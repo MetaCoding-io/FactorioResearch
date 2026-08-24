@@ -1,43 +1,22 @@
 # Architectural Decision Records
 
-FISL will use lightweight Architectural Decision Records (ADRs) for implementation choices that should remain understandable after the surrounding discussion has disappeared.
+FISL uses lightweight ADRs to preserve not just implementation choices, but the reasoning behind scientific and pedagogical contract decisions.
 
-The architecture document records the current system design and rationale. ADRs record **specific decisions made while implementing that design**, especially when reasonable alternatives exist.
+The architecture document records the current system design and rationale. ADRs record **specific decisions** that should remain understandable after the surrounding discussion has disappeared.
 
-Examples likely to deserve ADRs:
+## Status values
 
-- scenario serialization/schema technology;
-- how scenario ports bind to Factorio entities;
-- telemetry file format;
-- exact Python ↔ Factorio control channel;
-- WIP sampling/integration implementation;
-- save/reset strategy;
-- Factorio version/expansion support policy;
-- whether and how FLE code is reused.
+- **Proposed** — under active discussion.
+- **Accepted** — adopted for the current architecture/contract.
+- **Superseded** — replaced by a later ADR.
+- **Rejected** — considered but not adopted.
 
-Suggested format:
+## Current decisions
 
-```text
-# ADR-NNN: Title
+- [ADR 0001: Experiment Time and Phase Semantics](0001-experiment-time-and-phases.md) — **Accepted**
+- [ADR 0002: Zones and System Boundary Semantics](0002-zones-and-system-boundaries.md) — **Accepted**
+- [ADR 0003: Material Ports, Supply, Demand, and Boundary Transactions](0003-material-ports-supply-demand.md) — **Accepted**
 
-Status: proposed | accepted | superseded
-Date: YYYY-MM-DD
+Additional implementation choices likely to deserve ADRs include scenario serialization/schema technology, telemetry format, Python ↔ Factorio control channels, WIP integration implementation, save/reset strategy, Factorio version/expansion support, and whether/how FLE code is reused.
 
-## Context
-
-What problem requires a decision?
-
-## Decision
-
-What are we choosing?
-
-## Alternatives considered
-
-What else was plausible?
-
-## Consequences
-
-What becomes easier, harder, required, or forbidden because of this decision?
-```
-
-Keep ADRs short. The purpose is durable reasoning, not bureaucracy.
+Keep ADRs focused. Their purpose is durable reasoning, not bureaucracy.
