@@ -16,6 +16,7 @@ The architecture document records the current system design and rationale. ADRs 
 - [ADR 0001: Experiment Time and Phase Semantics](0001-experiment-time-and-phases.md) — **Accepted**
 - [ADR 0002: Zones and System Boundary Semantics](0002-zones-and-system-boundaries.md) — **Accepted**
 - [ADR 0003: Material Ports, Supply, Demand, and Boundary Transactions](0003-material-ports-supply-demand.md) — **Accepted**
+- [ADR 0004: Primitive Observations and Tick-Pipeline Semantics](0004-primitive-observations-and-tick-pipeline.md) — **Proposed**
 
 Additional implementation choices likely to deserve ADRs include scenario serialization/schema technology, telemetry format, Python ↔ Factorio control channels, WIP integration implementation, save/reset strategy, Factorio version/expansion support, and whether/how FLE code is reused.
 
