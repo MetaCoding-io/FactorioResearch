@@ -1,6 +1,6 @@
 # ADR 0003: Material Ports, Supply, Demand, and Boundary Transactions
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
@@ -8,270 +8,115 @@
 
 ADR 0002 established that geometric zone crossing is **not** the authoritative definition of material entering or leaving a FISL system. FISL therefore needs explicit boundary interfaces whose behavior is reproducible, measurable, and understandable to learners.
 
-For the first Factory Physics labs, these interfaces need to support at least:
+For the first Factory Physics labs, these interfaces must support effectively unconstrained raw-material supply, rate-limited supply, finished-goods output collection, customer demand/backlog, and authoritative input/output observations. The design must also leave a clean path toward stochastic supply/demand, failures, costs, finite warehousing, perishability, and multi-system experiments.
 
-- effectively unconstrained raw-material supply;
-- rate-limited raw-material supply;
-- finished-goods output collection;
-- customer demand and backlog;
-- authoritative input/output event streams for later throughput and service metrics.
-
-The design must remain compatible with later stochastic supply/demand, failures, costs, multi-system experiments, and other boundary-interface types without making v1 implement all of them.
-
-A major implementation constraint is that Factorio exposes inventory contents and script insertion/removal, but normal machine/inserter activity is not represented as a universal per-item inventory-transfer event stream. FISL must therefore define exactly what it can observe and avoid claiming gross transaction precision that the runtime apparatus does not actually provide.
+A key runtime constraint is that Factorio exposes inventory contents and script insertion/removal but not a universal gross event stream for every arbitrary inserter transfer. FISL therefore must be explicit about what is directly observed and must not claim precision the apparatus cannot support.
 
 ## Decision
 
 ### 1. A material `port` is an explicit system-boundary interface
 
-A FISL material port is a logical interface between one declared system and its external environment.
-
-A port answers:
+A FISL material port is a logical interface between one declared system and its external environment. It answers:
 
 > At what declared interface do items enter or leave the system, and how does FISL account for that exchange?
 
-A port is not merely a chest, coordinate, or zone edge. A physical Factorio entity is an implementation endpoint to which the logical port is bound.
+A port is not merely a chest, coordinate, or zone edge. A physical Factorio entity is an implementation endpoint bound to the logical port.
 
 Every v1 material port references exactly one FISL system.
 
-V1 does not require direct system-to-system ports. Such a feature should later be expressible as an interface connecting two systems rather than redefining the meaning of a port.
+### 2. V1 material-port directions are `source` and `sink`
 
-### 2. V1 has two material-port directions: `source` and `sink`
-
-V1 material ports have one of two semantic directions:
-
-- `source` — material is made available by the external environment and may enter the system;
+- `source` — external material is made available and may enter the system.
 - `sink` — material leaves the system and is accepted by the external environment.
 
-A source is therefore an **input boundary**.
-
-A sink is therefore an **output boundary**.
-
-Ports are one-way in v1. Bidirectional material interfaces are deferred.
+Ports are one-way in v1. Bidirectional and direct system-to-system material interfaces are deferred.
 
 ### 3. Demand is not a port type
 
-`demand` is an exogenous process that may be attached to a sink.
-
-This distinction is fundamental:
+`demand` is an exogenous process optionally attached to a sink.
 
 ```text
-source / sink = boundary direction
+source / sink = physical/accounting boundary direction
 
 demand        = external requirement over time
 ```
 
-A sink may exist without demand. This is useful for labs that measure output throughput without modeling a customer.
+A sink can therefore measure pure output throughput without a customer model, while the same sink can later carry demand/backlog/service semantics.
 
-The same sink can later be configured with demand to study fulfillment, backlog, service level, push/pull behavior, and response to changing requirements.
+### 4. V1 ports track one material identity and one endpoint
 
-This prevents physical boundary semantics from being coupled unnecessarily to one particular business interpretation.
+Each v1 port tracks exactly one item identity and binds to one inventory-bearing Factorio endpoint.
 
-### 4. V1 ports track one material identity each
+The scenario-level contract does not depend on whether that endpoint is implemented as a FISL-specific custom entity, a protected native container, or another inventory-bearing apparatus satisfying the contract.
 
-Each v1 port tracks exactly one item identity.
+At `READY`, the binding must resolve unambiguously and FISL records at least the logical port ID, system ID, direction, material identity, surface, endpoint prototype/position, runtime entity identifier when available, usable inventory capacity, and measurement method.
 
-Illustrative form:
+Loss of an authoritative port endpoint during a run preserves collected data but should abort the run rather than continue producing apparently valid boundary metrics.
 
-```yaml
-ports:
-  iron_supply:
-    system: factory
-    direction: source
-    material:
-      item: iron-plate
+### 5. Standard port apparatus is controlled experimental equipment
 
-  customer_shipments:
-    system: factory
-    direction: sink
-    material:
-      item: electronic-circuit
-```
+Standard FISL port endpoints SHOULD be visually distinctive and protected from normal learner manipulation as far as Factorio permits without preventing intended automated transfer. Appropriate endpoints should be non-minable, non-destructible, and non-operable through ordinary player inventory interaction.
 
-The resolved material identity SHOULD be capable of including item quality where the active Factorio configuration supports it. Base-game Factory Physics scenarios should default to normal-quality items and should not require expansion mechanics.
+Port apparatus represents the experimental bench rather than the learner's factory.
 
-Multi-item ports, fluids, heat, energy, information, and other interface types are deferred.
+### 6. Port inventories are external to normal system WIP
 
-### 5. Logical port semantics are separate from physical endpoint implementation
+Items waiting in source staging have not yet entered the measured production system. Items delivered to sink staging have reached the output boundary and are being accepted by the external environment.
 
-Each v1 logical port binds to exactly one physical Factorio endpoint that exposes an inventory FISL can inspect and manipulate.
+Therefore FISL-owned port inventories are excluded from ordinary internal WIP unless a future scenario explicitly models a boundary warehouse as part of the measured system.
 
-The scientific contract MUST NOT depend on whether that endpoint is ultimately implemented as:
+### 7. V1 ports use deterministic per-tick settlement
 
-- a FISL-specific custom entity;
-- a protected native container;
-- another inventory-bearing apparatus that satisfies the same contract.
+Each active port participates in one FISL-controlled settlement per executed simulation tick.
 
-The standard FISL distribution SHOULD provide purpose-built, visually distinctive FISL port apparatus because ports are part of the experimental bench rather than part of the student's factory.
+Settlement is the authoritative accounting point at which FISL:
 
-At `READY`, a port binding must resolve unambiguously and FISL records at least:
+1. reconciles endpoint changes from the completed tick interval;
+2. records source/sink boundary observations;
+3. settles sink output against already-outstanding demand;
+4. advances supply/demand schedules;
+5. prepares source availability and demand state for the next interval.
 
-- logical port ID;
-- system ID;
-- direction;
-- material identity;
-- surface;
-- endpoint prototype;
-- endpoint position;
-- stable runtime entity identifier when available;
-- effective usable inventory capacity;
-- measurement method.
+The exact callback location within the complete FISL per-tick pipeline is deferred to the primitive-observation contract, but the causal semantics are fixed here.
 
-An unresolved or ambiguous binding is a validation failure.
+### 8. Source input is measured as net withdrawal from staging
 
-If the endpoint becomes unavailable during an active run, the run data are preserved but the experiment must be marked as having lost an authoritative measurement interface. The recommended v1 behavior is to abort the run rather than continue producing apparently valid boundary metrics.
-
-### 6. Standard port apparatus is controlled experimental equipment
-
-The standard v1 endpoint SHOULD be protected from ordinary learner manipulation as far as Factorio permits without interfering with intended automated item transfer.
-
-Where appropriate FISL SHOULD make the endpoint:
-
-- non-minable;
-- non-destructible;
-- non-rotatable if relevant;
-- non-operable through the normal player GUI/quick-transfer interface.
-
-Factorio's runtime API supports script insertion/removal and inventory inspection, and exposes flags such as `operable`, `destructible`, and `minable_flag` on applicable entities.
-
-The purpose is not to prevent all adversarial behavior. It is to keep the experimental interface stable during normal classroom play.
-
-### 7. Port apparatus is external to normal system WIP accounting
-
-A source staging inventory represents material that is still external to the measured production system.
-
-A sink staging inventory represents boundary apparatus through which output is being accepted by the external environment.
-
-Therefore FISL-owned port inventories are excluded from ordinary internal WIP accounting unless a future scenario explicitly models a boundary buffer as part of the system.
-
-This preserves ADR 0002's separation between physical placement and accounting membership.
-
-### 8. V1 ports use deterministic per-tick settlement
-
-Each active port participates in one FISL-controlled **settlement** per executed simulation tick.
-
-A settlement is the authoritative accounting point at which FISL reconciles changes in the endpoint inventory since the previous settlement and performs its own source/sink actions.
-
-The port contract therefore measures boundary exchange in discrete simulation-tick intervals rather than pretending to observe the exact sub-tick instant at which an inserter moved an item.
-
-Each settlement must be timestamped in the authoritative FISL experiment clock.
-
-The exact placement of the settlement callback within FISL's complete per-tick observation pipeline will be fixed by the primitive-observation ADR. This ADR fixes the accounting semantics independently of that implementation detail.
-
-### 9. Source input is measured by net withdrawal from external staging
-
-After FISL has completed settlement for a source, it retains the resulting tracked-item count as the source's previous post-settlement state.
-
-At the next settlement it observes the source inventory before applying any new FISL replenishment/release action.
-
-For a compliant one-way source:
+After source settlement, FISL retains the source tracked-item count as the previous post-settlement state. At the next settlement, before adding newly available supply:
 
 ```text
-input_quantity = previous_post_settlement_count
-                 - current_pre_settlement_count
+source_withdrawal = previous_post_settlement_count
+                    - current_pre_settlement_count
 ```
 
-when that value is positive.
+when positive.
 
-This quantity is the authoritative v1 boundary input for the interval just completed.
+This quantity is the authoritative v1 input boundary observation for the completed interval.
 
-Conceptually:
+The method is explicitly **net inventory settlement**, not a claim of exact gross transfer history. Reverse flow into a source is therefore prohibited by the v1 protocol; standard apparatus/layout should make it difficult, and detectable reverse flow is a protocol violation.
 
-```text
-external source staging
-       |
-       | withdrawal by student's system
-       v
-================ SYSTEM BOUNDARY ================
-       |
-       v
- internal production system
-```
+### 9. Sink output is recorded and removed at settlement
 
-Items sitting in source staging are external. Quantity recognized as withdrawn at settlement has crossed the declared input boundary.
+At each sink settlement, FISL reads the tracked material present in sink staging. That quantity is recorded as `sink_delivery` for the completed interval and then removed from staging, normally returning the sink tracked-item count to zero.
 
-### 10. V1 source measurement is explicitly net, not guaranteed gross flow
+This settlement event is the authoritative v1 output boundary transaction.
 
-A normal Factorio inventory does not expose a universal gross history of every inserter transfer into and out of it.
+### 10. Output and demand fulfillment are distinct observations
 
-Therefore v1 source-port measurement MUST identify its method as a net-inventory settlement method rather than claiming exact gross transaction tracking.
+Every valid item accepted at a sink is system output regardless of customer demand.
 
-If material is both withdrawn from and returned to the same source endpoint between two settlements, only the resulting net change may be directly observable through this method.
+FISL distinguishes:
 
-Accordingly:
+- `sink_delivery` — output crossing the declared system boundary;
+- `demand_fulfilled` — the portion of that output satisfying already-outstanding demand;
+- `surplus_delivery` — delivered output in excess of already-outstanding demand.
 
-- reverse flow into a source is prohibited by the v1 port protocol;
-- standard scenarios and apparatus SHOULD make reverse flow difficult during normal play;
-- any detectable reverse flow is a protocol violation;
-- v1 scientific claims assume protocol-compliant one-way source use.
+Surplus delivery does not automatically satisfy future demand. If an experiment requires finished-goods inventory that can serve later demand, that inventory must be explicitly represented as a warehouse/buffer with an explicit location relative to the system boundary.
 
-A future one-way instrumented endpoint may provide stronger gross-transfer observability without changing the logical meaning of a source port.
+### 11. V1 demand uses a backlog ledger
 
-### 11. Sink output is settled, recorded, then removed from staging
+A demand-enabled sink creates discrete item requirements over simulation time. V1 shortage semantics use backlog.
 
-At each sink settlement FISL reads the count of the sink's tracked material.
-
-The tracked quantity present at settlement is recorded as a `sink_delivery` for the interval just completed and is then removed from the endpoint by FISL.
-
-Thus the normal post-settlement tracked-item count of a sink is zero.
-
-Conceptually:
-
-```text
- internal production system
-       |
-       | delivery
-       v
-================ SYSTEM BOUNDARY ================
-       |
-       v
- FISL sink staging -> settled/removed -> external environment
-```
-
-The settlement event is the authoritative v1 accounting point at which the delivered quantity becomes recorded system output.
-
-### 12. Sink delivery and demand fulfillment are different observations
-
-Every valid tracked item accepted at a sink is a system output delivery, regardless of whether there is customer demand waiting for it.
-
-Therefore FISL distinguishes at least:
-
-- `sink_delivery` — physical/accounting output across the declared boundary;
-- `demand_fulfillment` — the portion of that delivery that satisfies existing demand;
-- `surplus_delivery` — output delivered when there was not enough existing demand to consume it.
-
-This prevents throughput from being confused with customer service.
-
-It also allows a learner to overproduce and observe that:
-
-```text
-high output != high demand fulfillment efficiency
-```
-
-### 13. Deliveries do not retroactively satisfy future demand
-
-If a sink receives material when no demand is currently outstanding, that quantity is recorded as surplus delivery.
-
-It does not become a credit that automatically fulfills demand generated later.
-
-If an experiment needs finished-goods inventory that can satisfy future demand, that inventory should be modeled explicitly as part of the system or as a distinct downstream buffer rather than hidden inside demand accounting.
-
-This keeps the system boundary and inventory model intellectually honest.
-
-### 14. V1 demand uses a backlog ledger
-
-A sink may declare an attached demand process.
-
-V1 demand creates discrete item requirements over simulation time and uses **backlog** as the supported shortage policy.
-
-At any point the demand ledger includes at least cumulative values for:
-
-- demand created;
-- demand fulfilled;
-- current backlog;
-- surplus delivery.
-
-For a delivery quantity `D` and backlog `B` already outstanding when that delivery is settled:
+For delivery `D` and previously outstanding backlog `B`:
 
 ```text
 fulfilled = min(D, B)
@@ -279,54 +124,21 @@ surplus   = D - fulfilled
 backlog   = B - fulfilled
 ```
 
-Demand generated for a future simulation interval cannot be fulfilled by surplus output from an earlier interval.
+Demand generated for a future interval cannot be fulfilled by surplus output from an earlier interval.
 
-Lost-sales/expiry semantics are intentionally deferred because they require an additional definition of due-time tolerance and demand expiration.
+Lost-sales/expiry semantics are deferred because they require explicit due-time/expiration rules.
 
-### 15. Demand and supply schedules use simulation time and exact discrete accumulation
+### 12. Supply and demand schedules use exact simulation-time accumulation
 
-Constant rates such as:
+Author-facing constant rates such as `180/min` compile into deterministic discrete release arithmetic. FISL MUST NOT accumulate floating-point `items_per_tick` values in a way that introduces drift.
 
-```yaml
-rate: 180/min
-```
+The same schedule interface should later admit stochastic policies without changing port semantics.
 
-are authoring conveniences.
-
-The resolved scenario MUST represent them using exact simulation-time arithmetic that determines a discrete cumulative item entitlement without floating-point drift.
-
-For example, a constant rate may be compiled to an integer/rational accumulator such that the cumulative number of items released after `N` ticks is deterministic.
-
-FISL MUST NOT repeatedly add an inexact floating-point `items_per_tick` value and hope that rounding errors remain insignificant.
-
-The same scheduling abstraction should later support stochastic policies while preserving the source/sink interface.
-
-### 16. Source release and demand creation are prepared for the upcoming simulation interval
-
-FISL's causal model is:
-
-1. a tick interval runs using source availability and demand state already established at its beginning;
-2. at the next settlement, FISL accounts for source withdrawals and sink deliveries that occurred during that interval;
-3. sink deliveries are allocated to demand that was already outstanding during that interval;
-4. FISL then advances source-supply and demand schedules to establish state for the next interval.
-
-The first experiment interval is initialized before `experiment_tick = 0` begins.
-
-This rule prevents output produced before a demand exists from satisfying that future demand merely because of callback ordering.
-
-The primitive-observation ADR will define the exact implementation ordering and event timestamps consistent with this causal contract.
-
-### 17. V1 supports two source-supply modes
-
-Factory Physics labs need both an external source that is intentionally *not* the bottleneck and an external source whose availability rate is part of the experiment.
-
-V1 therefore SHOULD support:
+### 13. V1 supports `replenish` and `scheduled` source modes
 
 #### `replenish`
 
-Maintain a declared staging target after each settlement.
-
-Illustrative form:
+Maintain a declared staging target after settlement:
 
 ```yaml
 supply:
@@ -334,17 +146,11 @@ supply:
   target: 400
 ```
 
-After settling student withdrawals, FISL inserts enough tracked material to restore staging toward the target, subject to actual endpoint capacity.
-
-This is the preferred source mode when the pedagogical model intends raw-material availability to be effectively unconstrained.
-
-It is not literally infinite: extraction is still limited by the physical Factorio endpoint and the student's material-handling design.
+Use this when external raw-material availability should not be the experimental bottleneck. Physical extraction capacity still depends on the Factorio endpoint and the learner's handling system.
 
 #### `scheduled`
 
-Release material according to an explicit simulation-time schedule.
-
-Illustrative form:
+Release material according to an explicit schedule:
 
 ```yaml
 supply:
@@ -354,56 +160,102 @@ supply:
     rate: 180/min
 ```
 
-Scheduled mode is used when upstream availability itself is part of the experiment.
+Use this when upstream availability is an experimental variable.
 
-### 18. Scheduled source supply accumulates externally when staging is full
+### 14. Scheduled supply has an explicit external buffer
 
-For v1 scheduled supply, the supported overflow policy is **external backlog**.
+Scheduled material that has become available but cannot yet fit into source staging exists **outside the measured system**. FISL models this with an explicit external supply buffer rather than forcing one universal overflow behavior.
 
-If the schedule says more material has become available than can currently fit into the port staging inventory, FISL records that quantity as pending outside the system and attempts to stage it later when capacity becomes available.
+The external buffer has a capacity policy:
 
-This means a full receiving interface delays external delivery rather than silently destroying scheduled supply.
+```text
+unbounded      all blocked scheduled supply may wait externally
+finite(N)      at most N items may wait externally
+zero           no external warehouse/storage exists
+```
 
-Future scenarios may add lost supply, perishable supply, delivery windows, or other policies.
+This unifies several useful scenarios:
 
-### 19. Initial port conditions are explicit
+- an upstream warehouse with effectively unlimited storage;
+- a finite supplier/receiving warehouse;
+- no warehouse at all, where blocked arrivals are lost/discarded.
 
-A scenario must not rely on an accidental quantity already present in a saved chest.
+When scheduled supply becomes available, FISL first stages as much as current source-port capacity permits. Remaining quantity is placed into the external supply buffer up to its configured capacity. Any quantity beyond that capacity becomes `source_supply_lost`.
 
-At `READY`, FISL validates and establishes the declared initial state for every port.
+When source staging later gains capacity, externally buffered supply is offered to staging before later scheduled arrivals, using FIFO-by-availability semantics at the aggregate quantity level in v1.
 
-Relevant initial conditions include, as appropriate:
+This external buffer is **not system WIP**. It represents upstream inventory outside the declared production-system boundary.
+
+### 15. Zero-capacity external storage models “use it or lose it” supply
+
+A scenario with no upstream warehouse may declare conceptually:
+
+```yaml
+external_buffer:
+  capacity: 0
+```
+
+If scheduled supply arrives while source staging is full, the blocked quantity is immediately recorded as lost/discarded supply.
+
+This is not treated as a protocol violation: it is the declared behavior of the external environment.
+
+Later versions may introduce additional disposition policies such as supplier blocking, rescheduling, perishability, or expiring delivery windows, but v1 needs only external buffering plus overflow loss.
+
+### 16. External supply congestion/loss must be measurable
+
+FISL must expose enough primitive observations to show not merely whether an upstream backlog exists, but **how severe and persistent it is**.
+
+At minimum, source-side observations/state should support deriving:
+
+- `source_external_pending_current` — items currently waiting in the external buffer;
+- `source_external_pending_peak` — maximum external pending quantity in the observation window;
+- `source_external_pending_item_ticks` — time integral of pending supply, expressed as item-ticks;
+- `source_supply_scheduled_total` — cumulative supply made available by schedule;
+- `source_release_total` — cumulative quantity successfully staged at the source endpoint;
+- `source_withdrawal_total` — cumulative quantity actually taken into the system;
+- `source_supply_lost_total` — cumulative quantity discarded because both staging and configured external storage lacked capacity;
+- `source_supply_loss_fraction` — lost / scheduled over an explicit measurement window;
+- `source_overflow_events` — count of schedule settlements in which loss occurred.
+
+`source_external_pending_item_ticks` is important because current/peak backlog alone does not describe duration. It provides the raw material for later time-weighted backlog metrics analogous to WIP integration.
+
+The learner-facing presentation may call this **external supply backlog** or **upstream backlog**, but the underlying scientific field names should distinguish it from customer-demand backlog.
+
+### 17. Port and external-buffer initial conditions are explicit
+
+At `READY`, FISL validates and establishes declared initial state rather than trusting accidental save-game inventory.
+
+Relevant state includes:
 
 - initial source staging quantity;
-- replenishment target;
-- scheduled-supply accumulator state;
-- external pending supply, normally zero;
+- replenishment target when applicable;
+- schedule accumulator state;
+- external supply buffer capacity;
+- initial external pending quantity;
+- cumulative lost supply initialized to zero unless explicitly restoring a checkpoint;
 - sink tracked inventory, normally zero;
-- initial demand backlog, normally zero.
+- initial customer demand backlog, normally zero.
 
-The resolved run manifest records these initial conditions.
+These conditions are retained in run provenance.
 
-### 20. Unsupported material in a port is contamination, not output/input
+### 18. Unsupported material is contamination, not valid flow
 
-A v1 port tracks one declared material identity.
+A v1 port tracks one declared material identity. Other material found in the endpoint is `port_contamination` and must not count as valid input, output, fulfillment, or WIP.
 
-Any other material found in the endpoint is a `port_contamination` condition.
+Where endpoint filtering can reliably prevent contamination, standard apparatus should use it. Unexpected contents should be retained for diagnosis rather than silently destroyed unless a later explicit quarantine policy is introduced.
 
-Unsupported material MUST NOT be counted as valid input, output, fulfillment, or WIP merely because it is physically in FISL apparatus.
+### 19. Port facts are first-class primitive data
 
-Where Factorio endpoint filtering can reliably prevent contamination, the standard apparatus SHOULD use it.
-
-If contamination is detected, FISL records a protocol/validity event. V1 SHOULD NOT silently destroy unsupported material merely to make the experiment appear clean; the default should preserve the unexpected state for diagnosis unless a later explicit quarantine policy is added.
-
-### 21. Port flow observations are first-class primitive data
-
-The eventual telemetry vocabulary should be able to preserve primitive port facts such as:
+The primitive telemetry vocabulary should support facts/state including:
 
 ```text
 source_withdrawal
 source_reverse_flow
 source_release
 source_external_pending
+source_supply_scheduled
+source_supply_lost
+source_overflow
 sink_delivery
 demand_created
 demand_fulfilled
@@ -412,49 +264,25 @@ surplus_delivery
 port_contamination
 ```
 
-Each such record should include at least:
+Each record includes appropriate experiment tick/interval, port ID, system ID, material identity, quantity, and measurement/settlement method.
 
-- experiment tick / settlement interval;
-- port ID;
-- system ID;
-- material identity;
-- quantity;
-- measurement/settlement method where relevant.
+Later throughput, input-rate, service-level, congestion, and supply-loss metrics derive from these observations rather than re-reading arbitrary endpoint state.
 
-Later metrics such as throughput, input rate, fulfillment rate, and service level should derive from these observations instead of reaching back into arbitrary endpoint inventory state.
+### 20. Multiple ports remain distinct unless explicitly aggregated
 
-### 22. Multiple ports are explicit, not implicitly merged
+A system may have multiple source and sink ports, including several carrying the same item. Each emits its own authoritative observation stream.
 
-A system may have multiple source and sink ports, including multiple ports carrying the same item.
+System-wide totals require explicit aggregation over named ports; FISL never silently merges ports merely because material identities match.
 
-Each port produces its own authoritative observation stream.
+### 21. V1 deliberately does not model every boundary phenomenon
 
-System-wide totals must be constructed by an explicit later aggregation over named ports; FISL MUST NOT silently combine ports merely because their item identities match.
+Deferred capabilities include fluids, energy/information exchange, direct inter-system ports, bidirectional ports, train/bot boundary accounting, stochastic schedules, demand expiration/lost sales, order-level demand objects, prices/costs, perishable supply, supplier blocking/rescheduling, and exact gross sub-tick transfer history.
 
-This leaves room for experiments involving multiple suppliers, alternate routes, parallel customers, or decentralized subsystems.
+These should extend the established boundary/scheduling model rather than replace it.
 
-### 23. V1 material ports deliberately do not model every boundary phenomenon
+## Illustrative v1 schema
 
-V1 does not require:
-
-- fluids;
-- energy exchange;
-- circuit/information exchange;
-- train-consist boundary accounting;
-- logistic-bot boundary accounting;
-- inter-system transfer ports;
-- bidirectional ports;
-- demand expiration/lost sales;
-- stochastic schedules;
-- order-level demand objects;
-- costs or prices;
-- exact gross sub-tick transfer histories.
-
-These are extensions of the boundary-interface and scheduling model, not reasons to complicate the first Factory Physics implementation.
-
-## Proposed v1 schema shape
-
-Illustrative only:
+A scheduled source with a finite upstream warehouse:
 
 ```yaml
 ports:
@@ -473,8 +301,33 @@ ports:
       schedule:
         type: constant
         rate: 180/min
-      overflow_policy: external_backlog
+      external_buffer:
+        capacity: 2000
+```
 
+No upstream warehouse / blocked arrivals are lost:
+
+```yaml
+supply:
+  mode: scheduled
+  schedule:
+    type: constant
+    rate: 180/min
+  external_buffer:
+    capacity: 0
+```
+
+Effectively unlimited external warehouse:
+
+```yaml
+external_buffer:
+  capacity: unbounded
+```
+
+A sink with demand:
+
+```yaml
+ports:
   customer_shipments:
     system: factory
     direction: sink
@@ -492,85 +345,62 @@ ports:
         rate: 60/min
 ```
 
-An unconstrained teaching source might instead declare:
-
-```yaml
-ports:
-  iron_supply:
-    system: factory
-    direction: source
-    material:
-      item: iron-plate
-    supply:
-      mode: replenish
-      target: 400
-```
-
-The exact binding syntax and general schedule syntax remain subject to the eventual `fisl/v1` schema pass.
-
-## Implementation notes
-
-Factorio's runtime inventory APIs provide the core primitives needed for this design: inventory/entity item counts can be read, items can be inserted or removed by script, and entity interaction flags can protect apparatus from common player manipulation.
-
-However, the runtime event model does not provide a single universal event representing every arbitrary inserter transfer into or out of a container inventory. That is why v1 explicitly defines source flow using deterministic net inventory settlement and requires one-way protocol use rather than claiming unavailable gross-flow observability.
-
-The standard endpoint implementation should be chosen to make one-way use as natural and robust as possible. A future custom apparatus may improve gross-flow observability without altering the scenario-level port semantics.
+Exact binding and generic schedule syntax remain subject to the final `fisl/v1` schema pass.
 
 ## Consequences
 
 ### Positive
 
-- Input/output become explicit auditable boundary transactions rather than geometric guesses.
-- Demand is cleanly separated from physical output, which supports both pure throughput labs and customer-service labs.
-- The same port model extends naturally to stochastic schedules later.
-- Replenishing sources allow Factorio's own material-handling machinery to remain the learner's problem while removing unintended upstream scarcity.
-- Rate-limited sources allow upstream availability to become an intentional experimental variable.
-- Surplus output remains visible rather than being falsely credited against future demand.
-- Port observation streams give later throughput/service metrics a strong primitive-data foundation.
-- Binding semantics remain independent of the exact endpoint prototype.
+- Input/output are explicit auditable boundary transactions rather than geometric guesses.
+- Demand is separated from physical output.
+- Replenishing and scheduled sources support different Factory Physics teaching goals.
+- External buffering is an explicit environmental assumption rather than hidden behavior.
+- Zero, finite, and unbounded external storage are represented by one coherent abstraction.
+- Supply lost because of inadequate receiving/upstream storage becomes measurable rather than disappearing from the model.
+- Time-integrated upstream backlog makes prolonged congestion visible.
+- The same interfaces can later support stochastic schedules, costs, and reliability experiments.
 
 ### Negative / trade-offs
 
 - Net source settlement cannot reconstruct arbitrary gross same-tick reverse transfers.
-- Standard apparatus and scenario layout must reinforce one-way use.
-- Per-tick settlement introduces at most sub-tick physical/accounting timing granularity rather than claiming an exact inserter-movement instant.
-- Sink acceptance of surplus output means experiments that require a hard customer acceptance limit will need an additional future policy or an explicit downstream buffer.
-- Lost-sales demand is deferred in favor of a simpler backlog model.
-- Inventory-bound endpoints remain a deliberate experimental abstraction rather than a universal model of every industrial interface.
+- Per-tick settlement is a deliberate accounting granularity.
+- External-buffer state adds one more stock outside the measured system that authors and students must conceptually distinguish from WIP.
+- FIFO is aggregate rather than order-level in v1.
+- Supplier blocking, rescheduling, and perishability remain deferred.
 
 ## Open items deferred to later Issue #1 sections
 
 This ADR deliberately does not settle:
 
-- exact position of port settlement inside the complete FISL per-tick callback/order;
-- exact telemetry file/event schema;
-- WIP treatment of inserter-held items immediately after source withdrawal;
-- exact throughput metric window/aggregation syntax;
+- exact placement of settlement inside the complete per-tick pipeline;
+- final telemetry file/event schema;
+- WIP treatment of items immediately after source withdrawal;
+- exact time-window aggregation syntax for pending item-ticks and loss fractions;
 - service-level formulas;
-- order-level demand objects and response time;
-- whether sink surplus delivery should later support configurable rejection/holding policies;
-- a stronger custom one-way endpoint implementation;
-- exact authoring/binding UI;
+- order-level demand and response time;
+- stronger custom one-way endpoint implementations;
 - general stochastic schedule syntax;
-- multi-system and non-material interfaces.
+- non-material and inter-system interfaces.
 
-## Acceptance criteria for this decision
+## Acceptance criteria
 
-The ports/source/demand portion of Issue #1 is complete when we agree that:
+The ports/source/demand portion of Issue #1 is complete because we agree that:
 
 1. ports are explicit logical boundary interfaces attached to systems;
-2. v1 material port directions are `source` and `sink`;
-3. demand is an optional external process attached to a sink, not a third port direction;
-4. each v1 port tracks one material identity and one physical endpoint;
-5. standard port apparatus is FISL-owned controlled experimental equipment and is excluded from normal internal WIP;
-6. authoritative v1 port accounting occurs at deterministic per-tick settlements;
-7. source input uses an explicitly documented net-withdrawal measurement under a one-way protocol;
-8. sink delivery is recorded and settled independently from demand fulfillment;
-9. output delivered before demand is surplus and does not retroactively fulfill future demand;
-10. v1 demand uses backlog rather than lost-sales expiration;
-11. constant schedules compile to deterministic exact discrete release arithmetic;
-12. v1 sources support both replenishing and scheduled supply;
-13. scheduled supply that cannot fit stages as external pending supply rather than disappearing;
-14. initial conditions are explicit and reproducible;
-15. port observations become primitive data from which later metrics are derived;
-16. multiple ports remain separate unless a metric explicitly aggregates them.
+2. v1 directions are `source` and `sink`;
+3. demand is an optional external process attached to a sink;
+4. each v1 port tracks one material identity and one endpoint;
+5. port apparatus is FISL-owned experimental equipment excluded from normal internal WIP;
+6. authoritative v1 accounting occurs at deterministic per-tick settlements;
+7. source input uses documented net withdrawal under a one-way protocol;
+8. sink delivery is distinct from demand fulfillment;
+9. early surplus output does not satisfy future demand;
+10. v1 customer shortage semantics use backlog;
+11. schedules compile to exact deterministic discrete release arithmetic;
+12. sources support replenishing and scheduled supply;
+13. scheduled supply uses an explicit external buffer with zero, finite, or unbounded capacity;
+14. blocked supply beyond external-buffer capacity is explicitly recorded as lost rather than silently disappearing;
+15. upstream backlog/loss have primitive observations sufficient for current, peak, cumulative, and time-integrated metrics;
+16. initial conditions are explicit and reproducible;
+17. port observations are primitive data from which later metrics derive;
+18. multiple ports remain distinct unless explicitly aggregated.
