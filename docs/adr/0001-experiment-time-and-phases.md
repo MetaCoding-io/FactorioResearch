@@ -1,6 +1,6 @@
 # ADR 0001: Experiment Time and Phase Semantics
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
