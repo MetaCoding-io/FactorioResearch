@@ -219,7 +219,7 @@ At minimum, source-side observations/state should support deriving:
 
 `source_external_pending_item_ticks` is important because current/peak backlog alone does not describe duration. It provides the raw material for later time-weighted backlog metrics analogous to WIP integration.
 
-The learner-facing presentation may call this **external supply backlog** or **upstream backlog**, but the underlying scientific field names should distinguish it from customer-demand backlog.
+Learner-facing presentation may call `source_external_pending_*` **upstream backlog** or **external supply backlog**. It must remain visibly distinct from **customer demand backlog**, because these represent congestion on opposite sides of the system.
 
 ### 17. Port and external-buffer initial conditions are explicit
 
