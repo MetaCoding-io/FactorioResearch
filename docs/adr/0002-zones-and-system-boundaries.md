@@ -1,6 +1,6 @@
 # ADR 0002: Zones and System Boundary Semantics
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
