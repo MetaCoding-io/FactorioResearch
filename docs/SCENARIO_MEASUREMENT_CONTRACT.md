@@ -28,7 +28,38 @@ The contract must make it possible to answer, unambiguously:
 
 ---
 
-## 2. Core concepts to define
+## 2. Accepted decisions
+
+### 2.1 Experiment time and phases
+
+Accepted in [`adr/0001-experiment-time-and-phases.md`](adr/0001-experiment-time-and-phases.md).
+
+Key consequences:
+
+- Factorio map ticks are the authoritative experiment clock.
+- Simulation seconds/minutes compile to exact integer ticks.
+- Wall time and game speed do not define simulation-time metrics.
+- Pause behavior is a protocol concern and does not advance experiment time.
+- V1 phases are ordered, contiguous, fixed-duration half-open intervals.
+- Warm-up is an ordinary phase rather than a hidden clock mode.
+- Metrics explicitly select their observation windows.
+
+### 2.2 Zones and system boundaries
+
+Accepted in [`adr/0002-zones-and-system-boundaries.md`](adr/0002-zones-and-system-boundaries.md).
+
+Key consequences:
+
+- A zone is a spatial selector, not the complete accounting boundary.
+- V1 zones are static, rectangular, surface-qualified and tile-aligned.
+- Canonical entity membership uses entity position; collision bounding boxes are for containment/integrity checks.
+- A v1 system references one primary zone.
+- FISL-owned boundary apparatus may be geometrically inside while semantically outside internal accounting.
+- Material flow is not inferred from raw geometric crossing; explicit ports will define authoritative boundary transactions.
+
+---
+
+## 3. Core concepts to define
 
 The contract must define at least:
 
@@ -51,7 +82,7 @@ The contract must define at least:
 
 ---
 
-## 3. Measurement terms requiring explicit semantics
+## 4. Measurement terms requiring explicit semantics
 
 The first pass must define the meaning and admissible measurement methods for:
 
@@ -76,39 +107,40 @@ No metric should exist in the runtime only as an informal label.
 
 ---
 
-## 4. Design questions to resolve
+## 5. Design questions to resolve
 
-### 4.1 Scenario identity and versioning
+### 5.1 Scenario identity and versioning
 
 - Is a scenario version SemVer?
 - What exactly is hashed for provenance?
 - Does changing only prose/learning metadata change the experiment identity?
 - How are schema versions distinguished from scenario versions?
 
-### 4.2 Time
+### 5.2 Time — ACCEPTED
 
-- Canonical internal unit: Factorio tick?
-- How are human-friendly seconds/minutes compiled to ticks?
-- How do pause and game-speed changes affect experiment time?
-- Does warm-up contribute to metrics?
-- Can metrics declare different observation windows?
+See ADR 0001.
 
-### 4.3 System boundaries
+### 5.3 System boundaries — ACCEPTED
 
-- Are v1 zones strictly rectangular?
-- Can an entity belong to multiple zones?
-- What happens when a student moves an entity across a zone boundary?
-- How are belts/inventories crossing the boundary classified?
+See ADR 0002.
 
-### 4.4 Ports
+### 5.4 Ports
 
-- How does a scenario bind a logical port to a Factorio entity?
-- Does FISL use tagged native chests, custom entities, coordinates, or stable identifiers?
-- What are the semantics of source replenishment?
-- What exactly does a demand port do when demand cannot be satisfied?
-- Must shortage behavior support backlog vs lost demand in v1?
+- What exactly is a logical material port?
+- Should v1 distinguish `source` and `sink`, with demand attached to a sink, instead of making `demand` itself a port type?
+- How does a scenario bind a logical port to Factorio apparatus?
+- Should the standard v1 apparatus be a FISL-owned custom container while the contract remains binding-agnostic?
+- At what exact settlement point does material become internal/external?
+- Are v1 authoritative boundary flows gross transactions or net per-tick inventory changes at the port?
+- How is reverse flow handled?
+- What source policies are needed for Factory Physics: unlimited/replenishing, rate-limited, both?
+- How are fractional rates converted into deterministic discrete item releases without floating-point drift?
+- What happens if a source staging buffer is full?
+- Does v1 demand support backlog only, or also lost demand?
+- How are deliveries before demand treated?
+- How are surplus/unsolicited output and wrong-item contamination recorded?
 
-### 4.5 WIP
+### 5.5 WIP
 
 - Is WIP every declared tracked item within a zone?
 - Does WIP include material in machines, belts, inserter hands, trains, bots, and chests?
@@ -116,19 +148,19 @@ No metric should exist in the runtime only as an informal label.
 - Can scenarios define a whitelist of WIP items?
 - How do we avoid double-counting transient entity inventories?
 
-### 4.6 Throughput
+### 5.6 Throughput
 
-- Is throughput measured only at a declared output/demand boundary?
+- Is throughput measured only at a declared output/sink boundary?
 - Is it an event count divided by an observation window?
 - Do we support rolling and whole-run throughput separately?
 
-### 4.7 Machine state
+### 5.7 Machine state
 
 - Which Factorio statuses map to productive, starved, blocked, unavailable, disabled, idle-other?
 - Are these mappings machine-type dependent?
 - How are machines that are intentionally not scheduled interpreted?
 
-### 4.8 Utilization
+### 5.8 Utilization
 
 The contract should likely forbid bare `utilization` and require an explicit denominator, e.g.:
 
@@ -137,7 +169,7 @@ The contract should likely forbid bare `utilization` and require an explicit den
 
 The exact vocabulary remains to be settled.
 
-### 4.9 Cycle time
+### 5.9 Cycle time
 
 Because items are fungible, direct item-level flow time is not generally observable.
 
@@ -150,7 +182,7 @@ Potential allowed methods:
 
 Each reported result must retain the measurement method.
 
-### 4.10 Service level
+### 5.10 Service level
 
 Possible definitions include:
 
@@ -162,7 +194,7 @@ Possible definitions include:
 
 A scenario must choose one explicitly.
 
-### 4.11 Aggregation
+### 5.11 Aggregation
 
 For time-varying values such as WIP:
 
@@ -173,7 +205,7 @@ For time-varying values such as WIP:
 
 The authoritative semantics must not depend accidentally on UI refresh frequency.
 
-### 4.12 Visibility
+### 5.12 Visibility
 
 Need at least these conceptual audiences:
 
@@ -184,7 +216,7 @@ Need at least these conceptual audiences:
 
 Later organizational work should extend this model to named roles rather than replacing it.
 
-### 4.13 Objectives
+### 5.13 Objectives
 
 Need separation among:
 
@@ -195,7 +227,7 @@ Need separation among:
 
 V1 may support only simple thresholds and minimize/maximize objectives, but the data model should not assume every experiment reduces naturally to one score.
 
-### 4.14 Reset and replay
+### 5.14 Reset and replay
 
 - What exactly returns to baseline on reset?
 - Is resetting implemented by reloading the baseline save rather than trying to undo player actions?
@@ -204,7 +236,7 @@ V1 may support only simple thresholds and minimize/maximize objectives, but the 
 
 ---
 
-## 5. Initial scenario shape under discussion
+## 6. Initial scenario shape under discussion
 
 This is illustrative only:
 
@@ -221,15 +253,29 @@ factorio:
   version: 2.0.x
 
 experiment:
-  warmup_seconds: 300
-  duration_seconds: 1200
+  time:
+    game_speed:
+      policy: fixed
+      value: 1.0
+    pause_policy: allowed
+  phases:
+    - id: warmup
+      duration: 5m
+    - id: measured
+      duration: 20m
+
+zones:
+  factory_floor:
+    surface: nauvis
+    area:
+      left_top: [-50, -30]
+      right_bottom: [50, 30]
 
 system:
-  zones:
-    factory:
-      area:
-        left_top: [-50, -30]
-        right_bottom: [50, 30]
+  id: factory
+  primary_zone: factory_floor
+  boundary_integrity:
+    entity_containment: contained
 
 ports:
   iron_supply:
@@ -240,12 +286,13 @@ ports:
       rate_per_minute: 180
 
   customer:
-    type: demand
+    type: sink
     item: electronic-circuit
-    schedule:
-      type: constant
-      rate_per_minute: 60
-    shortage_policy: backlog
+    demand:
+      schedule:
+        type: constant
+        rate_per_minute: 60
+      shortage_policy: backlog
 
 metrics:
   - id: output_throughput
@@ -254,7 +301,7 @@ metrics:
 
   - id: average_wip
     type: wip
-    zone: factory
+    zone: factory_floor
     aggregation: time_weighted_mean
 
 objectives:
@@ -275,7 +322,7 @@ visibility:
 
 ---
 
-## 6. Contract design principles
+## 7. Contract design principles
 
 The contract should satisfy these rules:
 
@@ -292,12 +339,12 @@ The contract should satisfy these rules:
 
 ---
 
-## 7. Recommended order for the next design session
+## 8. Recommended order for the next design session
 
 Work through the contract in this sequence:
 
-1. **Time and experiment phases** — establishes the common temporal model.
-2. **Zones/system boundaries** — establishes what is being observed.
+1. **Time and experiment phases** — accepted in ADR 0001.
+2. **Zones/system boundaries** — accepted in ADR 0002.
 3. **Ports/source/demand** — establishes controlled boundary flows.
 4. **Primitive observations** — establishes what FISL can honestly know.
 5. **WIP and throughput** — first major Factory Physics measurements.
@@ -311,7 +358,7 @@ Work through the contract in this sequence:
 
 ---
 
-## 8. Definition of done for this contract
+## 9. Definition of done for this contract
 
 This document is ready to become an implementation specification when we can take each of Labs 0–6 from the architecture document and answer all of the following without informal interpretation:
 
