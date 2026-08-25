@@ -1,0 +1,9 @@
+{
+  "name": "fisl-core",
+  "version": "0.1.0",
+  "title": "FISL Core Runtime",
+  "author": "FISL",
+  "factorio_version": "2.0",
+  "description": "FISL in-game experimental runtime: experiment clock/phases, port settlement, conservation-ledger WIP, physical census validation, telemetry, and controller protocol.",
+  "dependencies": ["base >= 2.0", "? fisl-factory-physics"]
+}

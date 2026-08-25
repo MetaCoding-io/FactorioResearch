@@ -1,0 +1,9 @@
+{
+  "name": "fisl-factory-physics",
+  "version": "0.1.0",
+  "title": "FISL Factory Physics Content",
+  "author": "FISL",
+  "factorio_version": "2.0",
+  "description": "Conserved workpiece item/recipe families and FISL port apparatus prototypes for Factory Physics laboratories.",
+  "dependencies": ["base >= 2.0"]
+}
