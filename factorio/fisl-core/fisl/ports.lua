@@ -74,7 +74,14 @@ function ports.bind_all(config)
               runtime.supply.external_capacity = port_config.supply.external_buffer.quantity
             end
           end
+          -- Explicit initial staging state (ADR 0003 §17), established at
+          -- READY rather than trusting accidental save inventory.
+          local initial_quantity = port_config.supply.initial_quantity or 0
+          if initial_quantity > 0 then
+            chest_inventory(entity).insert({ name = runtime.item, count = initial_quantity })
+          end
         end
+        runtime.prev_post_settlement_count = chest_inventory(entity).get_item_count(runtime.item)
         s.ports[port_id] = runtime
       end
     end

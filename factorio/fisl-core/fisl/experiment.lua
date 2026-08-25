@@ -154,8 +154,12 @@ local function finalize(config, experiment_tick)
   s.run.completed_map_tick = game.tick
   s.lifecycle = "COMPLETED"
   telemetry.flush(false)
-  -- Prevent unmeasured post-experiment drift (ADR 0001 §12, ADR 0018 §5).
-  game.tick_paused = true
+  -- ADR 0001 §12 / ADR 0018 §5 recommend a terminal pause. Deliberately NOT
+  -- implemented via game.tick_paused yet: if tick execution stops, RCON
+  -- commands (tick-synchronized in multiplayer) may stall, deadlocking the
+  -- controller's status polling. Post-completion drift cannot contaminate
+  -- results because all metrics are windowed and settled above. RV-011
+  -- evidence decides the final mechanism.
 end
 
 --- The per-tick checkpoint. Called from on_tick while lifecycle == RUNNING

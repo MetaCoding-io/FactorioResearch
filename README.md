@@ -32,14 +32,24 @@ Then use the broader documents as the destination/full-v1 specification:
 - [`docs/SCENARIO_MEASUREMENT_CONTRACT.md`](docs/SCENARIO_MEASUREMENT_CONTRACT.md) — accepted scientific API summary linking the detailed ADRs.
 - [`docs/RESEARCH_NOTES.md`](docs/RESEARCH_NOTES.md) — research and intellectual provenance behind the project.
 
-## Repository direction
+## Repository layout
 
-The intended implementation shape is:
-
-- `factorio/` — in-game FISL Lua runtime and Factory Physics content mod.
-- `python/` — scenario/compiler/controller/report tooling.
+- `factorio/` — in-game FISL Lua runtime (`fisl-core`) and Factory Physics content mod (`fisl-factory-physics`).
+- `python/` — scenario compiler, controller, metrics, and report tooling (`fisl` package).
 - `scenarios/` — reproducible teaching/experimental scenario packages.
-- `tests/` — deterministic unit and Factorio headless integration fixtures.
+- `tests/unit/` — deterministic unit tests (no Factorio required).
+- `tests/integration/` — runtime-validation spike against a real Factorio headless server (see its README).
 - `docs/` — architecture, contracts, pedagogy, PRD, and ADRs.
 
 The durable artifact is the laboratory platform and scenario contract rather than any one hard-coded course factory.
+
+## Development quick start
+
+```sh
+pip install -e .[dev]
+pytest tests/unit                 # no Factorio needed
+fisl validate scenarios/factory-physics/fp03-littles-law
+
+# runtime-validation spike (Issue #2 Stage A) — needs a real binary:
+FACTORIO_BIN=/path/to/factorio/bin/x64/factorio pytest tests/integration -v
+```
