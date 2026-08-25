@@ -13,12 +13,15 @@ Several different concepts are easy to conflate:
 - the human-readable scenario version;
 - the exact authoring files used;
 - the resolved/compiled experiment semantics;
+- the concrete run configuration for one execution attempt;
 - the baseline Factorio save;
 - the software/mod environment;
 - a unique execution attempt;
 - whether two runs are intended to be reproducible under the same experimental condition.
 
 FISL needs a provenance model that distinguishes those concepts and produces a self-contained run dataset suitable for audit, debrief, regression testing, and later research use.
+
+A design review identified one important ambiguity in the first version of this ADR/schema: a document cannot simultaneously be a stable resolved-experiment identity and contain a unique `run_id` / concrete execution seed. This revision explicitly separates those layers.
 
 ## Decision
 
@@ -47,46 +50,124 @@ However, FISL MUST NOT rely on `scenario.version` alone to prove that two runs u
 
 Hashes/fingerprints provide the authoritative machine-checkable identity.
 
-### 3. FISL preserves both source/package identity and resolved experiment identity
+### 3. FISL distinguishes source identity, `ResolvedScenario`, and `RunConfiguration`
 
-Two different hashes are useful:
+Three different representations are authoritative for different questions.
 
-1. **scenario package/source hash** — identifies the supplied scenario package/artifacts as executed;
-2. **resolved experiment hash** — identifies the canonical compiled semantics used by the runtime.
+#### A. Scenario package/source identity
 
-The resolved experiment representation contains explicit ticks, resolved port policies, metric windows, objective rules, visibility, bindings/configuration, and other experiment-relevant semantics rather than authoring shorthand.
+Identifies the supplied authoring package/artifacts as executed.
 
-This allows FISL to distinguish:
+This may change because prose/course metadata changed even when executable experiment semantics did not.
 
-- a prose-only/source packaging change;
-- a semantically meaningful experiment change.
+#### B. `ResolvedScenario`
 
-The canonicalization rules must be versioned with the schema/compiler.
+A canonical **run-independent** representation of compiled experiment semantics.
 
-### 4. The resolved experiment is stored as a run artifact
+It contains execution/measurement/evaluation/disclosure rules such as:
 
-Every run dataset MUST contain the exact resolved scenario/experiment representation used for that execution, or a lossless canonical equivalent.
+```text
+spec/schema/compiler semantic versions
+resolved phase tick boundaries
+time/game-speed policy
+zone/system/entity-set definitions
+port policies and exact schedules
+flow definitions
+metric/observation definitions
+objective definitions
+visibility definitions
+protocol-relevant semantic configuration
+```
 
-A hash without the corresponding resolved configuration is insufficient for audit.
+It MUST NOT contain per-attempt identity such as:
+
+```text
+run_id
+wall-clock timestamps
+learner/team metadata
+```
+
+and it MUST NOT contain the concrete execution seed when seed is modeled as a run input separately under this ADR.
+
+The canonical hash of this object is the **resolved experiment hash** / `resolved_scenario_hash`.
+
+#### C. `RunConfiguration`
+
+A per-attempt object that binds one execution to the stable resolved semantics.
+
+It contains at least:
+
+```text
+run_id
+resolved_scenario_hash
+actual experiment_seed
+run-scoped protocol/config identity needed by Lua
+```
+
+and may reference runtime/baseline identities recorded in the manifest.
+
+The `RunConfiguration` is not used as the resolved experiment hash input because it intentionally changes across attempts.
+
+### 4. The stable resolved experiment hash covers only canonical `ResolvedScenario` semantics
+
+FISL computes:
+
+```text
+resolved_scenario_hash = hash(canonical ResolvedScenario)
+```
+
+The hash excludes at least:
+
+```text
+run_id
+actual experiment_seed
+wall timestamps
+learner/team identifier
+run output paths
+RCON credentials/ephemeral ports
+```
+
+Changing the concrete seed therefore changes the reproducibility fingerprint, not the stable resolved-scenario hash.
+
+Canonicalization rules are versioned with the schema/compiler.
+
+### 5. Every run stores both the exact `ResolvedScenario` and `RunConfiguration`
+
+A hash without the corresponding configuration is insufficient for audit.
 
 Conceptually:
 
 ```text
-scenario.source.yaml
-       |
-       v
-Python validation/compiler
-       |
-       v
-scenario.resolved.json  <-- stored with run
-       |
-       v
-Factorio runtime
+scenario.yaml
+    |
+    | parse + validate + compile
+    v
+ResolvedScenario
+    |              \
+    | hash          \ bind run-specific inputs
+    v                v
+resolved hash     RunConfiguration
+    \                /
+     \              /
+      v            v
+        runtime payload
+             |
+             v
+        FISL Lua runtime
 ```
 
-The resolved document is the authoritative contract handed to execution, subject to the final controller/runtime transport design.
+The run dataset therefore retains at least:
 
-### 5. Baseline save bytes are identified by a cryptographic hash
+```text
+scenario.resolved.json
+run-config.json
+```
+
+or lossless canonical equivalents.
+
+The transport to Lua may send them separately or in one wrapper envelope, but their identity/hash semantics remain separate.
+
+### 6. Baseline save bytes are identified by a cryptographic hash
 
 The baseline Factorio save is an input artifact and MUST have a recorded cryptographic digest, using SHA-256 or a comparably standard digest.
 
@@ -101,7 +182,7 @@ Two saves with the same filename but different contents are different baseline i
 
 The baseline is treated as immutable for an experiment version.
 
-### 6. Software/runtime provenance is mandatory
+### 7. Software/runtime provenance is mandatory
 
 The run manifest records enough software information to reproduce the runtime environment, including at least:
 
@@ -119,7 +200,7 @@ Where practical, local development builds SHOULD also record a Git commit SHA an
 
 The scientific contract should not depend on only a package display version when exact source identity is available.
 
-### 7. Mod/environment identity participates in reproducibility
+### 8. Mod/environment identity participates in reproducibility
 
 A Factorio save can behave differently with a different mod set or settings.
 
@@ -127,7 +208,7 @@ The reproducibility input therefore includes the effective mod manifest and rele
 
 At minimum, the manifest records mod name/version. The implementation SHOULD record hashes for FISL-owned mod artifacts/builds and enough configuration to detect meaningful changes.
 
-### 8. Every run records an explicit experiment seed
+### 9. Every run records an explicit experiment seed
 
 Even deterministic v1 experiments record an `experiment_seed`.
 
@@ -135,26 +216,36 @@ All FISL-controlled pseudo-random behavior, now or in future Course II features,
 
 For v1 deterministic schedules the seed may not affect behavior, but including it from the beginning makes the run contract stable.
 
-### 9. A reproducibility fingerprint identifies the experimental input condition
+The actual execution seed is a `RunConfiguration` field and is not included in the stable `ResolvedScenario` hash.
+
+Authoring syntax may provide a default seed, but the compiler/controller resolves the actual execution seed before building the run configuration.
+
+### 10. A reproducibility fingerprint identifies the controlled experimental input condition
 
 FISL computes a canonical fingerprint from the inputs that can affect experiment behavior/measurement, including at least:
 
 ```text
-resolved experiment hash
+resolved_scenario_hash
 baseline save hash
 Factorio version/build identity as available
 FISL runtime/controller identity
 mod/configuration identity
-experiment seed
+actual experiment_seed
 ```
 
 The exact serialization/hash composition is versioned.
 
-Runs with different `run_id`s may share the same reproducibility fingerprint.
+Importantly:
+
+```text
+run_id NOT IN reproducibility fingerprint
+```
+
+Therefore runs with different `run_id`s may share the same reproducibility fingerprint.
 
 This fingerprint does **not** imply identical human player actions; it means the controlled experimental starting condition/configuration is the same.
 
-### 10. Learner/team identifiers do not define experiment identity
+### 11. Learner/team identifiers do not define experiment identity
 
 A scenario/run may optionally record a learner/team identifier for classroom organization.
 
@@ -166,7 +257,7 @@ That identifier:
 
 FISL does not require real names for scientific operation.
 
-### 11. Wall-clock timestamps are provenance, never simulation timing
+### 12. Wall-clock timestamps are provenance, never simulation timing
 
 The manifest may record:
 
@@ -178,7 +269,7 @@ for operational traceability.
 
 These timestamps do not define experiment phase duration, rates, service deadlines, or other simulation-time measurements. ADR 0001 remains authoritative.
 
-### 12. Simulation timing and lifecycle are recorded explicitly
+### 13. Simulation timing and lifecycle are recorded explicitly
 
 A completed run manifest/summary records as applicable:
 
@@ -193,7 +284,7 @@ pause/protocol events summary
 
 This permits verification that the execution matched the resolved time contract.
 
-### 13. Result artifacts are versioned and checksummed
+### 14. Result artifacts are versioned and checksummed
 
 The run dataset should be organized around stable machine-readable artifacts such as:
 
@@ -201,6 +292,7 @@ The run dataset should be organized around stable machine-readable artifacts suc
 runs/<run_id>/
   manifest.json
   scenario.resolved.json
+  run-config.json
   telemetry.jsonl
   events.jsonl
   summary.json
@@ -213,7 +305,7 @@ The manifest/summary SHOULD contain checksums or an artifact inventory sufficien
 
 Telemetry/result schema versions are explicit.
 
-### 14. `telemetry.jsonl` is the authoritative append-oriented scientific stream for v1
+### 15. `telemetry.jsonl` is the authoritative append-oriented scientific stream for v1
 
 ADR 0004 established ordered primitive observations. V1 SHOULD persist authoritative observations in append-oriented JSON Lines or an equivalently transparent lossless format.
 
@@ -221,7 +313,9 @@ Factorio's runtime API supports writing files to the `script-output` directory; 
 
 Live UDP/RCON/other transports may be added for dashboards/control, but they MUST NOT be the only authoritative record.
 
-### 15. Event/telemetry records carry run and schema identity
+Lossless batching/run-length/change encoding is permitted when the decoded scientific facts remain equivalent.
+
+### 16. Event/telemetry records carry run and schema identity
 
 The stream must be interpretable outside the live process.
 
@@ -229,6 +323,7 @@ Records or stream headers therefore provide enough identity to associate observa
 
 ```text
 run_id
+resolved_scenario_hash
 telemetry schema version
 experiment tick / map tick as applicable
 monotonic FISL sequence number
@@ -238,15 +333,15 @@ measurement method/provenance fields
 
 A consumer must not need undocumented process state to order or interpret observations.
 
-### 16. `summary.json` is derived and reproducible from authoritative inputs when feasible
+### 17. `summary.json` is derived and reproducible from authoritative inputs when feasible
 
 The summary contains named final metrics/objectives/validity diagnostics for convenient consumption.
 
-It is a derived artifact. Where the retained primitive/aggregate data are sufficient, the Python analysis layer SHOULD be able to recompute and validate the summary from the resolved scenario and telemetry.
+It is a derived artifact. Where the retained primitive/aggregate data are sufficient, the Python analysis layer SHOULD be able to recompute and validate the summary from the resolved scenario, run configuration, and telemetry.
 
 The summary preserves exact numerators/denominators and provenance references where defined by preceding ADRs.
 
-### 17. Final save capture is useful but is not the primary scientific record
+### 18. Final save capture is useful but is not the primary scientific record
 
 FISL SHOULD support capturing a final Factorio save for debrief/debugging. Current Factorio runtime APIs provide save operations for single-player/multiplayer contexts, and the controller can also orchestrate save handling.
 
@@ -256,19 +351,19 @@ However:
 - a missing final save does not automatically invalidate otherwise complete scientific measurements;
 - a final save is an output artifact, not a new baseline unless deliberately promoted/versioned.
 
-### 18. Provenance includes protocol and coverage validity summaries without erasing underlying data
+### 19. Provenance includes protocol and coverage validity summaries without erasing underlying data
 
 The run summary/manifest records whether:
 
 - required metric coverage was complete;
 - protocol violations occurred;
-- boundary/WIP balance diagnostics failed;
-- unsupported states/carriers appeared;
+- boundary/WIP validation diagnostics failed;
+- unsupported/unclassified states appeared;
 - the run completed normally or aborted.
 
 A flagged run remains stored. FISL does not delete inconvenient data because a validity rule failed.
 
-### 19. Metric and objective provenance is dependency-linked
+### 20. Metric and objective provenance is dependency-linked
 
 A final metric result identifies its source observation types/metric dependencies and resolved window/method metadata as required by prior ADRs.
 
@@ -283,7 +378,7 @@ Factorio/runtime fact
       -> objective evaluation
 ```
 
-### 20. Scenario metadata distinguishes semantic from explanatory content
+### 21. Scenario metadata distinguishes semantic from explanatory content
 
 The final schema SHOULD distinguish experiment-semantic fields from explanatory/course metadata such as:
 
@@ -297,7 +392,7 @@ representational-limit notes
 
 The complete package/source hash may change when explanatory content changes.
 
-The resolved experiment hash SHOULD include only fields that affect execution, measurement, evaluation, or learner disclosure. Because learner disclosure can affect behavior, visibility is semantic and is included.
+The `ResolvedScenario` hash SHOULD include only fields that affect execution, measurement, evaluation, or learner disclosure. Because learner disclosure can affect behavior, visibility is semantic and is included.
 
 The canonicalization/compiler version determines this distinction and is itself provenance.
 
@@ -311,7 +406,10 @@ The canonicalization/compiler version determines this distinction and is itself 
     "id": "fp-05-pull-production",
     "version": "1.0.0",
     "source_hash": "sha256:...",
-    "resolved_hash": "sha256:..."
+    "resolved_scenario_hash": "sha256:..."
+  },
+  "run_configuration": {
+    "experiment_seed": 12345
   },
   "baseline": {
     "save": "fp-05.zip",
@@ -323,7 +421,6 @@ The canonicalization/compiler version determines this distinction and is itself 
     "controller_version": "...",
     "compiler_version": "..."
   },
-  "experiment_seed": 12345,
   "reproducibility_fingerprint": "sha256:...",
   "ticks": {
     "experiment_start_map_tick": 100,
@@ -343,6 +440,7 @@ Exact fields/serialization are settled in the schema implementation.
 - Every result is traceable to exact experiment/world/software inputs.
 - Retries remain distinct runs while still being recognizable as the same controlled condition.
 - Human-readable scenario versions do not substitute for cryptographic identity.
+- Stable `ResolvedScenario` semantics are no longer polluted by per-attempt run IDs/seeds.
 - Resolved experiment semantics remain inspectable after authoring files change.
 - The run dataset supports classroom debrief, regression testing, and later empirical research.
 - Future stochastic experiments already have seed/replay provenance.
@@ -350,7 +448,7 @@ Exact fields/serialization are settled in the schema implementation.
 
 ### Negative / trade-offs
 
-- Run directories contain more metadata/artifacts than a minimal game mod would require.
+- Run directories contain one additional explicit configuration layer/artifact.
 - Development builds need disciplined version/commit recording.
 - Exact cross-platform reproducibility may still depend on Factorio/mod behavior beyond FISL control; the manifest identifies the environment rather than promising impossible equivalence.
 - Artifact hashing/canonicalization must be implemented consistently.
@@ -361,18 +459,19 @@ The run-provenance portion of Issue #1 is complete when:
 
 1. every attempt has a unique run ID independent of scenario/seed;
 2. scenario version is human metadata, with hashes providing authoritative identity;
-3. source/package and resolved-experiment identities are distinguished;
-4. the exact resolved experiment is stored with every run;
-5. baseline saves are immutable inputs identified by cryptographic hash;
-6. Factorio/FISL/mod/compiler identities are recorded;
-7. every run records an experiment seed;
-8. a reproducibility fingerprint identifies the controlled input condition without implying identical human actions;
-9. simulation ticks and wall timestamps remain semantically distinct;
-10. authoritative telemetry is append-oriented/lossless and not dependent on a live-only transport;
-11. summary results remain dependency/provenance linked to measurements;
-12. protocol/coverage problems flag rather than erase runs;
-13. final saves are useful output artifacts but not substitutes for telemetry;
-14. semantic experiment identity distinguishes execution/measurement/evaluation/disclosure fields from prose-only course metadata.
+3. source/package identity, stable `ResolvedScenario` identity, and per-attempt `RunConfiguration` are distinguished;
+4. `run_id` and actual execution seed are excluded from `resolved_scenario_hash`;
+5. every run stores both the exact resolved scenario and run configuration;
+6. baseline saves are immutable inputs identified by cryptographic hash;
+7. Factorio/FISL/mod/compiler identities are recorded;
+8. every run records an experiment seed;
+9. a reproducibility fingerprint includes the resolved scenario identity plus actual seed/environment while excluding run ID;
+10. simulation ticks and wall timestamps remain semantically distinct;
+11. authoritative telemetry is append-oriented/lossless and not dependent on a live-only transport;
+12. summary results remain dependency/provenance linked to measurements;
+13. protocol/coverage problems flag rather than erase runs;
+14. final saves are useful output artifacts but not substitutes for telemetry;
+15. semantic experiment identity distinguishes execution/measurement/evaluation/disclosure fields from prose-only course metadata.
 
 ## References
 
