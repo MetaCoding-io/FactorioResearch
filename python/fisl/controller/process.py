@@ -41,9 +41,12 @@ class FactorioServer:
         extra_mods: list[Path] | None = None,
         rcon_port: int | None = None,
     ):
-        self.factorio_bin = Path(factorio_bin)
-        self.workspace = Path(workspace)
-        self.baseline_save = Path(baseline_save)
+        # Absolute paths throughout: launch() runs Factorio with cwd=workspace,
+        # so relative --config/--start-server arguments would resolve against
+        # the new cwd and fail ("Specified config file doesn't exist").
+        self.factorio_bin = Path(factorio_bin).resolve()
+        self.workspace = Path(workspace).resolve()
+        self.baseline_save = Path(baseline_save).resolve()
         self.rcon_port = rcon_port or find_free_port()
         self.game_port = find_free_port()
         self.rcon_password = secrets.token_hex(16)
