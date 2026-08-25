@@ -7,9 +7,11 @@ Builds, against a real Factorio server:
         -> assembling-machine-1 (fisl-machine-workpiece, 1:1)
         -> inserter -> belt x2 -> inserter -> fisl-sink-port
 
-Inserter pickup/drop positions are set explicitly via
-LuaEntity.pickup_position / drop_position so the fixture does not depend on
-direction-placement conventions.
+Inserters use the stock direction convention (a west-facing inserter picks up
+from the west tile and drops on the east tile). Runtime writes to
+LuaEntity.pickup_position / drop_position are silently ignored for standard
+inserters on Factorio 2.0.77 — verified empirically; custom vectors would need
+a prototype with allow_custom_vectors.
 """
 
 from __future__ import annotations
@@ -41,7 +43,7 @@ MAP_GEN_SETTINGS = {
 # Coordinates of the line (y = 0.5 row). The zone comfortably contains it.
 # Geometry: the 3x3 assembler is centered at (0.5, 0.5) so its tile columns
 # are x = -0.5, 0.5, 1.5; every inserter sits adjacent to its pickup and drop
-# tiles (1-tile reach), with pickup/drop positions set explicitly.
+# tiles (fast-inserter 1-tile reach), facing west so items move eastward.
 SOURCE_POS = (-7.5, 0.5)
 SINK_POS = (6.5, 0.5)
 
@@ -55,33 +57,31 @@ end
 local function make(name, x, y)
   return surface.create_entity{name = name, position = {x, y}, force = "player", raise_built = false}
 end
-local function inserter(x, y, pick_x, pick_y, drop_x, drop_y)
-  local e = make("fast-inserter", x, y)
-  e.pickup_position = {pick_x, pick_y}
-  e.drop_position = {drop_x, drop_y}
-  return e
+local function inserter(x, y)
+  return surface.create_entity{name = "fast-inserter", position = {x, y},
+    direction = defines.direction.west, force = "player", raise_built = false}
 end
 local eei = make("electric-energy-interface", -3.0, -4.0)
 eei.power_production = 100000000
 eei.electric_buffer_size = 100000000
 make("substation", 0.0, -4.0)
 make("fisl-source-port", %(source_x)s, %(source_y)s)
-inserter(-6.5, 0.5, %(source_x)s, %(source_y)s, -5.5, 0.5)
+inserter(-6.5, 0.5)
 for x = -6, -3 do
   surface.create_entity{
     name = "transport-belt", position = {x + 0.5, 0.5},
     direction = defines.direction.east, force = "player", raise_built = false}
 end
-inserter(-1.5, 0.5, -2.5, 0.5, -0.5, 0.5)
+inserter(-1.5, 0.5)
 local asm = make("assembling-machine-1", 0.5, 0.5)
 asm.set_recipe("fisl-machine-workpiece")
-inserter(2.5, 0.5, 1.5, 0.5, 3.5, 0.5)
+inserter(2.5, 0.5)
 for x = 3, 4 do
   surface.create_entity{
     name = "transport-belt", position = {x + 0.5, 0.5},
     direction = defines.direction.east, force = "player", raise_built = false}
 end
-inserter(5.5, 0.5, 4.5, 0.5, %(sink_x)s, %(sink_y)s)
+inserter(5.5, 0.5)
 make("fisl-sink-port", %(sink_x)s, %(sink_y)s)
 rcon.print("bootstrap-ok")
 """ % {

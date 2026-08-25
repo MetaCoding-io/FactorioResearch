@@ -127,11 +127,25 @@ class FactorioServer:
                     f"Factorio exited early (code {self.process.returncode}); see {self.log_path}"
                 )
             try:
-                return RconClient("127.0.0.1", self.rcon_port, self.rcon_password)
+                client = RconClient("127.0.0.1", self.rcon_port, self.rcon_password)
+                self._prime_lua_console(client)
+                return client
             except (OSError, RconError) as exc:
                 last_error = exc
                 time.sleep(0.5)
         raise ProcessError(f"RCON not reachable within {timeout}s: {last_error}")
+
+    @staticmethod
+    def _prime_lua_console(client) -> None:
+        # Factorio 2.0 swallows the first Lua console command of a save with
+        # "Using Lua console commands will disable achievements. Please repeat
+        # the command to proceed." — send an identical no-op twice so every
+        # subsequent /silent-command actually executes.
+        probe = '/silent-command rcon.print("fisl-rcon-ready")'
+        for _ in range(3):
+            if "fisl-rcon-ready" in client.command(probe):
+                return
+        raise ProcessError("Lua console did not accept commands after repeat confirmation")
 
     def stop(self, timeout: float = 15.0) -> None:
         if self.process is None:

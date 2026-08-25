@@ -112,26 +112,21 @@ function census.take(config, flow_id, include_player_inventory)
     end
   end
 
-  -- Belts: deduplicate underlying transport lines (ADR 0005 §13, RV-004).
-  local seen_lines = {}
+  -- Belts (ADR 0005 §13, RV-004). Empirical 2.0.77 semantics: each entity's
+  -- LuaTransportLine holds only that entity's own segment contents, so the
+  -- naive per-entity/per-line sum is already exact. line_equals-based
+  -- deduplication is WRONG here — it reports true for different segments of
+  -- the same merged belt line group and silently drops their contents
+  -- (observed: 15 physical items counted as 8 on a 4-belt straight run).
   for _, entity in ipairs(surface.find_entities_filtered({
     area = area, type = { "transport-belt", "underground-belt", "splitter", "loader", "linked-belt" },
   })) do
     if in_zone(area, entity.position) then
       local max_index = entity.get_max_transport_line_index()
       for index = 1, max_index do
-        local line = entity.get_transport_line(index)
-        local duplicate = false
-        for _, existing in ipairs(seen_lines) do
-          local ok, equal = pcall(function() return line.line_equals(existing) end)
-          if ok and equal then duplicate = true break end
-        end
-        if not duplicate then
-          seen_lines[#seen_lines + 1] = line
-          local contents = line.get_contents()
-          decomposition.belts = decomposition.belts
-            + count_tracked(function(item) return util.contents_count(contents, item) end)
-        end
+        local contents = entity.get_transport_line(index).get_contents()
+        decomposition.belts = decomposition.belts
+          + count_tracked(function(item) return util.contents_count(contents, item) end)
       end
     end
   end
