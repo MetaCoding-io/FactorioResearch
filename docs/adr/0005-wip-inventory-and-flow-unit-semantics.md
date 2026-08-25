@@ -1,6 +1,8 @@
 # ADR 0005: WIP, Inventory, and Flow-Unit Semantics
 
-- **Status:** Proposed
+- **Status:** Accepted
+- **Runtime validation:** Pending for physical-holder adapter assumptions; see `../RUNTIME_VALIDATION.md`
+- **Superseded in part by:** ADR 0017 for authoritative conserved-flow total WIP, player-carried work, and census/ledger roles
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
