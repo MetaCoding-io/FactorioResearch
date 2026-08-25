@@ -39,9 +39,13 @@ MAP_GEN_SETTINGS = {
 }
 
 # Coordinates of the line (y = 0.5 row). The zone comfortably contains it.
-SOURCE_POS = (-8.5, 0.5)
-SINK_POS = (9.5, 0.5)
+# Geometry: the 3x3 assembler is centered at (0.5, 0.5) so its tile columns
+# are x = -0.5, 0.5, 1.5; every inserter sits adjacent to its pickup and drop
+# tiles (1-tile reach), with pickup/drop positions set explicitly.
+SOURCE_POS = (-7.5, 0.5)
+SINK_POS = (6.5, 0.5)
 
+# NOTE: sent as one /silent-command line — no Lua comments allowed here.
 BOOTSTRAP_LUA = r"""
 local surface = game.surfaces["nauvis"]
 surface.always_day = true
@@ -57,23 +61,21 @@ local function inserter(x, y, pick_x, pick_y, drop_x, drop_y)
   e.drop_position = {drop_x, drop_y}
   return e
 end
--- power
 local eei = make("electric-energy-interface", -3.0, -4.0)
 eei.power_production = 100000000
 eei.electric_buffer_size = 100000000
 make("substation", 0.0, -4.0)
--- apparatus + line
 make("fisl-source-port", %(source_x)s, %(source_y)s)
-inserter(-7.5, 0.5, %(source_x)s, %(source_y)s, -6.5, 0.5)
-for x = -6, -4 do
-  local belt = surface.create_entity{
+inserter(-6.5, 0.5, %(source_x)s, %(source_y)s, -5.5, 0.5)
+for x = -6, -3 do
+  surface.create_entity{
     name = "transport-belt", position = {x + 0.5, 0.5},
     direction = defines.direction.east, force = "player", raise_built = false}
 end
-inserter(-2.5, 0.5, -3.5, 0.5, -0.5, 0.5)
+inserter(-1.5, 0.5, -2.5, 0.5, -0.5, 0.5)
 local asm = make("assembling-machine-1", 0.5, 0.5)
 asm.set_recipe("fisl-machine-workpiece")
-inserter(2.5, 0.5, 0.5, 0.5, 3.5, 0.5)
+inserter(2.5, 0.5, 1.5, 0.5, 3.5, 0.5)
 for x = 3, 4 do
   surface.create_entity{
     name = "transport-belt", position = {x + 0.5, 0.5},

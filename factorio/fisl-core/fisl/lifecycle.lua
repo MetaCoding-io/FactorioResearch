@@ -68,8 +68,8 @@ function lifecycle.commit_configuration()
     end
     encoded_parts[index] = chunk
   end
-  local decoded = util.decode_payload(table.concat(encoded_parts))
-  if decoded == nil then
+  local decode_ok, decoded = pcall(util.decode_payload, table.concat(encoded_parts))
+  if not decode_ok or decoded == nil then
     return util.json_encode({ ok = false, error = "payload decode failed" })
   end
   local crc = util.crc32(decoded)
@@ -79,8 +79,9 @@ function lifecycle.commit_configuration()
       error = string.format("crc mismatch: expected %d got %d", transfer.crc32, crc),
     })
   end
-  local document = util.json_decode(decoded)
-  if document == nil or document.resolved_scenario == nil or document.run_configuration == nil then
+  local parse_ok, document = pcall(util.json_decode, decoded)
+  if not parse_ok or document == nil
+      or document.resolved_scenario == nil or document.run_configuration == nil then
     return util.json_encode({ ok = false, error = "malformed configuration document" })
   end
   if document.resolved_scenario.protocol_version ~= PROTOCOL_VERSION then

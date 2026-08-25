@@ -12,7 +12,6 @@ local function port_container(name, tint)
   chest.name = name
   chest.minable = nil
   chest.inventory_size = 48
-  chest.flags = { "not-rotatable", "no-automated-item-removal-when-used-as-ingredient" }
   if chest.icons == nil then
     chest.icons = { { icon = chest.icon, icon_size = chest.icon_size or 64 } }
     chest.icon = nil
