@@ -1,345 +1,353 @@
 # FISL Scenario and Measurement Contract
 
-**Status:** Working design document  
+**Status:** Accepted / implementation-ready  
+**Spec:** `fisl/v1`  
 **Depends on:** [`ARCHITECTURE.md`](ARCHITECTURE.md)  
+**Implementation handoff:** [`FISL_V1_PRD.md`](FISL_V1_PRD.md) and [`FISL_V1_SCHEMA.md`](FISL_V1_SCHEMA.md)
 
-This document is the next major design artifact for FISL.
+This document is the index/summary for the **scientific API** between scenario authors, the Factorio runtime, the Python controller, and the resulting run dataset.
 
-Its purpose is to define the **scientific API** between scenario authors, the Factorio runtime, the external controller, and the resulting run dataset.
+The detailed normative reasoning lives in the accepted ADRs. The schema document turns those decisions into the authoring/resolved data model. The PRD turns them into implementation requirements.
 
-Implementation should not begin in earnest until the core semantics here are sufficiently precise.
+The guiding rule remains:
+
+> **Measurement semantics must be settled before implementation makes them implicit.**
 
 ---
 
 ## 1. Contract goals
 
-The contract must make it possible to answer, unambiguously:
+A FISL v1 scenario/run must be able to answer unambiguously:
 
-- What world is being used?
-- What counts as the system?
+- What baseline Factorio world is being used?
+- What counts as the production system?
 - What enters and leaves it?
-- What does the experiment control?
+- What does FISL control versus ordinary Factorio?
 - What is measured?
-- How is each metric defined?
-- Over what time interval is it measured?
-- What can the learner see during the run?
+- How is each number calculated?
+- What is the measurement method and unit?
+- Over what simulation-time interval/population is it measured?
+- What can the learner see live/post-run?
 - What objective is being evaluated?
-- What run conditions are required for reproducibility?
+- What run/protocol/coverage conditions apply?
+- Which artifacts/software/seed make the run reproducible?
+- What exactly happens on reset/retry?
 
 ---
 
-## 2. Accepted decisions
+## 2. Accepted decision map
 
 ### 2.1 Experiment time and phases
 
-Accepted in [`adr/0001-experiment-time-and-phases.md`](adr/0001-experiment-time-and-phases.md).
+[`adr/0001-experiment-time-and-phases.md`](adr/0001-experiment-time-and-phases.md)
 
-Key consequences:
-
-- Factorio map ticks are the authoritative experiment clock.
-- Simulation seconds/minutes compile to exact integer ticks.
-- Wall time and game speed do not define simulation-time metrics.
-- Pause behavior is a protocol concern and does not advance experiment time.
-- V1 phases are ordered, contiguous, fixed-duration half-open intervals.
-- Warm-up is an ordinary phase rather than a hidden clock mode.
-- Metrics explicitly select their observation windows.
+- Factorio simulation ticks are authoritative.
+- Simulation seconds/minutes compile exactly to ticks.
+- V1 phases are fixed-duration, ordered, contiguous, half-open intervals.
+- Warmup is an ordinary phase.
+- Pause does not advance experiment time.
+- Starts/transitions/end happen on clean tick boundaries.
 
 ### 2.2 Zones and system boundaries
 
-Accepted in [`adr/0002-zones-and-system-boundaries.md`](adr/0002-zones-and-system-boundaries.md).
+[`adr/0002-zones-and-system-boundaries.md`](adr/0002-zones-and-system-boundaries.md)
 
-Key consequences:
+- Zones are spatial selectors, not complete accounting boundaries.
+- V1 zones are static rectangular surface-qualified regions.
+- Entity position determines spatial membership; collision box supports containment diagnostics.
+- V1 system references one primary zone.
+- Material crossing is not inferred from arbitrary geometry.
 
-- A zone is a spatial selector, not the complete accounting boundary.
-- V1 zones are static, rectangular, surface-qualified and tile-aligned.
-- Canonical entity membership uses entity position; collision bounding boxes are for containment/integrity checks.
-- A v1 system references one primary zone.
-- FISL-owned boundary apparatus may be geometrically inside while semantically outside internal accounting.
-- Material flow is not inferred from raw geometric crossing; explicit ports define authoritative boundary transactions.
+### 2.3 Ports, supply, demand
 
-### 2.3 Material ports, supply, and demand
+[`adr/0003-material-ports-supply-demand.md`](adr/0003-material-ports-supply-demand.md)
 
-Accepted in [`adr/0003-material-ports-supply-demand.md`](adr/0003-material-ports-supply-demand.md).
-
-Key consequences:
-
-- Ports are explicit logical system-boundary interfaces, with `source` and `sink` directions.
-- Demand is an external process attached to a sink, not a port direction.
-- Port staging apparatus is external to normal WIP accounting.
-- V1 port accounting uses deterministic per-tick settlement.
-- Sources support replenish and scheduled modes.
-- Scheduled supply may use zero, finite, or unbounded external storage, preserving backlog/loss observability.
-- Sink delivery and demand fulfillment remain distinct facts.
+- Ports are explicit one-way source/sink accounting interfaces.
+- Demand is a process attached to a sink, not a port direction.
+- Source withdrawal and sink delivery are authoritative boundary facts.
+- Sources support replenish and exact scheduled modes.
+- Scheduled supply has zero/finite/unbounded external storage with observable backlog/loss.
+- Customer shortages use FIFO backlog semantics in v1.
 
 ### 2.4 Primitive observations and tick pipeline
 
-Accepted in [`adr/0004-primitive-observations-and-tick-pipeline.md`](adr/0004-primitive-observations-and-tick-pipeline.md).
+[`adr/0004-primitive-observations-and-tick-pipeline.md`](adr/0004-primitive-observations-and-tick-pipeline.md)
 
-Key consequences:
+- Factorio callbacks are sensor inputs; normalized FISL facts are the scientific observations.
+- One simulation-tick coordinator is the authoritative experiment-state writer.
+- Facts distinguish interval observations, point-state samples, and instantaneous events/actions.
+- Point sample at `T` represents prepared state for `[T,T+1)`.
+- Missing observations are never silently zero.
 
-- Factorio event callbacks are sensor inputs; FISL primitive observations are normalized scientific facts.
-- One `on_tick` coordinator is the single writer of authoritative experiment state.
-- Primitive facts distinguish interval observations, point-state samples, and instantaneous events/actions.
-- Point samples represent the prepared state for the upcoming interval.
-- Observation methods/provenance travel with primitive data.
-- Missing observations are never silently interpreted as zero.
+### 2.5 WIP and flow units
 
-### 2.5 WIP, inventory, and flow units
+[`adr/0005-wip-inventory-and-flow-unit-semantics.md`](adr/0005-wip-inventory-and-flow-unit-semantics.md)
 
-Accepted in [`adr/0005-wip-inventory-and-flow-unit-semantics.md`](adr/0005-wip-inventory-and-flow-unit-semantics.md).
+- Physical inventory and scalar WIP are distinct.
+- Scalar WIP needs an explicit common flow-unit basis.
+- Canonical Little's Law labs use conserved workpiece families.
+- WIP lifetime begins after source admission and ends at completion-sink delivery.
+- V1 holder coverage includes process inventories, active crafts, unique belt lines, inserter hands, buffers, and internal dropped work.
+- Unsupported carriers create coverage/protocol conditions rather than silent undercounting.
+- Conserved flows support WIP balance diagnostics.
 
-Key consequences:
+### 2.6 Throughput
 
-- Physical inventory vectors and scalar WIP are distinct concepts.
-- Scalar WIP requires an explicit common flow-unit basis.
-- Canonical Little's Law labs use conserved workpiece families where appropriate.
-- WIP begins at source admission and ends at sink delivery.
-- Supported holder coverage includes process inventories, active crafts, belts, inserter hands, buffers, and internal dropped work.
-- Unsupported carriers produce coverage/protocol problems rather than silent undercounting.
-- Conserved work-unit flows support WIP balance diagnostics.
-
-### 2.6 Throughput and flow rates
-
-Accepted in [`adr/0006-throughput-and-boundary-flow-rate-semantics.md`](adr/0006-throughput-and-boundary-flow-rate-semantics.md).
-
-Key consequences:
+[`adr/0006-throughput-and-boundary-flow-rate-semantics.md`](adr/0006-throughput-and-boundary-flow-rate-semantics.md)
 
 - Throughput is a derived rate over an explicit simulation-time window.
-- Completion sink `sink_delivery` observations provide the authoritative numerator.
+- Completion `sink_delivery` is the authoritative numerator.
 - Input rate, output rate, fulfillment rate, and system throughput are distinct.
-- Surplus completed output still counts as throughput; scrap/loss does not by default.
-- A `flow` concept ties WIP/throughput/cycle-time compatibility to common work units and boundaries.
-- FISL does not expose an unqualified instantaneous-throughput metric.
+- Surplus completed output counts as throughput; scrap/loss does not by default.
+- No unqualified instantaneous throughput.
+- `flow` is the compatibility anchor for WIP/TH/CT.
 
-### 2.7 Production machine state classification
+### 2.7 Production-machine state
 
-Accepted in [`adr/0007-machine-state-classification.md`](adr/0007-machine-state-classification.md).
+[`adr/0007-machine-state-classification.md`](adr/0007-machine-state-classification.md)
 
-Key consequences:
+- Raw Factorio status is retained.
+- Classification is derived and entity-family/version aware.
+- Separate actual activity/progress from cause/constraint and headline state.
+- Headline states include productive, starved, blocked, unavailable, disabled, idle-other, unclassified.
+- Productive is based on actual craft progress/completion evidence.
+- Low power may coexist with productive progress.
 
-- Raw Factorio status remains an auditable primitive observation.
-- Production-state classification is derived and entity-family-aware.
-- Classification separates actual activity/progress from constraint/cause and a convenience headline.
-- Productive operation is established from actual process progress rather than `working`/`is_crafting` labels alone.
-- Starved, blocked, unavailable, disabled, idle-other, and unclassified remain mechanistically distinct.
-- Brownout/low-power conditions may coexist with productive operation.
+### 2.8 Customer service
 
-### 2.8 Service level and demand cohorts
+[`adr/0008-service-level-and-demand-cohort-semantics.md`](adr/0008-service-level-and-demand-cohort-semantics.md)
 
-Accepted in [`adr/0008-service-level-and-demand-cohort-semantics.md`](adr/0008-service-level-and-demand-cohort-semantics.md).
-
-Key consequences:
-
-- FISL does not expose a bare ambiguous `service_level` metric.
-- V1's canonical service measure is quantity-based `on_time_item_rate` with an explicit maximum wait.
-- Demand uses FIFO age cohorts for timing/provenance without pretending cohorts are orders.
-- Service metrics select demand by creation cohort and observe fulfillment through the relevant deadline horizon.
+- No ambiguous bare `service_level` metric.
+- Canonical v1 service is `on_time_item_rate` with explicit maximum wait.
+- Demand uses FIFO age cohorts without pretending they are customer orders.
+- Cohort-selection window is distinct from fulfillment observation horizon.
 - Unobserved deadlines are unresolved/censored, not automatically late.
-- Backlog metrics remain distinct from customer service rate.
+- Backlog magnitude/time remains separate from service rate.
+
+### 2.9 Cycle time
+
+[`adr/0009-cycle-time-and-flow-time-measurement.md`](adr/0009-cycle-time-and-flow-time-measurement.md)
+
+- Production cycle time is residence from declared flow admission through completion.
+- Process time, transport time, customer wait, cohort response, and production cycle time are distinct.
+- Every result carries its measurement method/directness class.
+- Generic fungible Factorio production does not receive fictitious per-item identity.
+- Canonical continuous-flow v1 method is `little_law_derived = average WIP / throughput`.
+- Controlled isolated probes can provide direct residence time under explicit guarantees.
+- Finite-window interpretation remains qualified/auditable.
+
+### 2.10 Aggregation and observation windows
+
+[`adr/0010-aggregation-and-observation-windows.md`](adr/0010-aggregation-and-observation-windows.md)
+
+- Ordinary windows are explicit contiguous half-open intervals.
+- State `X(T)` integrates over `[T,T+1)` using left-boundary occupancy.
+- WIP/backlog unit-ticks are first-class exact quantities.
+- Machine-state duration uses classified intervals.
+- No bare utilization without an explicit denominator.
+- Missing coverage does not silently shrink denominators.
+- Time percentiles are time-weighted; demand waits are quantity-weighted.
+- V1 quantiles use deterministic weighted nearest rank.
+- Rolling window at `T` is `[T-L,T)`.
+
+### 2.11 Metric visibility
+
+[`adr/0011-metric-visibility-and-disclosure.md`](adr/0011-metric-visibility-and-disclosure.md)
+
+- Collection, evaluation, and disclosure are independent.
+- V1 audiences: learner-live, learner-post-run, instructor, debug.
+- Learner disclosure is allowlist-based.
+- Hidden values may still be collected/evaluated.
+- Objective rule/status/value disclosure can differ.
+- Visibility is part of the experimental condition/provenance.
+
+### 2.12 Objectives
+
+[`adr/0012-objectives-and-evaluation-semantics.md`](adr/0012-objectives-and-evaluation-semantics.md)
+
+- Metrics state facts; objectives evaluate named metrics.
+- V1 supports threshold requirements and minimize/maximize preferences.
+- No implicit weighted scalar score.
+- Incomplete/no-data objective dependencies yield undetermined.
+- Protocol validity is separate from objective outcome.
+- Multiple preferences remain an explicit comparison vector.
+
+### 2.13 Run provenance
+
+[`adr/0013-run-provenance-and-reproducibility.md`](adr/0013-run-provenance-and-reproducibility.md)
+
+- Every attempt has a unique run ID.
+- Scenario version is human metadata; hashes provide exact identity.
+- Store source/package identity and canonical resolved experiment identity.
+- Baseline save is immutable and cryptographically hashed.
+- Record Factorio/FISL/controller/mod/compiler identity and seed.
+- Reproducibility fingerprint identifies controlled input condition, not player actions.
+- Authoritative telemetry is durable file-backed data.
+
+### 2.14 Reset/repeat/replay
+
+[`adr/0014-reset-repeat-and-replay-semantics.md`](adr/0014-reset-repeat-and-replay-semantics.md)
+
+- Reset reloads the immutable baseline; no arbitrary undo engine.
+- Every retry is a new run.
+- Reset, repeat, and replay are distinct concepts.
+- Same controlled condition does not imply same learner actions.
+- Canonical measured v1 runs avoid mid-run save/load.
+- Final saves are outputs, never implicit baselines.
+
+### 2.15 Python ↔ Factorio transport
+
+[`adr/0015-controller-runtime-transport.md`](adr/0015-controller-runtime-transport.md)
+
+- Canonical runtime is a controller-launched local Factorio server.
+- Learner uses a normal graphical Factorio client.
+- RCON is low-volume configuration/lifecycle control only.
+- Lua receives resolved canonical JSON via a versioned chunked protocol.
+- Lua remains authoritative for clean tick start/phases/runtime behavior.
+- Authoritative telemetry is file-backed through Factorio `script-output`.
+- Same topology supports headless integration tests.
+
+### 2.16 Entity sets
+
+[`adr/0016-entity-set-membership.md`](adr/0016-entity-set-membership.md)
+
+- Entity sets are analytical selectors distinct from system boundaries.
+- Production sets are dynamically maintained as learners redesign factories.
+- Membership follows canonical prepared-boundary semantics.
+- Pooled machine-time uses explicit subject eligibility intervals.
+- New/removed machines do not retroactively distort denominators.
+- Overlapping analytical sets are allowed.
 
 ---
 
-## 3. Core concepts to define
+## 3. Implementation schema
 
-The contract must define at least:
+The accepted authoring/runtime schema is defined in:
 
-1. `scenario`
-2. `experiment`
-3. `phase`
-4. `zone`
-5. `entity_set`
-6. `port`
-7. `source`
-8. `demand` / `sink`
-9. `observation`
-10. `flow`
-11. `metric`
-12. `aggregation`
-13. `objective`
-14. `visibility`
-15. `run`
-16. `provenance`
-17. `reset` / `replay`
+[`FISL_V1_SCHEMA.md`](FISL_V1_SCHEMA.md)
 
----
+Key implementation distinction:
 
-## 4. Measurement terms requiring explicit semantics
+```text
+human authoring YAML
+        |
+        v
+Python strict typed compiler
+        |
+        v
+canonical resolved JSON
+        |
+        v
+Factorio Lua runtime
+```
 
-The first pass must define the meaning and admissible measurement methods for:
-
-- throughput;
-- input rate;
-- output rate;
-- WIP;
-- inventory;
-- productive time;
-- starved time;
-- blocked time;
-- unavailable time;
-- utilization;
-- demand;
-- fulfillment;
-- backlog;
-- service level;
-- cycle time / flow time;
-- order response time.
-
-No metric should exist in the runtime only as an informal label.
+Lua never needs to interpret authoring shortcuts or independently invent measurement semantics.
 
 ---
 
-## 5. Design questions to resolve
+## 4. Core v1 concepts
 
-### 5.1 Scenario identity and versioning
+The implementation must provide typed concepts for at least:
 
-- Is a scenario version SemVer?
-- What exactly is hashed for provenance?
-- Does changing only prose/learning metadata change the experiment identity?
-- How are schema versions distinguished from scenario versions?
+```text
+scenario
+experiment
+phase
+zone
+system
+entity_set
+port
+supply
+demand
+observation
+flow
+metric
+aggregation
+objective
+visibility
+run
+provenance
+reset/repeat
+```
 
-### 5.2 Time — ACCEPTED
-
-See ADR 0001.
-
-### 5.3 System boundaries — ACCEPTED
-
-See ADR 0002.
-
-### 5.4 Ports — ACCEPTED
-
-See ADR 0003.
-
-### 5.5 Primitive observations — ACCEPTED
-
-See ADR 0004.
-
-### 5.6 WIP — ACCEPTED
-
-See ADR 0005.
-
-### 5.7 Throughput — ACCEPTED
-
-See ADR 0006.
-
-### 5.8 Machine state — ACCEPTED
-
-See ADR 0007.
-
-### 5.9 Service level — ACCEPTED
-
-See ADR 0008.
-
-### 5.10 Cycle time
-
-Because normal Factorio materials are fungible and transformations generally do not preserve unique part identity, direct end-to-end item cycle time is not universally observable.
-
-Potential allowed methods:
-
-- `cohort_completion_time`
-- `transport_traversal_time`
-- `little_law_derived`
-- future genuinely identity-tracked work-unit methods where the apparatus supports them
-
-Each reported result must retain the measurement method and cannot imply stronger observability than the method provides.
-
-### 5.11 Aggregation
-
-For time-varying values such as WIP:
-
-- sample every N ticks?
-- event-based integration?
-- time-weighted mean?
-- min/max/percentile?
-
-The authoritative semantics must not depend accidentally on UI refresh frequency.
-
-### 5.12 Visibility
-
-Need at least these conceptual audiences:
-
-- learner live;
-- learner post-run;
-- instructor;
-- debug/internal.
-
-Later organizational work should extend this model to named roles rather than replacing it.
-
-### 5.13 Objectives
-
-Need separation among:
-
-- measured values;
-- constraints/requirements;
-- scalar score;
-- Pareto/multi-objective comparisons.
-
-V1 may support only simple thresholds and minimize/maximize objectives, but the data model should not assume every experiment reduces naturally to one score.
-
-### 5.14 Reset and replay
-
-- What exactly returns to baseline on reset?
-- Is resetting implemented by reloading the baseline save rather than trying to undo player actions?
-- Are run IDs always unique even with identical scenario/seed?
-- What guarantees can be made about a repeated deterministic run?
+`flow` is the shared compatibility object for system-level WIP, throughput, and cycle time.
 
 ---
 
-## 6. Initial scenario shape under discussion
+## 5. Measurement vocabulary
 
-This remains illustrative until the final schema pass. The accepted ADRs increasingly suggest `flow` as a shared object for WIP/throughput/cycle-time compatibility.
+The initial implementation must distinguish explicitly among:
 
----
+```text
+physical inventory
+WIP
+input rate
+output rate
+throughput
+productive/starved/blocked/unavailable/disabled time
+state fractions with declared denominator
+demand created/fulfilled/backlog
+on-time item rate
+customer wait
+production flow cycle time
+transport/process/probe/cohort times
+upstream supply pending/loss
+```
 
-## 7. Contract design principles
-
-The contract should satisfy these rules:
-
-1. **Explicit beats inferred.** Do not guess system boundaries or metric intent from arbitrary factory geometry.
-2. **Primitive observations before derived metrics.** Preserve enough raw data to audit derived values.
-3. **Measurement method travels with the result.** A number without semantics is not a scientific measurement.
-4. **Experiment time is simulation time.** UI/render/network timing must not define experiment behavior.
-5. **Student visibility is separate from collection.** A metric may be recorded without being shown live.
-6. **Scenario and world are separable.** A single baseline factory can support multiple experiments.
-7. **Future stochastic behavior must fit the same interfaces.** Constant schedules are v1 policies, not hard-coded assumptions.
-8. **Future role-based information control must extend visibility.** Do not bake single-player omniscience into the schema.
-9. **Run provenance is mandatory.** Every result should be traceable to a scenario, world, software configuration, and seed.
-10. **The schema should reject ambiguity early.** Invalid measurement definitions should fail validation before Factorio starts.
-
----
-
-## 8. Recommended order for the next design session
-
-Work through the contract in this sequence:
-
-1. **Time and experiment phases** — accepted in ADR 0001.
-2. **Zones/system boundaries** — accepted in ADR 0002.
-3. **Ports/source/demand** — accepted in ADR 0003.
-4. **Primitive observations** — accepted in ADR 0004.
-5. **WIP** — accepted in ADR 0005.
-6. **Throughput** — accepted in ADR 0006.
-7. **Machine-state classification** — accepted in ADR 0007.
-8. **Service level** — accepted in ADR 0008.
-9. **Cycle-time methods** — explicitly address fungibility/observability.
-10. **Aggregation/windows** — make time-varying metrics rigorous.
-11. **Visibility/objectives** — pedagogical presentation and evaluation.
-12. **Run provenance/reset/replay** — reproducibility contract.
-13. **Draft `fisl/v1` schema** — only after semantics are agreed.
+No runtime metric should exist only as an informal dashboard label.
 
 ---
 
-## 9. Definition of done for this contract
+## 6. Validity model
 
-This document is ready to become an implementation specification when we can take each of Labs 0–6 from the architecture document and answer all of the following without informal interpretation:
+FISL retains distinct dimensions:
 
-- what the starting world is;
-- where its system boundary lies;
-- what FISL controls;
-- what Factorio controls;
-- exactly what is measured;
-- how each number is calculated;
-- when measurement begins and ends;
-- which measurements the student can see;
-- what constitutes success;
-- what files/data make the run reproducible.
+```text
+measurement coverage/completeness
+objective result
+experiment/protocol validity
+interpretation/suitability where relevant
+```
 
-At that point, the first Lua and Python modules should become largely mechanical implementations of the agreed contract.
+A run can pass an objective yet be protocol-flagged, or be protocol-clean while a metric is incomplete.
+
+Data is preserved in either case.
+
+---
+
+## 7. Labs 0–6 validation
+
+The contract has been validated against the first course in:
+
+[`FACTORY_PHYSICS_LABS_V1.md`](FACTORY_PHYSICS_LABS_V1.md)
+
+The important conclusion is:
+
+> Factory Physics Labs 0–6 can be expressed through the generic `fisl/v1` mechanisms without lab-ID-specific runtime code.
+
+That document also defines the deterministic integration fixture suite required during implementation.
+
+---
+
+## 8. Definition of done
+
+The contract-definition issue is complete because we can now answer for each Lab 0–6:
+
+- starting world/baseline;
+- system boundary;
+- FISL-controlled inputs;
+- ordinary Factorio-controlled mechanics;
+- exact measurements/methods;
+- exact measurement windows/populations;
+- learner disclosure;
+- objective evaluation;
+- reproducibility/reset artifacts.
+
+Implementation should proceed from:
+
+1. [`FISL_V1_PRD.md`](FISL_V1_PRD.md)
+2. [`FISL_V1_SCHEMA.md`](FISL_V1_SCHEMA.md)
+3. accepted ADRs
+4. [`FACTORY_PHYSICS_LABS_V1.md`](FACTORY_PHYSICS_LABS_V1.md)
+
+If implementation discovers that an accepted semantic is impossible or materially wrong against the pinned Factorio runtime, write a superseding ADR rather than silently changing the contract.
