@@ -18,7 +18,7 @@ The architecture document records the current system design and rationale. ADRs 
 - [ADR 0003: Material Ports, Supply, Demand, and Boundary Transactions](0003-material-ports-supply-demand.md) — **Accepted**
 - [ADR 0004: Primitive Observations and Tick-Pipeline Semantics](0004-primitive-observations-and-tick-pipeline.md) — **Accepted**
 - [ADR 0005: WIP, Inventory, and Flow-Unit Semantics](0005-wip-inventory-and-flow-unit-semantics.md) — **Accepted**
-- [ADR 0006: Throughput and Boundary Flow-Rate Semantics](0006-throughput-and-boundary-flow-rate-semantics.md) — **Proposed**
+- [ADR 0006: Throughput and Boundary Flow-Rate Semantics](0006-throughput-and-boundary-flow-rate-semantics.md) — **Accepted**
 
 Additional implementation choices likely to deserve ADRs include scenario serialization/schema technology, telemetry format, Python ↔ Factorio control channels, WIP integration implementation, save/reset strategy, Factorio version/expansion support, and whether/how FLE code is reused.
 
