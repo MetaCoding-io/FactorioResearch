@@ -173,6 +173,7 @@ function experiment.checkpoint(config)
     s.run.experiment_start_map_tick = game.tick
     s.lifecycle = "RUNNING"
     telemetry.emit({ type = "experiment_started", experiment_tick = 0 })
+    ports.stage_initial(0)
   end
 
   if s.lifecycle ~= "RUNNING" then return end

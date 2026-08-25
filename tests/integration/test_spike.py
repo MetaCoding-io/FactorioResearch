@@ -282,7 +282,9 @@ def test_rv006_craft_progress_probe(factorio, tmp_path, baseline, evidence):
     with _session(factorio, tmp_path, baseline, scenario) as session:
         session.configure()
         session.start(speed=1.0)  # real time so RCON sampling lands on distinct ticks
-        for _ in range(40):
+        # The line needs ~8-10s before the first craft completes (belt/inserter
+        # transit plus a 2s-energy recipe in a 0.5-speed assembler = 4s/craft).
+        for _ in range(140):
             raw = session.sc(
                 'local a = game.surfaces["nauvis"].find_entities_filtered{type="assembling-machine"}[1] '
                 'rcon.print(game.tick .. "," .. tostring(a.is_crafting()) .. "," '

@@ -74,12 +74,12 @@ function ports.bind_all(config)
               runtime.supply.external_capacity = port_config.supply.external_buffer.quantity
             end
           end
-          -- Explicit initial staging state (ADR 0003 §17), established at
-          -- READY rather than trusting accidental save inventory.
-          local initial_quantity = port_config.supply.initial_quantity or 0
-          if initial_quantity > 0 then
-            chest_inventory(entity).insert({ name = runtime.item, count = initial_quantity })
-          end
+          -- Initial staging is deferred to the experiment-start boundary
+          -- (ports.stage_initial): the world keeps ticking between READY and
+          -- start, so material staged here would be withdrawn by live
+          -- apparatus before the settlement pipeline exists — a real
+          -- admission the ledger would never see (observed on 2.0.77).
+          runtime.supply.initial_quantity = port_config.supply.initial_quantity or 0
         end
         runtime.prev_post_settlement_count = chest_inventory(entity).get_item_count(runtime.item)
         s.ports[port_id] = runtime
@@ -88,6 +88,32 @@ function ports.bind_all(config)
   end
   if #problems > 0 then return problems end
   return nil
+end
+
+--- Stage declared initial source material on the experiment-start tick
+--- (ADR 0003 §17 + ADR 0001 §9 clean start): runs inside the start
+--- checkpoint before entity updates, so the first possible withdrawal is
+--- inside the settled interval [0, 1).
+function ports.stage_initial(experiment_tick)
+  local s = state.get()
+  for port_id, port in pairs(s.ports) do
+    local supply = port.supply
+    if supply and (supply.initial_quantity or 0) > 0 then
+      local entity = ports.entity_for(port)
+      if entity and entity.valid then
+        local inventory = chest_inventory(entity)
+        local inserted = inventory.insert({ name = port.item, count = supply.initial_quantity })
+        if inserted > 0 then
+          telemetry.emit({
+            type = "source_release", port = port_id, quantity = inserted,
+            experiment_tick = experiment_tick, method = "initial_staging",
+          })
+          port.totals.release = port.totals.release + inserted
+        end
+        port.prev_post_settlement_count = inventory.get_item_count(port.item)
+      end
+    end
+  end
 end
 
 -- Transient LuaEntity cache keyed by unit_number. Module locals reset on

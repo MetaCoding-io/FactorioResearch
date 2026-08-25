@@ -59,15 +59,21 @@ Not yet covered here: RV-007 (brownout classification — needs the machine-stat
 adapter, deferred with Lab 4 scope) and RV-012 (dynamic entity sets, likewise
 deferred by Issue #2).
 
-## Known first-run risks
+## First-run findings (resolved on Factorio 2.0.77)
 
-- Inserter reach: `fast-inserter` pickup/drop positions are set to exact
-  tiles; if the runtime clamps them differently than expected, the workpiece
-  won't flow and `test_one_workpiece_vertical_slice` will fail with zero
-  admissions — adjust the coordinates in `fixture_world.py` (`BOOTSTRAP_LUA`).
-- `map-gen-settings` autoplace control names (`trees`, `rocks`, `enemy-base`)
-  and the `electric-energy-interface` prototype are 2.0 names; the bootstrap
-  clears the build area defensively either way.
-- If `helpers.decode_string` is absent/renamed on the pinned build, config
-  upload fails at commit — that is exactly RV-008 evidence; the companion-mod
-  fallback (RV-010) is the designed alternative.
+The first execution against the real runtime surfaced four behaviors that
+contradicted the harness as originally written; all are fixed and documented
+as spike findings in `docs/RUNTIME_VALIDATION.md`:
+
+- the first `/silent-command` of a save is swallowed by the achievement
+  confirmation prompt (controller now primes the console after connect);
+- runtime writes to inserter `pickup_position`/`drop_position` are silently
+  ignored (the bootstrap places west-facing inserters instead);
+- source material staged at READY was withdrawn before experiment start
+  (staging moved into the start checkpoint);
+- `line_equals`-based belt census deduplication undercounts — the naive
+  per-entity segment sum is the exact method on 2.0.77.
+
+Still true: if `helpers.decode_string` is absent/renamed on a future pinned
+build, config upload fails at commit — that is RV-008 evidence; the
+companion-mod fallback (RV-010) is the designed alternative.
