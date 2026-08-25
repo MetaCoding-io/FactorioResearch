@@ -1,6 +1,6 @@
 # ADR 0010: Aggregation and Observation-Window Semantics
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
