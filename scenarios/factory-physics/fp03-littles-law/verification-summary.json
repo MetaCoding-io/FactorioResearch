@@ -1,0 +1,97 @@
+{
+  "run_id": "01M0WY1ZYD062TJNZ9PQVJS6KE",
+  "resolved_scenario_hash": "sha256:4fafdd4cb4607338b4888b8b6b535f4ebd1f39f0d52b0b726ccc7c71183938f4",
+  "scenario": {
+    "id": "fp-03-littles-law",
+    "version": "0.1.0",
+    "title": "WIP and Little's Law"
+  },
+  "metrics": {
+    "average_wip": {
+      "type": "aggregate",
+      "aggregation": "time_mean",
+      "source": "line_wip",
+      "window": {
+        "phase": "measured",
+        "start_tick": 7200,
+        "end_tick": 43200
+      },
+      "coverage_complete": true,
+      "census_validity": {
+        "census_checks_in_window": 600,
+        "discrepancy_intervals": [],
+        "valid": true
+      },
+      "value": 51.69583333333333,
+      "unit": "work units",
+      "exact": {
+        "numerator": 1861050,
+        "denominator": 36000
+      },
+      "area_work_unit_ticks": 1861050,
+      "window_ticks": 36000
+    },
+    "current_wip": {
+      "type": "current_value",
+      "source": "line_wip",
+      "note": "live display metric"
+    },
+    "line_wip": {
+      "type": "wip",
+      "method": "conservation_ledger",
+      "flow": "workpiece_flow",
+      "final_wip": 51,
+      "change_points": 392
+    },
+    "measured_throughput": {
+      "type": "throughput",
+      "flow": "workpiece_flow",
+      "window": {
+        "phase": "measured",
+        "start_tick": 7200,
+        "end_tick": 43200
+      },
+      "method": "completion_sink_delivery",
+      "completed_quantity": 150,
+      "window_ticks": 36000,
+      "value_per_minute": 15.0,
+      "exact_per_minute": {
+        "numerator": 15,
+        "denominator": 1
+      },
+      "coverage_complete": true
+    },
+    "loaded_cycle_time": {
+      "type": "cycle_time",
+      "flow": "workpiece_flow",
+      "method": "little_law_derived",
+      "measurement_class": "derived",
+      "wip_metric": "average_wip",
+      "throughput_metric": "measured_throughput",
+      "value_seconds": 206.78333333333333,
+      "exact_ticks": {
+        "numerator": 12407,
+        "denominator": 1
+      },
+      "coverage_complete": true,
+      "census_validity": {
+        "census_checks_in_window": 600,
+        "discrepancy_intervals": [],
+        "valid": true
+      }
+    }
+  },
+  "validity": {
+    "completed": true,
+    "aborted": false,
+    "abort_reason": null,
+    "protocol_events": {},
+    "manual_carriage_residual": 0
+  },
+  "lua_cross_verification": {
+    "available": true,
+    "agrees": true,
+    "mismatches": []
+  },
+  "lifecycle": "COMPLETED"
+}
