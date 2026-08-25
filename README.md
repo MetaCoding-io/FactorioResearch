@@ -12,15 +12,22 @@ The immediate target is **deterministic Factory Physics**. Future work may add c
 
 ## Start here for implementation
 
-The v1 scientific contract is now sufficiently specified to begin implementation.
+An independent pre-implementation review produced a focused revision pass. **For the immediate POC, start with the post-review handoff rather than treating the full v1 PRD as one implementation milestone.**
 
-- [`docs/FISL_V1_PRD.md`](docs/FISL_V1_PRD.md) — **Codex-ready implementation/product requirements document.**
-- [`docs/FISL_V1_SCHEMA.md`](docs/FISL_V1_SCHEMA.md) — implementation-grade authoring/resolved scenario schema.
-- [`docs/FACTORY_PHYSICS_LABS_V1.md`](docs/FACTORY_PHYSICS_LABS_V1.md) — Labs 0–6 contract validation and required integration fixtures.
-- [`docs/adr/README.md`](docs/adr/README.md) — accepted ADR index and scientific/architectural decisions.
+1. [`docs/POST_REVIEW_REVISIONS.md`](docs/POST_REVIEW_REVISIONS.md) — what changed after independent design review and which older statements are superseded.
+2. [`docs/RUNTIME_VALIDATION.md`](docs/RUNTIME_VALIDATION.md) — empirical Factorio 2.0.77 assumptions that the first spike must prove/falsify.
+3. [GitHub Issue #2](https://github.com/MetaCoding-io/FactorioResearch/issues/2) — immediate runtime-validation spike + Lab 3 / Little's Law vertical-slice definition of done.
+4. [`docs/FISL_V1_SCHEMA.md`](docs/FISL_V1_SCHEMA.md) — implementation-grade `AuthorScenario` → stable `ResolvedScenario` + per-run `RunConfiguration` contract.
+5. [`docs/adr/README.md`](docs/adr/README.md) — accepted ADR index, including ADR 0017 conserved-ledger WIP and ADR 0018 local-server pause/disconnect behavior.
+
+Then use the broader documents as the destination/full-v1 specification:
+
+- [`docs/FISL_V1_PRD.md`](docs/FISL_V1_PRD.md) — full v1 product/runtime requirements, including features deliberately deferred from the first vertical slice.
+- [`docs/FACTORY_PHYSICS_LABS_V1.md`](docs/FACTORY_PHYSICS_LABS_V1.md) — Labs 0–6 contract validation and integration-fixture goals; Lab 3 is the first human-facing implementation target.
 
 ## Background documents
 
+- [`docs/DESIGN_REVIEW.md`](docs/DESIGN_REVIEW.md) — independent pre-implementation critique that triggered the revision pass.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — FISL architecture, scope, design principles, v1 boundary, and future extension model.
 - [`docs/SCENARIO_MEASUREMENT_CONTRACT.md`](docs/SCENARIO_MEASUREMENT_CONTRACT.md) — accepted scientific API summary linking the detailed ADRs.
 - [`docs/RESEARCH_NOTES.md`](docs/RESEARCH_NOTES.md) — research and intellectual provenance behind the project.
