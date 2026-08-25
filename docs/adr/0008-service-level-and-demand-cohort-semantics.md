@@ -1,6 +1,6 @@
 # ADR 0008: Service-Level and Demand-Cohort Semantics
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
@@ -145,7 +145,7 @@ A physical delivery occurring during interval `[F-1,F)` is recognized when the s
 For service timing, that fulfilled quantity therefore has:
 
 ```text
-created_tick    = T
+created_tick     = T
 fulfillment_tick = F
 wait_ticks       = F - T
 ```
@@ -218,7 +218,7 @@ A service metric needs two temporal concepts:
 Conceptually:
 
 ```text
-cohort window:       [A, B)
+cohort window:        [A, B)
 max wait:             L
 required observation: through at least B-1 cohort's deadline
 ```
