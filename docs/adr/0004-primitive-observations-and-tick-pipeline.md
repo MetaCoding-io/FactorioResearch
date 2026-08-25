@@ -1,6 +1,7 @@
 # ADR 0004: Primitive Observations and Tick-Pipeline Semantics
 
-- **Status:** Proposed
+- **Status:** Accepted
+- **Runtime validation:** Pending for Factorio-specific event/tick assumptions; see `../RUNTIME_VALIDATION.md`
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
