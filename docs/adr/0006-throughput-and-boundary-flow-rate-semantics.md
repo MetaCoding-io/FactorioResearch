@@ -1,6 +1,6 @@
 # ADR 0006: Throughput and Boundary Flow-Rate Semantics
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Issue:** #1 — Define FISL v1 scenario and measurement contract
 - **Scope:** FISL v1
 
