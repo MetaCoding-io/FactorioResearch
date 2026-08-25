@@ -98,6 +98,43 @@ def run(
     console.print(f"Artifacts: {result.run_dir}")
 
 
+@app.command("build-baseline")
+def build_baseline_command(
+    scenario: Path = typer.Argument(..., help="Scenario directory (e.g. scenarios/factory-physics/fp03-littles-law)"),
+    factorio: Path | None = typer.Option(None, envvar="FACTORIO_BIN", help="Factorio binary"),
+    verify: bool = typer.Option(True, help="Run the scenario headlessly against the new baseline as acceptance"),
+    workspace: Path = typer.Option(Path("runs/_baseline_build"), help="Scratch workspace"),
+) -> None:
+    """Construct the scenario's baseline.zip against a real Factorio server
+    (Issue #2 Stage B) and optionally verify it with a full headless run."""
+    from fisl.controller.baseline_builder import BuildError, build_baseline, verify_baseline
+
+    if factorio is None or not Path(factorio).exists():
+        console.print("[red]No Factorio binary: pass --factorio or set FACTORIO_BIN[/red]")
+        raise typer.Exit(code=1)
+    scenario_dir = _scenario_yaml_path(scenario).parent
+    try:
+        target = build_baseline(
+            factorio_bin=Path(factorio), scenario_dir=scenario_dir,
+            workspace=workspace, console=console,
+        )
+        if verify:
+            console.print("Verifying baseline with a full headless run…")
+            summary = verify_baseline(
+                factorio_bin=Path(factorio), scenario_dir=scenario_dir,
+                runs_dir=workspace / "verify-runs", console=console,
+            )
+            throughput = summary["metrics"]["measured_throughput"]
+            console.print(
+                f"[green]Baseline verified[/green]: {throughput['completed_quantity']} workpieces "
+                f"completed in measured window; census valid; Lua/Python agree."
+            )
+    except BuildError as exc:
+        console.print(f"[red]Baseline build failed:[/red] {exc}")
+        raise typer.Exit(code=1)
+    console.print(f"Done: {target}")
+
+
 @app.command()
 def report(run_dir: Path = typer.Argument(..., help="runs/<run_id> directory")) -> None:
     """Display final metrics with method/window/coverage metadata (FR-CTRL-007)."""
