@@ -303,6 +303,16 @@ For v1 system-level WIP, canonical scenarios SHOULD keep measured belt networks 
 
 Raw geometric belt crossing is still not an authoritative system transaction; source/sink ports remain the entry/exit accounting mechanism.
 
+> **Runtime note (Factorio 2.0.77, RV-004):** Empirically, each belt entity's
+> `LuaTransportLine.get_contents()` returns only that entity's own segment
+> contents, and `line_equals()` returns true across *different* segments of
+> one merged line group — so line-identity deduplication **undercounts**, and
+> the per-entity/per-line sum is the validated census method (exact ledger
+> reconciliation on straight belts; underground/splitter layouts pending
+> under RV-004). The rule this section protects is "never double count"; the
+> counting technique must be validated against the pinned runtime rather than
+> assumed in either direction. See `../RUNTIME_VALIDATION.md` finding 4.
+
 ### 14. Inserter-held tracked work counts as WIP for internal inserters
 
 An inserter exposes its currently held stack and the position of its hand.
