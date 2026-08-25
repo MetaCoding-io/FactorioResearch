@@ -24,18 +24,53 @@ The first implementation work should execute this validation matrix before large
 
 | ID | Dependent ADR(s) | Hypothesis to validate | Spike / evidence required | Pass condition | Status |
 |---|---|---|---|---|---|
-| RV-001 | 0004 | The single `on_tick` coordinator can implement the declared checkpoint pipeline without relying on undocumented ordering among unrelated events. | Minimal mod logs event ticks plus coordinator checkpoints while building/mining/transferring entities. | FISL can queue notifications and deterministically normalize them at the coordinator without lost required facts. | Pending |
-| RV-002 | 0003, 0017 | Standard source apparatus can enforce the one-way assumptions needed for net-withdrawal admission accounting strongly enough for canonical conserved-flow labs. | Exercise inserter/player interaction, filters, operability/minability/destructibility and attempted reverse insertion. | Canonical apparatus prevents normal learner reverse transfer; detectable violations are surfaced rather than masked. | Pending |
-| RV-003 | 0003, 0017 | Sink settlement can read/remove all tracked output once per tick without ambiguous duplicate accounting. | Deliver known quantities at tick boundaries and compare physical sink state with emitted settlement facts. | Exact known `sink_delivery` sequence with clean post-settlement staging. | Pending |
-| RV-004 | 0005, 0017 | A coarse physical census can count canonical belt contents without double-counting underlying transport lines. | Construct straight belts, underground belts, and splitters; compare naïve owner sums to deduplicated `LuaTransportLine` accounting. | Census equals known injected physical work-unit quantity across supported layouts. | Pending |
-| RV-005 | 0005, 0017 | Physical census can account for work committed to active crafting exactly once when used as a ledger cross-check/decomposition measurement. | Move one workpiece through machine input → active craft → output and inspect Factorio inventory/progress state each phase. | Census never creates disappearance/double-counting for the supported conserved 1:1 recipe fixture. | Pending |
-| RV-006 | 0007 | Adjacent checkpoint observations can determine actual crafting progress across normal progress, craft completion/reset, and high effective craft speed. | Record `crafting_progress`, `products_finished`, raw status, recipe and tick over controlled machines. | Interval classifier recognizes positive progress through completion/reset without false idle/productive intervals. | Pending |
-| RV-007 | 0007 | Brownout/low-power operation can be distinguished as progressing + energy-limited versus stopped/unavailable at the required resolution. | Controlled power-limited crafting fixture. | Progress evidence and raw status support the ADR 0007 two-dimensional classification. | Pending |
-| RV-008 | 0015 | RCON `/silent-command` configuration transfer is reliable with a conservatively chosen chunk size and exact hash verification. | Transfer increasingly large canonical JSON payloads using the proposed begin/append/commit protocol. | POC-sized resolved config transfers reproducibly with deterministic corruption/reorder rejection. | Pending |
-| RV-009 | 0015 | `script-output` can sustain the authoritative POC telemetry strategy without materially degrading a small teaching fixture. | Run representative event/aggregate output volumes and profile UPS/file size. | POC fixture remains playable/headless-stable; authoritative records are complete. | Pending |
-| RV-010 | 0015 | A generated companion configuration mod is a viable fallback if RCON configuration upload proves unnecessarily fragile. | Only if RV-008 is unsatisfactory: generate a run-specific config mod and launch server/client from the same mod directory. | Demonstrates a simpler reliable alternative without changing scientific clock/telemetry semantics. | Deferred fallback |
-| RV-011 | 0001, 0015 | Dedicated/local-server pause and disconnect behavior can be configured to match deterministic POC policy. | Launch server with intended auto-pause settings; test connected, disconnected, reconnect, and headless operation. | Server does not silently pause a running interactive experiment; disconnect is detectable and can trigger the declared abort policy. | Pending |
-| RV-012 | 0016 | Dynamic production-entity membership can be maintained incrementally from runtime events with canonical eligibility boundaries. | Build/remove matching machines during a run and record membership intervals. | New/removed machines enter/leave pooled denominators on the intended FISL boundaries. | Pending |
+| RV-001 | 0004 | The single `on_tick` coordinator can implement the declared checkpoint pipeline without relying on undocumented ordering among unrelated events. | Minimal mod logs event ticks plus coordinator checkpoints while building/mining/transferring entities. | FISL can queue notifications and deterministically normalize them at the coordinator without lost required facts. | Confirmed on Factorio 2.0.77 (`test_one_workpiece_vertical_slice`, `test_retry_same_fingerprint_new_run_id`; evidence log) |
+| RV-002 | 0003, 0017 | Standard source apparatus can enforce the one-way assumptions needed for net-withdrawal admission accounting strongly enough for canonical conserved-flow labs. | Exercise inserter/player interaction, filters, operability/minability/destructibility and attempted reverse insertion. | Canonical apparatus prevents normal learner reverse transfer; detectable violations are surfaced rather than masked. | Confirmed on Factorio 2.0.77 (`test_rv002_hardening_and_reverse_flow`, vertical slice; see finding 3 below) |
+| RV-003 | 0003, 0017 | Sink settlement can read/remove all tracked output once per tick without ambiguous duplicate accounting. | Deliver known quantities at tick boundaries and compare physical sink state with emitted settlement facts. | Exact known `sink_delivery` sequence with clean post-settlement staging. | Confirmed on Factorio 2.0.77 (`test_one_workpiece_vertical_slice`) |
+| RV-004 | 0005, 0017 | A coarse physical census can count canonical belt contents without double-counting underlying transport lines. | Construct straight belts, underground belts, and splitters; compare naïve owner sums to deduplicated `LuaTransportLine` accounting. | Census equals known injected physical work-unit quantity across supported layouts. | Confirmed on Factorio 2.0.77 for straight belts, with the technique inverted — see finding 4. Underground/splitter layouts still pending. |
+| RV-005 | 0005, 0017 | Physical census can account for work committed to active crafting exactly once when used as a ledger cross-check/decomposition measurement. | Move one workpiece through machine input → active craft → output and inspect Factorio inventory/progress state each phase. | Census never creates disappearance/double-counting for the supported conserved 1:1 recipe fixture. | Confirmed on Factorio 2.0.77 (`test_one_workpiece_vertical_slice`: census stays exactly 1 through input → active craft → output) |
+| RV-006 | 0007 | Adjacent checkpoint observations can determine actual crafting progress across normal progress, craft completion/reset, and high effective craft speed. | Record `crafting_progress`, `products_finished`, raw status, recipe and tick over controlled machines. | Interval classifier recognizes positive progress through completion/reset without false idle/productive intervals. | API evidence confirmed on Factorio 2.0.77 (`test_rv006_craft_progress_probe`: `products_finished` monotonic, `crafting_progress` ∈ [0,1], completions observable). Interval classifier itself is Lab 4 scope. |
+| RV-007 | 0007 | Brownout/low-power operation can be distinguished as progressing + energy-limited versus stopped/unavailable at the required resolution. | Controlled power-limited crafting fixture. | Progress evidence and raw status support the ADR 0007 two-dimensional classification. | Pending (deferred with Lab 4 machine-state scope) |
+| RV-008 | 0015 | RCON `/silent-command` configuration transfer is reliable with a conservatively chosen chunk size and exact hash verification. | Transfer increasingly large canonical JSON payloads using the proposed begin/append/commit protocol. | POC-sized resolved config transfers reproducibly with deterministic corruption/reorder rejection. | Confirmed on Factorio 2.0.77 (`test_rv008_config_transfer_multi_chunk` at forced 200-byte chunks; corrupt payload deterministically rejected) |
+| RV-009 | 0015 | `script-output` can sustain the authoritative POC telemetry strategy without materially degrading a small teaching fixture. | Run representative event/aggregate output volumes and profile UPS/file size. | POC fixture remains playable/headless-stable; authoritative records are complete. | Confirmed for POC volume on Factorio 2.0.77 (`test_steady_flow_littles_law_agreement`: complete stream at 10× speed, ~tens of KB per simulated minute; Python recomputation matches Lua accumulators) |
+| RV-010 | 0015 | A generated companion configuration mod is a viable fallback if RCON configuration upload proves unnecessarily fragile. | Only if RV-008 is unsatisfactory: generate a run-specific config mod and launch server/client from the same mod directory. | Demonstrates a simpler reliable alternative without changing scientific clock/telemetry semantics. | Not needed — RV-008 confirmed |
+| RV-011 | 0001, 0015 | Dedicated/local-server pause and disconnect behavior can be configured to match deterministic POC policy. | Launch server with intended auto-pause settings; test connected, disconnected, reconnect, and headless operation. | Server does not silently pause a running interactive experiment; disconnect is detectable and can trigger the declared abort policy. | Headless profile confirmed on Factorio 2.0.77 (`test_rv011_headless_no_pause_and_post_completion_rcon`: ticks advance with zero players under `auto_pause:false`; RCON responsive post-completion). Interactive connect/disconnect/reconnect still pending. |
+| RV-012 | 0016 | Dynamic production-entity membership can be maintained incrementally from runtime events with canonical eligibility boundaries. | Build/remove matching machines during a run and record membership intervals. | New/removed machines enter/leave pooled denominators on the intended FISL boundaries. | Pending (deferred by Issue #2) |
+
+## Spike findings (Factorio 2.0.77, 2026-08-25)
+
+Executed by `tests/integration/` against a real 2.0.77 headless server;
+per-check records live in `tests/integration/evidence/rv-evidence.jsonl`.
+Four runtime behaviors contradicted the implementation as first written —
+in each case the accepted semantic survived and only the technique changed:
+
+1. **First Lua console command is swallowed.** Factorio 2.0 answers the
+   first `/silent-command` of a save with "Using Lua console commands will
+   disable achievements. Please repeat the command to proceed." and does not
+   execute it. The controller now primes the console after RCON connect by
+   repeating an identical no-op probe until acknowledged
+   (`FactorioServer._prime_lua_console`).
+2. **Runtime inserter vector writes are ignored.** Assigning
+   `LuaEntity.pickup_position` / `drop_position` on standard inserters
+   silently leaves the default vectors (no error). Fixtures must use the
+   stock direction convention (pickup from the facing tile, drop opposite);
+   custom vectors would require a prototype with `allow_custom_vectors`.
+3. **READY-staged source material is withdrawn before start.** The world
+   keeps ticking between READY and experiment start, so material staged at
+   binding was picked up by the live inserter before the settlement pipeline
+   existed — a real completion with no admission (ledger WIP −1). Initial
+   staging now happens inside the experiment-start checkpoint
+   (`ports.stage_initial`), so the first possible withdrawal falls in the
+   settled interval [0, 1).
+4. **`line_equals` deduplication undercounts; the naive sum is exact.** On
+   2.0.77 each belt entity's `LuaTransportLine.get_contents()` returns only
+   that entity's own segment, and `line_equals` reports true across
+   *different* segments of the same merged line group. Deduplicating by
+   `line_equals` therefore drops real contents (observed: 15 physical items
+   counted as 8 on a 4-belt straight run), while the naive
+   per-entity/per-line sum reconciles exactly with the conservation ledger.
+   The census now uses the naive sum. Underground belts and splitters were
+   not exercised and keep RV-004 partially pending.
 
 ## First validation fixture: one-workpiece vertical slice
 
