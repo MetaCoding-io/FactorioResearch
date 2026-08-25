@@ -1,0 +1,165 @@
+spec: fisl/v1
+
+scenario:
+  id: fp-03-littles-law
+  version: 0.1.0
+  title: WIP and Little's Law
+  description: >-
+    First vertical-slice scenario: a conserved workpiece line measured with
+    conservation-ledger WIP, completion throughput, and Little's-Law-derived
+    cycle time.
+
+factorio:
+  version:
+    minimum: 2.0.77
+    maximum_exclusive: 2.1.0
+  baseline_save: baseline.zip
+  required_mods:
+    fisl-core: compatible
+    fisl-factory-physics: compatible
+
+experiment:
+  seed: 1
+  time:
+    game_speed:
+      policy: fixed
+      value: 1.0
+    pause_policy: prohibited
+  phases:
+    - id: warmup
+      duration: 2m
+    - id: measured
+      duration: 10m
+
+zones:
+  factory_floor:
+    surface: nauvis
+    area:
+      left_top: [-48, -24]
+      right_bottom: [48, 24]
+
+systems:
+  factory:
+    primary_zone: factory_floor
+    boundary_integrity:
+      entity_containment: flag
+
+entity_sets:
+  line_machines:
+    zone: factory_floor
+    types:
+      - assembling-machine
+    exclude_roles:
+      - fisl_apparatus
+    membership: dynamic
+
+ports:
+  workpiece_source:
+    system: factory
+    direction: source
+    binding:
+      surface: nauvis
+      position: [-44.5, 0.5]
+      prototype: fisl-source-port
+    material:
+      item: fisl-rough-workpiece
+    supply:
+      mode: replenish
+      target: 100
+
+  finished_goods:
+    system: factory
+    direction: sink
+    binding:
+      surface: nauvis
+      position: [44.5, 0.5]
+      prototype: fisl-sink-port
+    material:
+      item: fisl-finished-workpiece
+
+flows:
+  workpiece_flow:
+    system: factory
+    unit: workpiece
+    basis:
+      type: conserved_work_unit
+      materials:
+        fisl-rough-workpiece: 1
+        fisl-machined-workpiece: 1
+        fisl-inspected-workpiece: 1
+        fisl-finished-workpiece: 1
+    entry_ports:
+      - workpiece_source
+    completion_ports:
+      - finished_goods
+
+metrics:
+  line_wip:
+    type: wip
+    flow: workpiece_flow
+    method: conservation_ledger
+    validation:
+      physical_census:
+        required: true
+        every: 60t
+        discrepancy_tolerance: 0
+        include_player_inventory: true
+
+  current_wip:
+    type: current_value
+    source: line_wip
+
+  average_wip:
+    type: aggregate
+    source: line_wip
+    aggregation: time_mean
+    window:
+      phase: measured
+
+  measured_throughput:
+    type: throughput
+    flow: workpiece_flow
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  loaded_cycle_time:
+    type: cycle_time
+    flow: workpiece_flow
+    method: little_law_derived
+    wip_metric: average_wip
+    throughput_metric: measured_throughput
+    interpretation:
+      profile: stable_flow
+
+visibility:
+  learner_live:
+    metrics:
+      - current_wip
+  learner_post_run:
+    metrics:
+      - average_wip
+      - measured_throughput
+      - loaded_cycle_time
+  instructor:
+    metrics:
+      - line_wip
+    diagnostics:
+      - coverage
+      - census
+      - protocol_violations
+
+learning:
+  concepts:
+    - WIP
+    - throughput
+    - cycle time
+    - Little's Law
+  represents_directly:
+    - deterministic production flow
+  remains_absent:
+    - variability
+    - equipment failures
+    - monetary cost
+  not_warranted:
+    - inferring human organizational behavior from deterministic machines
