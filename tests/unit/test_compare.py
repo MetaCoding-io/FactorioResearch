@@ -101,3 +101,27 @@ def test_missing_summary_rejected(tmp_path):
     empty.mkdir()
     with pytest.raises(CompareError):
         RunRecord.load(empty)
+
+
+def test_three_way_deltas_vs_first_and_json(tmp_path):
+    from fisl.report.compare import comparison_to_json
+
+    run_a = make_run(tmp_path, "A", avg_wip=51.70, throughput=15.0, ct=206.78)
+    run_b = make_run(tmp_path, "B", avg_wip=8.2, throughput=15.0, ct=32.8)
+    run_c = make_run(tmp_path, "C", avg_wip=6.9, throughput=15.0, ct=27.6)
+    records = [RunRecord.load(d) for d in (run_a, run_b, run_c)]
+    rows = {row["metric"]: row for row in comparison_rows(records)}
+    wip = rows["average_wip"]
+    assert wip["delta_pcts_vs_first"][0] is None or wip["deltas_vs_first"][0] == 0
+    assert wip["delta_pcts_vs_first"][1] == pytest.approx((8.2 - 51.70) / 51.70 * 100)
+    assert wip["delta_pcts_vs_first"][2] == pytest.approx((6.9 - 51.70) / 51.70 * 100)
+
+    doc = comparison_to_json([run_a, run_b, run_c])
+    assert doc["compatibility"]["same_experiment_semantics"] is True
+    assert [r["run_id"] for r in doc["runs"]] == ["A", "B", "C"]
+    assert any(m["metric"] == "loaded_cycle_time" for m in doc["metrics"])
+
+    console = Console(record=True, width=160)
+    render_comparison([run_a, run_b, run_c], console)
+    output = console.export_text()
+    assert "Run C" in output and "% vs A" in output

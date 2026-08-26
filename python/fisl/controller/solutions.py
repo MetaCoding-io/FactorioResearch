@@ -104,6 +104,25 @@ def load_solution(directory: Path) -> Solution:
     return Solution(solution_id=directory.name, directory=directory, steps=steps)
 
 
+def list_solutions(scenario_dir: Path) -> list[dict]:
+    """Enumerate a scenario's solutions: id + first prose line of README."""
+    solutions_dir = Path(scenario_dir) / "solutions"
+    entries = []
+    if not solutions_dir.is_dir():
+        return entries
+    for directory in sorted(p for p in solutions_dir.iterdir() if p.is_dir()):
+        summary = ""
+        readme = directory / "README.md"
+        if readme.exists():
+            for line in readme.read_text(encoding="utf-8").splitlines():
+                stripped = line.strip().lstrip("#").strip()
+                if stripped:
+                    summary = stripped
+                    break
+        entries.append({"id": directory.name, "summary": summary})
+    return entries
+
+
 def resolve_solution_path(scenario_dir: Path, spec: str) -> Path:
     """Accept either a path or a bare id under <scenario>/solutions/."""
     as_path = Path(spec)

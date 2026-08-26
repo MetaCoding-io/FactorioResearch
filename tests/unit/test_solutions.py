@@ -93,3 +93,17 @@ def test_resolve_by_id_and_path(tmp_path):
     assert resolve_solution_path(FP03, str(direct)) == direct
     with pytest.raises(SolutionError):
         resolve_solution_path(FP03, "nonexistent")
+
+
+def test_list_solutions_fp03():
+    from fisl.controller.solutions import list_solutions
+
+    entries = list_solutions(FP03)
+    assert [entry["id"] for entry in entries] == ["a-pull-signal"]
+    assert "pull signal" in entries[0]["summary"]
+
+
+def test_list_solutions_empty(tmp_path):
+    from fisl.controller.solutions import list_solutions
+
+    assert list_solutions(tmp_path) == []

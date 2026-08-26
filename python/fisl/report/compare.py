@@ -108,12 +108,42 @@ def comparison_rows(runs: list[RunRecord]) -> list[dict]:
             "displays": displays,
             "validities": validities,
         }
+        # Deltas relative to run A (the first run) for every later run — this
+        # is what makes N-way solution comparisons readable.
+        row["deltas_vs_first"] = [
+            (value - values[0]) if (value is not None and values[0] is not None) else None
+            for value in values
+        ]
+        row["delta_pcts_vs_first"] = [
+            (delta / values[0] * 100.0)
+            if (delta is not None and values[0] not in (None, 0))
+            else None
+            for delta in row["deltas_vs_first"]
+        ]
         if len(runs) == 2 and values[0] is not None and values[1] is not None:
-            delta = values[1] - values[0]
-            row["delta"] = delta
-            row["delta_pct"] = (delta / values[0] * 100.0) if values[0] else None
+            row["delta"] = values[1] - values[0]
+            row["delta_pct"] = row["delta_pcts_vs_first"][1]
         rows.append(row)
     return rows
+
+
+def comparison_to_json(run_dirs: list[Path]) -> dict:
+    """Machine-readable comparison (for course chapters, analysis, CI)."""
+    runs = [RunRecord.load(run_dir) for run_dir in run_dirs]
+    return {
+        "scenario": runs[0].summary.get("scenario", {}),
+        "compatibility": compatibility(runs),
+        "runs": [
+            {
+                "run_id": run.run_id,
+                "lifecycle": run.summary.get("lifecycle"),
+                "scripted_intervention": run.manifest.get("scripted_intervention"),
+                "validity": run.summary.get("validity", {}),
+            }
+            for run in runs
+        ],
+        "metrics": comparison_rows(runs),
+    }
 
 
 def render_comparison(run_dirs: list[Path], console: Console) -> None:
@@ -162,21 +192,17 @@ def render_comparison(run_dirs: list[Path], console: Console) -> None:
     table.add_column("Metric")
     for index in range(len(runs)):
         table.add_column(f"Run {chr(65 + index)}")
-    if len(runs) == 2:
-        table.add_column("Δ (B − A)")
 
     for row in comparison_rows(runs):
         cells = [row["metric"]]
-        for display, validity in zip(row["displays"], row["validities"]):
-            cells.append(display + (f"  [red]{validity}[/red]" if validity else ""))
-        if len(runs) == 2:
-            if "delta" in row:
-                delta_text = f"{row['delta']:+.2f}"
-                if row.get("delta_pct") is not None:
-                    delta_text += f" ({row['delta_pct']:+.1f}%)"
-                cells.append(delta_text)
-            else:
-                cells.append("—")
+        for index, (display, validity) in enumerate(zip(row["displays"], row["validities"])):
+            cell = display
+            delta_pct = row["delta_pcts_vs_first"][index]
+            if index > 0 and delta_pct is not None:
+                cell += f"  [dim]({delta_pct:+.1f}% vs A)[/dim]"
+            if validity:
+                cell += f"  [red]{validity}[/red]"
+            cells.append(cell)
         table.add_row(*cells)
     console.print(table)
     console.print(

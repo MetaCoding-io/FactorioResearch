@@ -154,16 +154,69 @@ def report(run_dir: Path = typer.Argument(..., help="runs/<run_id> directory")) 
 @app.command()
 def compare(
     run_dirs: list[Path] = typer.Argument(..., help="Two or more runs/<run_id> directories"),
+    json_out: Path | None = typer.Option(None, "--json", help="Also write machine-readable comparison JSON here"),
 ) -> None:
     """Compare completed runs side by side with compatibility/validity checks
-    and per-metric deltas — never a combined score (FR-CTRL-008)."""
-    from fisl.report.compare import CompareError, render_comparison
+    and per-metric deltas vs run A — never a combined score (FR-CTRL-008)."""
+    from fisl.report.compare import CompareError, comparison_to_json, render_comparison
 
     try:
         render_comparison(run_dirs, console)
+        if json_out is not None:
+            json_out.write_text(json.dumps(comparison_to_json(run_dirs), indent=2))
+            console.print(f"Comparison JSON written to {json_out}")
     except CompareError as exc:
         console.print(f"[red]{exc}[/red]")
         raise typer.Exit(code=1)
+
+
+@app.command()
+def solutions(
+    scenario: Path = typer.Argument(..., help="Scenario directory"),
+    run: bool = typer.Option(False, "--run", help="Run baseline + every solution headlessly, then compare"),
+    include_baseline: bool = typer.Option(True, help="Include a no-intervention baseline run when using --run"),
+    factorio: Path | None = typer.Option(None, envvar="FACTORIO_BIN", help="Factorio binary (for --run)"),
+    runs_dir: Path = typer.Option(Path("runs"), help="Run workspace root"),
+    json_out: Path | None = typer.Option(None, "--json", help="With --run: write comparison JSON here"),
+) -> None:
+    """List a scenario's scripted reference solutions; with --run, execute
+    the whole set headlessly (baseline first) and render the comparison —
+    one command from scenario to systematic solution data."""
+    from fisl.controller.solutions import list_solutions
+
+    scenario_dir = _scenario_yaml_path(scenario).parent
+    entries = list_solutions(scenario_dir)
+    if not entries:
+        console.print(f"No solutions under {scenario_dir / 'solutions'}")
+        raise typer.Exit(code=0 if not run else 1)
+    for entry in entries:
+        console.print(f"  [bold]{entry['id']}[/bold]  {entry['summary']}")
+    if not run:
+        return
+
+    from fisl.controller.run import RunError, execute_run
+    from fisl.report.compare import comparison_to_json, render_comparison
+
+    run_dirs: list[Path] = []
+    plan = ([None] if include_baseline else []) + [entry["id"] for entry in entries]
+    for solution_id in plan:
+        label = solution_id or "baseline (no intervention)"
+        console.print(f"\n[bold]Running:[/bold] {label}")
+        try:
+            result = execute_run(
+                scenario_dir=scenario_dir, headless=True, factorio_bin=factorio,
+                runs_dir=runs_dir, console=console, solution=solution_id,
+            )
+        except RunError as exc:
+            console.print(f"[red]{label} failed:[/red] {exc}")
+            raise typer.Exit(code=1)
+        run_dirs.append(result.run_dir)
+
+    console.print()
+    render_comparison(run_dirs, console)
+    if json_out is not None:
+        json_out.write_text(json.dumps(comparison_to_json(run_dirs), indent=2))
+        console.print(f"Comparison JSON written to {json_out}")
 
 
 if __name__ == "__main__":

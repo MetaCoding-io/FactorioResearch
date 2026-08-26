@@ -149,13 +149,27 @@ comments only, and each step ends with `rcon.print("solution-step-ok")`.
 
 ### `fisl compare runs/<id-a> runs/<id-b> [...]`
 
-Side-by-side debrief of two or more completed runs — the heart of the
+Side-by-side debrief of any number of completed runs — the heart of the
 "try a different strategy" loop. It checks comparability first (same
 resolved scenario hash = same experiment; same reproducibility fingerprint
-= same controlled condition), surfaces each run's validity problems, and
-shows every shared metric with per-metric deltas for a pair. Deliberately
-**no combined score**: metrics stay a vector (ADR 0012). Incompatible runs
-are still displayed, loudly flagged.
+= same controlled condition), surfaces each run's validity problems and any
+scripted-solution identity, and shows every shared metric with in-cell
+deltas relative to run A. Deliberately **no combined score**: metrics stay
+a vector (ADR 0012). Incompatible runs are still displayed, loudly flagged.
+`--json <path>` also writes the full comparison as machine-readable JSON —
+the intended data feed for course chapters and analysis.
+
+### `fisl solutions <scenario-dir> [--run]`
+
+Without `--run`: lists the scenario's scripted reference solutions
+(`solutions/<id>/` directories with their README summaries).
+
+With `--run`: executes the whole set headlessly — a no-intervention
+baseline first (disable with `--no-include-baseline`), then every solution
+— and renders the N-way comparison at the end. One command from scenario to
+systematic solution data; add `--json <path>` to persist the comparison.
+Because solution runs are deterministic, this doubles as the regression
+check for the expected numbers cited in the course text.
 
 ### `fisl report runs/<run_id>`
 
