@@ -60,9 +60,19 @@ You just located a bottleneck without a stopwatch, a spec sheet, or a
 single measurement: coupled machines *point at* their constraint. After the
 run, `fisl report runs/<run-id>` turns your walking impressions into
 numbers — a per-machine table of productive/starved/blocked fractions and
-the pooled fractions. Check it against what you saw. Predict first: which
-machine shows ~0% idle? Roughly what fraction of the time was M1 blocked?
-(Rates say: M1 needs only 1.6 of every 2.0 seconds to keep M2 fed…)
+the pooled fractions. The reference baseline measured:
+
+| Machine | productive | starved | blocked |
+|---|---|---|---|
+| M1 (fast, upstream) | 85.7% | 1.5% | **12.8%** |
+| M2 (the constraint) | **99.0%** | 1.0% | — |
+| M3 (fast, downstream) | 66.4% | **33.6%** | — |
+
+Check it against the rates: M3 needs only 1.33 of every 2.0 seconds to
+keep pace with M2 — so it *must* idle exactly ⅓ of the time, and it does,
+to the decimal. M1's blocked share is a little under its ⅕ rate surplus
+because its own output buffer soaks up part of each stall. And the
+constraint never rests. The machines' behavior is the spec sheet.
 
 ## Run 2 — intervene, two ways
 
@@ -87,22 +97,40 @@ fisl compare runs/<baseline> runs/<intervention>
 What actually happens — reference runs of the committed solutions, against
 a baseline that measured **TH 30.00/min, avg WIP 57.54, CT 115.08 s**:
 
-- **A** makes M1's blocked fraction collapse and its productive fraction
-  climb — the machine *looks* healthier. Throughput does not move at all
-  (measured: **30.00/min, +0.0%**): M2 never stopped being the constraint,
-  and a buffer feeds no one faster. The surplus M1 produces now accumulates
-  in the chest for the entire run, so WIP climbs and climbs — average WIP
-  **91.16 (+58.4%)**, and *still rising* when the experiment ended (final
-  WIP 122 vs the baseline's steady 58) — and cycle time with it: **182.31 s
-  (+58.4%)**. Little's Law is not optional. You improved a machine and
-  worsened every workpiece.
+- **A** makes blocked time vanish (measured: **6.1% → 0.0%** pooled) and
+  lifts the pooled productive fraction to **89.2%** — every machine *looks*
+  healthier. Throughput does not move at all (**30.00/min, +0.0%**): M2
+  never stopped being the constraint, and a buffer feeds no one faster.
+  The surplus M1 produces now accumulates in the chest for the entire run,
+  so WIP climbs and climbs — average WIP **91.16 (+58.4%)**, and *still
+  rising* when the experiment ended (final WIP 122 vs the baseline's
+  steady 58) — and cycle time with it: **182.31 s (+58.4%)**. Little's Law
+  is not optional. You improved every machine's statistics and worsened
+  every workpiece.
 - **B** moves throughput — measured **37.50/min (+25.0%)**, exactly the
   *next* constraint's rate (M1's 1.6 s). Average WIP fell to **33.23
   (−42.3%)** and cycle time to **53.17 s (−53.8%)** as the pre-constraint
-  queue drained. And watch the state signature migrate: M1's blocked time
-  vanishes, while M2 and M3 now show starved time. Walk the line again:
+  queue drained. And watch the state signature migrate: blocked time
+  vanishes here too, but pooled starved time nearly doubles (**11.3% →
+  21.9%**) — M2 and M3 now wait on M1. Walk the line again:
   blocked-above/starved-below now points at M1. The method still works;
   the answer moved, because the constraint moved.
+
+Now put the two pooled productive fractions side by side with throughput:
+
+| | pooled productive | throughput |
+|---|---|---|
+| baseline | 82.6% | 30.00/min |
+| A — buffer | **89.2%** (best) | 30.00/min (no change) |
+| B — upgrade | **78.1%** (worst) | **37.50/min** (best) |
+
+Across these three runs the pooled productive fraction — the closest thing
+this lab has to a "utilization" score — ranks the interventions *exactly
+backwards*. The intervention that made machines busiest delivered nothing;
+the intervention that delivered the most made machines idle the most. This
+is why FISL refuses to print a bare utilization number: it is not that the
+quantity is unmeasurable, it is that maximizing it is not the objective,
+and a dashboard that headlines it teaches the wrong reflex.
 
 ## Debrief
 
@@ -128,11 +156,7 @@ productive time back when machines fail or vary. What survives contact
 with reality unchanged: buffers never raise the sustained rate above the
 constraint's rate, and inventory's price stays denominated in flow time.
 
-<!-- TODO(figure): after the first verified baseline + solution runs, generate
-  fisl solutions scenarios/factory-physics/fp04-starvation-blocking --run --json course/data/lab-04-comparison.json --svg course/data/lab-04-comparison.svg
-then uncomment. This figure regenerates from run data — never hand-capture it.
-![The debrief: baseline vs buffer vs constraint upgrade.](../data/lab-04-comparison.svg){#fig-compare-lab4}
--->
+![The debrief: baseline vs buffer vs constraint upgrade. This figure regenerates from run data (`fisl solutions … --run --svg`) — never hand-capture it.](../data/lab-04-comparison.svg){#fig-compare-lab4}
 
 ::: {.callout-note collapse="true"}
 ## Instructor notes
@@ -146,8 +170,11 @@ then uncomment. This figure regenerates from run data — never hand-capture it.
   baseline `01M0YHYH9TAVJP0SK6F60XX8W9` (TH 30.00/min, avg WIP 57.54,
   CT 115.08 s — the rate arithmetic hit exactly), buffer
   `01M0YJ0RNJCQZ7ZRSXVC75J1VR`, upgrade `01M0YJ304T2T1GQ8R2AFEPS62J`
-  (37.50/min, again exact). Rerun the command after any scenario or
-  baseline change and re-check the numbers cited in this chapter.
+  (37.50/min, again exact). Pooled fractions
+  (productive/starved/blocked): baseline 82.6/11.3/6.1, buffer
+  89.2/10.8/0.0, upgrade 78.1/21.9/0.0. Rerun the command after any
+  scenario or baseline change and re-check the numbers cited in this
+  chapter.
 - Machine-state fractions come from ADR 0007 classification: productive is
   measured *craft progress*, never the status lamp; unknown states surface
   as `unclassified`/coverage rather than disappearing into idle. The
