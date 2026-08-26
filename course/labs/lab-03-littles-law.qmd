@@ -34,7 +34,7 @@ answer would spoil the diagnosis.
 
 ## Run 1 — observe
 
-![The FISL panel in READY: the experiment waits for you to press Start.](../images/lab-03/fisl-panel-ready.png){#fig-ready width=60%}
+![The FISL panel in READY: the experiment waits for you to press Start.](../images/lab-03/fisl-panel-ready.jpg){#fig-ready width=60%}
 
 Start the experiment and *don't change anything*. Spend the twelve minutes
 walking the line (hold **Alt** for the detail overlay):
@@ -63,7 +63,7 @@ You walked past the answer: the packed input belt. Over 95% of each
 workpiece's life was spent *waiting in a queue*, and nearly all of the
 system's inventory was that queue.
 
-![Run 1, mid-experiment: the input belt packed solid with waiting workpieces — this queue *is* the WIP number on the panel.](../images/lab-03/run1-jammed-belt.png){#fig-jam}
+![Run 1, mid-experiment: the input belt packed solid with waiting workpieces — this queue *is* the WIP number on the panel.](../images/lab-03/run1-jammed-belt.jpg){#fig-jam}
 
 ## The theory you just watched
 
@@ -124,7 +124,7 @@ Start a new run, and **before pressing Start**:
    allowance of one extra piece covers the travel time so the bottleneck
    never starves. Try 1 later and watch what happens to throughput.)
 
-![The pull gate: red wire from the source inserter to the last belt tile before machine 1.](../images/lab-03/run2-pull-gate.png){#fig-gate}
+![The pull gate: red wire from the source inserter to the last belt tile before machine 1.](../images/lab-03/run2-pull-gate.jpg){#fig-gate}
 
 You have built a *pull signal*: a workpiece is admitted only while fewer
 than two are staged at the machine. Press Start and watch the same twelve
@@ -148,7 +148,7 @@ Law still binds all three numbers in run 2.
 downstream of your monitored tile is still packed. The signal must watch
 the point where the queue actually forms. This exact mistake was made by
 the first version of this lab's own reference solution — it measured
-avg WIP 41.66 instead of ~17. Diagnosing a control system by *walking the
+avg WIP 41.66 instead of 19.16. Diagnosing a control system by *walking the
 physical line* is itself the skill being taught here.
 :::
 
@@ -211,9 +211,10 @@ denominated in flow time*, and that the price is exact: CT = WIP / TH.
   course/data/lab-03-comparison.json` — rerun it after any scenario or
   baseline change and re-check the numbers cited in this chapter.
 - Baseline reference numbers come from run `01M0XP8VJ78KXRC8DB6BATBW39`
-  (committed verification summary matches). Expected pull-solution result:
-  TH unchanged at 15.00/min, avg WIP ~16–19, CT ~65–75 s (transit floor —
-  see the solution README for the analysis).
+  (committed verification summary matches). Measured pull-solution result
+  (run `01M0Y3SH364FWVZR8NBSDC2WYZ`, solution v3): TH unchanged at
+  15.00/min, avg WIP 19.16 (−62.9%), CT 76.64 s — right on the transit
+  floor predicted in the solution README.
 - The ~20% "gate near the source" failure in the callout is real: it was
   version 1 of the reference solution (run `01M0Y063ACYSD8JWRF78EJAWTF`).
   Learners who make it are in good company; send them to walk the line.
