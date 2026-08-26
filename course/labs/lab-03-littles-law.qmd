@@ -185,8 +185,10 @@ question of the variability course that follows. Do not conclude from this
 lab that all inventory is bad; conclude that inventory has a *price
 denominated in flow time*, and that the price is exact: CT = WIP / TH.
 
-<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
-![The debrief: `fisl compare` of the push baseline vs the pull run.](../images/lab-03/compare-terminal.png){#fig-compare}
+<!-- TODO(figure): generate with
+  fisl solutions scenarios/factory-physics/fp03-littles-law --run --svg course/data/lab-03-comparison.svg
+then uncomment. This figure regenerates from run data — never hand-capture it.
+![The debrief: `fisl compare` of the push baseline vs the pull solution.](../data/lab-03-comparison.svg){#fig-compare}
 -->
 
 ::: {.callout-note collapse="true"}

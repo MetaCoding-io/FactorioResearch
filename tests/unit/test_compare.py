@@ -125,3 +125,15 @@ def test_three_way_deltas_vs_first_and_json(tmp_path):
     render_comparison([run_a, run_b, run_c], console)
     output = console.export_text()
     assert "Run C" in output and "% vs A" in output
+
+
+def test_svg_export(tmp_path):
+    from fisl.report.compare import export_comparison_svg
+
+    run_a = make_run(tmp_path, "A", avg_wip=51.70, throughput=15.0, ct=206.78)
+    run_b = make_run(tmp_path, "B", avg_wip=17.5, throughput=15.0, ct=70.0)
+    svg_path = tmp_path / "comparison.svg"
+    export_comparison_svg([run_a, run_b], svg_path)
+    content = svg_path.read_text()
+    assert content.lstrip().startswith("<svg")
+    assert "average_wip" in content

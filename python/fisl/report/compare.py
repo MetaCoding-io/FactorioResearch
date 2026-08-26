@@ -146,6 +146,15 @@ def comparison_to_json(run_dirs: list[Path]) -> dict:
     }
 
 
+def export_comparison_svg(run_dirs: list[Path], svg_path: Path, width: int = 110) -> None:
+    """Render the comparison into a crisp SVG (for the course book) — the
+    figure regenerates from run data instead of being a hand-taken
+    terminal screenshot."""
+    recording = Console(record=True, width=width)
+    render_comparison(run_dirs, recording)
+    recording.save_svg(str(svg_path), title="fisl compare")
+
+
 def render_comparison(run_dirs: list[Path], console: Console) -> None:
     runs = [RunRecord.load(run_dir) for run_dir in run_dirs]
     if len(runs) < 2:

@@ -157,7 +157,9 @@ scripted-solution identity, and shows every shared metric with in-cell
 deltas relative to run A. Deliberately **no combined score**: metrics stay
 a vector (ADR 0012). Incompatible runs are still displayed, loudly flagged.
 `--json <path>` also writes the full comparison as machine-readable JSON —
-the intended data feed for course chapters and analysis.
+the intended data feed for course chapters and analysis — and
+`--svg <path>` renders it as a crisp SVG figure for the book (regenerated
+from run data, never a hand-taken terminal screenshot).
 
 ### `fisl solutions <scenario-dir> [--run]`
 
@@ -167,9 +169,24 @@ Without `--run`: lists the scenario's scripted reference solutions
 With `--run`: executes the whole set headlessly — a no-intervention
 baseline first (disable with `--no-include-baseline`), then every solution
 — and renders the N-way comparison at the end. One command from scenario to
-systematic solution data; add `--json <path>` to persist the comparison.
-Because solution runs are deterministic, this doubles as the regression
-check for the expected numbers cited in the course text.
+systematic solution data; add `--json <path>` to persist the comparison and
+`--svg <path>` to render it as a figure for the course text. Because
+solution runs are deterministic, this doubles as the regression check for
+the expected numbers cited in the course text.
+
+### `fisl snap <scenario-dir>` (experimental)
+
+Scripted screenshot session for the course text. Launches the scenario's
+photo runs (baseline and, where the shot list needs it, a solution-applied
+world); **you only connect a graphical client when prompted** — camera
+position, zoom, Alt overlay, and GUI visibility are driven automatically
+via the server, and the PNGs are rendered on *your* client into its
+`script-output/fisl-snap/` directory (usually `~/.factorio/script-output/`
+or `<install>/script-output/`). Copy them into `course/images/<lab>/` and
+uncomment the chapter's figure blocks. Shot lists live in
+`python/fisl/controller/snapshot.py`, keyed by scenario id, with camera
+coordinates tied to the builder layout. Photo-session runs are aborted
+after their shots — they are not data runs.
 
 ### `fisl report runs/<run_id>`
 

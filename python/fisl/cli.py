@@ -155,16 +155,25 @@ def report(run_dir: Path = typer.Argument(..., help="runs/<run_id> directory")) 
 def compare(
     run_dirs: list[Path] = typer.Argument(..., help="Two or more runs/<run_id> directories"),
     json_out: Path | None = typer.Option(None, "--json", help="Also write machine-readable comparison JSON here"),
+    svg_out: Path | None = typer.Option(None, "--svg", help="Also render the comparison as an SVG figure here"),
 ) -> None:
     """Compare completed runs side by side with compatibility/validity checks
     and per-metric deltas vs run A — never a combined score (FR-CTRL-008)."""
-    from fisl.report.compare import CompareError, comparison_to_json, render_comparison
+    from fisl.report.compare import (
+        CompareError,
+        comparison_to_json,
+        export_comparison_svg,
+        render_comparison,
+    )
 
     try:
         render_comparison(run_dirs, console)
         if json_out is not None:
             json_out.write_text(json.dumps(comparison_to_json(run_dirs), indent=2))
             console.print(f"Comparison JSON written to {json_out}")
+        if svg_out is not None:
+            export_comparison_svg(run_dirs, svg_out)
+            console.print(f"Comparison SVG written to {svg_out}")
     except CompareError as exc:
         console.print(f"[red]{exc}[/red]")
         raise typer.Exit(code=1)
@@ -178,6 +187,7 @@ def solutions(
     factorio: Path | None = typer.Option(None, envvar="FACTORIO_BIN", help="Factorio binary (for --run)"),
     runs_dir: Path = typer.Option(Path("runs"), help="Run workspace root"),
     json_out: Path | None = typer.Option(None, "--json", help="With --run: write comparison JSON here"),
+    svg_out: Path | None = typer.Option(None, "--svg", help="With --run: render the comparison as an SVG figure here"),
 ) -> None:
     """List a scenario's scripted reference solutions; with --run, execute
     the whole set headlessly (baseline first) and render the comparison —
@@ -217,6 +227,45 @@ def solutions(
     if json_out is not None:
         json_out.write_text(json.dumps(comparison_to_json(run_dirs), indent=2))
         console.print(f"Comparison JSON written to {json_out}")
+    if svg_out is not None:
+        from fisl.report.compare import export_comparison_svg
+
+        export_comparison_svg(run_dirs, svg_out)
+        console.print(f"Comparison SVG written to {svg_out}")
+
+
+@app.command()
+def snap(
+    scenario: Path = typer.Argument(..., help="Scenario directory"),
+    factorio: Path | None = typer.Option(None, envvar="FACTORIO_BIN", help="Factorio binary"),
+    runs_dir: Path = typer.Option(Path("runs"), help="Run workspace root"),
+) -> None:
+    """EXPERIMENTAL: scripted screenshot session for the course text. Launches
+    the scenario's photo runs; you only connect a graphical client when
+    prompted — camera position, zoom, and overlays are driven automatically
+    and PNGs are rendered on YOUR client into its script-output/fisl-snap/
+    directory (usually ~/.factorio/script-output/ or <install>/script-output/)."""
+    from fisl.controller.snapshot import SnapError, run_photo_session
+    from fisl.scenario.compiler import CompilationError, load_author_yaml
+
+    if factorio is None or not Path(factorio).exists():
+        console.print("[red]No Factorio binary: pass --factorio or set FACTORIO_BIN[/red]")
+        raise typer.Exit(code=1)
+    scenario_dir = _scenario_yaml_path(scenario).parent
+    try:
+        scenario_id = load_author_yaml(scenario_dir / "scenario.yaml").scenario.id
+        captured = run_photo_session(
+            scenario_dir=scenario_dir, factorio_bin=Path(factorio),
+            scenario_id=scenario_id, runs_dir=runs_dir, console=console,
+        )
+    except (CompilationError, SnapError) as exc:
+        console.print(f"[red]Photo session failed:[/red] {exc}")
+        raise typer.Exit(code=1)
+    console.print(
+        f"\n[green]Captured {len(captured)} shots[/green] on your client under "
+        "script-output/fisl-snap/ — copy them into course/images/<lab>/ and "
+        "uncomment the figure blocks in the chapter."
+    )
 
 
 if __name__ == "__main__":
