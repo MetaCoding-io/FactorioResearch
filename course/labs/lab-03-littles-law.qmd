@@ -34,9 +34,7 @@ answer would spoil the diagnosis.
 
 ## Run 1 — observe
 
-<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
 ![The FISL panel in READY: the experiment waits for you to press Start.](../images/lab-03/fisl-panel-ready.png){#fig-ready width=60%}
--->
 
 Start the experiment and *don't change anything*. Spend the twelve minutes
 walking the line (hold **Alt** for the detail overlay):
@@ -65,9 +63,7 @@ You walked past the answer: the packed input belt. Over 95% of each
 workpiece's life was spent *waiting in a queue*, and nearly all of the
 system's inventory was that queue.
 
-<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
 ![Run 1, mid-experiment: the input belt packed solid with waiting workpieces — this queue *is* the WIP number on the panel.](../images/lab-03/run1-jammed-belt.png){#fig-jam}
--->
 
 ## The theory you just watched
 
@@ -128,9 +124,7 @@ Start a new run, and **before pressing Start**:
    allowance of one extra piece covers the travel time so the bottleneck
    never starves. Try 1 later and watch what happens to throughput.)
 
-<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
 ![The pull gate: red wire from the source inserter to the last belt tile before machine 1.](../images/lab-03/run2-pull-gate.png){#fig-gate}
--->
 
 You have built a *pull signal*: a workpiece is admitted only while fewer
 than two are staged at the machine. Press Start and watch the same twelve
@@ -205,11 +199,7 @@ question of the variability course that follows. Do not conclude from this
 lab that all inventory is bad; conclude that inventory has a *price
 denominated in flow time*, and that the price is exact: CT = WIP / TH.
 
-<!-- TODO(figure): generate with
-  fisl solutions scenarios/factory-physics/fp03-littles-law --run --svg course/data/lab-03-comparison.svg
-then uncomment. This figure regenerates from run data — never hand-capture it.
 ![The debrief: `fisl compare` of the push baseline vs the pull solution.](../data/lab-03-comparison.svg){#fig-compare}
--->
 
 ::: {.callout-note collapse="true"}
 ## Instructor notes

@@ -1,0 +1,151 @@
+{
+  "scenario": {
+    "id": "fp-03-littles-law",
+    "version": "0.1.0",
+    "title": "WIP and Little's Law"
+  },
+  "compatibility": {
+    "same_experiment_semantics": true,
+    "resolved_hashes": [
+      "sha256:4fafdd4cb4607338b4888b8b6b535f4ebd1f39f0d52b0b726ccc7c71183938f4"
+    ],
+    "same_controlled_condition": true
+  },
+  "runs": [
+    {
+      "run_id": "01M0Y3Q8FPZ81NJZDEP49PM9HP",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": null,
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M0Y3SH364FWVZR8NBSDC2WYZ",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "a-pull-signal",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "solution.lua",
+            "sha256": "sha256:69a6570925db3aa5ab1c2eb75d06a0ed90656d0965c2b98450f51c8df735b7e3"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "metric": "average_wip",
+      "values": [
+        51.69583333333333,
+        19.15888888888889
+      ],
+      "displays": [
+        "51.70 work units",
+        "19.16 work units"
+      ],
+      "validities": [
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -32.536944444444444
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -62.93920098868918
+      ],
+      "delta": -32.536944444444444,
+      "delta_pct": -62.93920098868918
+    },
+    {
+      "metric": "line_wip",
+      "values": [
+        51.0,
+        15.0
+      ],
+      "displays": [
+        "final 51",
+        "final 15"
+      ],
+      "validities": [
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -36.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -70.58823529411765
+      ],
+      "delta": -36.0,
+      "delta_pct": -70.58823529411765
+    },
+    {
+      "metric": "measured_throughput",
+      "values": [
+        15.0,
+        15.0
+      ],
+      "displays": [
+        "15.00/min",
+        "15.00/min"
+      ],
+      "validities": [
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0
+      ],
+      "delta": 0.0,
+      "delta_pct": 0.0
+    },
+    {
+      "metric": "loaded_cycle_time",
+      "values": [
+        206.78333333333333,
+        76.63555555555556
+      ],
+      "displays": [
+        "206.78 s",
+        "76.64 s"
+      ],
+      "validities": [
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -130.14777777777778
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -62.93920098868918
+      ],
+      "delta": -130.14777777777778,
+      "delta_pct": -62.93920098868918
+    }
+  ]
+}
