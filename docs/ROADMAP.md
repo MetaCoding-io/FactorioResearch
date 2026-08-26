@@ -44,7 +44,7 @@ In dependency order (later items consume earlier ones):
 | # | Work | Issue | Unlocks |
 |---|---|---|---|
 | 1 | `fisl compare` — side-by-side run debrief, no scalar score | [#6](https://github.com/MetaCoding-io/FactorioResearch/issues/6) | Lab 3 as a full experiment pair (**done**) |
-| 2 | Machine-state classification (ADR 0007) + state fractions + RV-006/007 — **implemented; remaining: run `FACTORIO_BIN=… pytest tests/integration/test_machine_state.py` on a Factorio-capable machine, commit evidence, then wire the metrics into a Lab 2/4 scenario** (note: adding them to `fp03` would change its resolved hash and break comparability with existing runs, so they go into new scenarios) | [#7](https://github.com/MetaCoding-io/FactorioResearch/issues/7) | Labs 2 & 4 |
+| 2 | Machine-state classification (ADR 0007) + state fractions + RV-006/007 — **implemented; remaining: run `FACTORIO_BIN=… python3 -m pytest tests/integration/test_machine_state.py` on a Factorio-capable machine, commit evidence, then wire the metrics into a Lab 2/4 scenario** (note: adding them to `fp03` would change its resolved hash and break comparability with existing runs, so they go into new scenarios) | [#7](https://github.com/MetaCoding-io/FactorioResearch/issues/7) | Labs 2 & 4 |
 | 3 | Dynamic entity sets (ADR 0016, RV-012) | [#8](https://github.com/MetaCoding-io/FactorioResearch/issues/8) | mid-run redesign; pooled denominators |
 | 4 | Demand/service cohorts + on-time item rate (ADR 0008) | [#9](https://github.com/MetaCoding-io/FactorioResearch/issues/9) | Lab 5 push/pull |
 | 5 | Objectives + full visibility enforcement (ADR 0011/0012) | [#10](https://github.com/MetaCoding-io/FactorioResearch/issues/10) | Labs 5/6 evaluation |

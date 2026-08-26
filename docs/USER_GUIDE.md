@@ -64,12 +64,12 @@ Requirements:
 ```sh
 git clone git@github.com:MetaCoding-io/FactorioResearch.git
 cd FactorioResearch
-pip install -e .[dev]
+pip install -e '.[dev]'     # quotes matter in zsh: [dev] is a glob there
 
 # tell fisl where Factorio is (add to your shell profile):
 export FACTORIO_BIN=/path/to/factorio/bin/x64/factorio
 
-pytest tests/unit -q        # should be all green, no Factorio needed
+python3 -m pytest tests/unit -q   # should be all green, no Factorio needed
 ```
 
 The two FISL mods (`factorio/fisl-core`, `factorio/fisl-factory-physics`)
@@ -269,8 +269,8 @@ software). Run ids always differ.
 ## 7. Development workflow
 
 ```sh
-pytest tests/unit -q                      # fast, no Factorio (always run)
-FACTORIO_BIN=... pytest tests/integration -v   # the real-runtime spike suite
+python3 -m pytest tests/unit -q                # fast, no Factorio (always run)
+FACTORIO_BIN=... python3 -m pytest tests/integration -v   # the real-runtime suite
 ```
 
 - Integration tests exercise the empirical assumptions in

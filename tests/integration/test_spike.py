@@ -3,7 +3,7 @@
 Each passing test appends evidence rows for the RV items it exercises.
 Run with a real binary:
 
-    FACTORIO_BIN=~/factorio/bin/x64/factorio pytest tests/integration -v
+    FACTORIO_BIN=~/factorio/bin/x64/factorio python3 -m pytest tests/integration -v
 """
 
 from __future__ import annotations

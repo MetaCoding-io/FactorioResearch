@@ -2,7 +2,7 @@
 
 These tests require a real Factorio 2.0.x headless binary:
 
-    FACTORIO_BIN=/path/to/factorio/bin/x64/factorio pytest tests/integration -v
+    FACTORIO_BIN=/path/to/factorio/bin/x64/factorio python3 -m pytest tests/integration -v
 
 Without FACTORIO_BIN the whole directory is skipped. Passing tests append
 runtime-validation evidence records (RUNTIME_VALIDATION.md "Validation
