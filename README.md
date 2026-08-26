@@ -10,6 +10,10 @@ Factorio already provides a rich physical simulation of production: machines, be
 
 The immediate target is **deterministic Factory Physics**. Future work may add controlled variability, economics, feedback/control experiments, and structured multiplayer organizational-cybernetics exercises.
 
+## Using FISL
+
+- [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) — **living operator's guide**: setup, `fisl validate/build-baseline/run/report`, connecting the graphical client, run artifacts, troubleshooting. Kept current with every workflow change.
+
 ## Start here for implementation
 
 An independent pre-implementation review produced a focused revision pass. **For the immediate POC, start with the post-review handoff rather than treating the full v1 PRD as one implementation milestone.**
