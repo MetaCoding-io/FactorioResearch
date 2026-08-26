@@ -93,7 +93,8 @@ anything semantic does).
 
 Constructs the scenario's `baseline.zip` from nothing, against a real
 Factorio server. The layout is selected by the scenario id in
-`scenario.yaml` (registered labs: `fp-03-littles-law`,
+`scenario.yaml` (registered labs: `fp-00-measuring-the-factory`,
+`fp-01-flow-and-capacity`, `fp-02-the-constraint`, `fp-03-littles-law`,
 `fp-04-starvation-blocking`). What it actually does, in order:
 
 1. creates a fresh deterministic map (fixed seed, no water/trees/enemies);
@@ -215,7 +216,17 @@ in the numerator and what the denominator is.
 
 ---
 
-## 4. What the learner experiences (Labs 3 & 4)
+## 4. What the learner experiences
+
+Five labs exist (teaching order 0 → 4): **Lab 0** (one machine; boundary,
+stock vs flow, admission rate vs throughput), **Lab 1** (two unequal
+stages; installed capacity vs achieved output), **Lab 2** (fast→slow→fast;
+find the constraint with live diagnostics deliberately withheld — the two
+reference solutions upgrade a non-constraint vs the constraint), **Lab 3**
+and **Lab 4** below in detail. Labs 0–2 chapters live in `course/labs/`;
+their baselines build with `fisl build-baseline` like any other.
+
+### Labs 3 & 4 in detail
 
 - Spawn next to a **toolbox chest** holding belts, inserters, chests,
   assemblers, poles — the materials for redesigning the line. (These items

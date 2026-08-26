@@ -7,6 +7,9 @@ book:
   author: "FISL"
   chapters:
     - index.qmd
+    - labs/lab-00-measuring-the-factory.qmd
+    - labs/lab-01-flow-and-capacity.qmd
+    - labs/lab-02-the-constraint.qmd
     - labs/lab-03-littles-law.qmd
     - labs/lab-04-starvation-blocking.qmd
 

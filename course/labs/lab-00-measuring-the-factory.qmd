@@ -1,0 +1,82 @@
+# Lab 0 — Measuring the Factory
+
+**Scenario:** `fp-00-measuring-the-factory` · one run of ~6 minutes
+
+Before anything can be improved it has to be measured, and before anything
+can be measured someone has to make three decisions that sound like
+formalities and are not: *where the system ends*, *what unit is counted*,
+and *over what window*. This lab is one machine, two chests, and those
+three decisions made explicit.
+
+## The system
+
+A blue **source** chest, a short belt, one machine (rough → machined
+workpiece, one every 4 s), another belt, an orange **sink** chest. The
+white rectangle you can walk around is the *declared boundary*: FISL
+counts a workpiece as *inside the system* from the tick it leaves the
+source until the tick it arrives at the sink — on a belt, in the machine's
+hopper, mid-craft, or in your pockets. The ports are the only doors, and
+the experiment watches both.
+
+Four numbers, all deriving from those decisions:
+
+- **current WIP** — a *stock*: how many workpieces are inside *right now*;
+- **average WIP** — the same stock averaged tick-by-tick over the measured
+  window;
+- **admission rate** — a *flow*: workpieces entering per minute, counted at
+  the source;
+- **throughput** — a *flow*: workpieces leaving per minute, counted at the
+  sink.
+
+## Run it, and watch two numbers disagree
+
+Start the experiment and watch the panel's WIP number while you walk the
+line. For the first stretch it *climbs*: the source inserter feeds the belt
+much faster than the machine consumes, so the input belt fills. Once the
+belt is packed, WIP flattens — the system is *full*.
+
+That climb is the whole lesson in miniature. While WIP is rising,
+**work is entering faster than it is leaving** — the admission rate and
+the throughput are different numbers. They must be: the difference between
+inflow and outflow *is* the change in stock. That's not an insight about
+factories; it's accounting. But it means neither rate alone describes "how
+fast the factory runs" until you say *which boundary you measured at*.
+
+After the run, `fisl report runs/<run-id>` shows all four numbers, each
+with its window `[start, end)` in ticks, its method, and its exact
+fraction. Questions to answer from the report, not from memory:
+
+- In the measured window, were admission rate and throughput equal? Should
+  they be, given what WIP did during that window?
+- Is average WIP equal to the WIP you saw at the end? Why would a time
+  average differ from a closing snapshot?
+- The machine takes 4 s per workpiece. What throughput does that predict?
+  Check it.
+
+## Debrief
+
+- Suppose the boundary had been drawn to exclude the input belt. Which
+  numbers change? Which stay the same? (All the WIP numbers change; the
+  flows at the *new* boundary change; the machine does not.) A metric
+  without its boundary is not a number — it's a vibe.
+- "We produced 75 units" — count, stock, or flow? What else must be stated
+  before it means anything?
+- Every number in the report carries an exact numerator/denominator and a
+  declared window. That bookkeeping felt pedantic today, on one machine.
+  Every later lab runs on exactly this machinery, unchanged — that's what
+  makes their comparisons trustworthy.
+
+::: {.callout-note collapse="true"}
+## Instructor notes
+
+- No optimization objective, by design: the deliverable is a correctly
+  *read* report, not a better factory. Good debrief format: have learners
+  write down their three numbers with units and windows, then compare
+  phrasings.
+- The admission-rate metric is the entry-boundary variant of the same
+  throughput machinery (`boundary: entry` in `scenario.yaml`) — same
+  settlement records, different port set. Cite that when someone asks
+  whether input and output are measured "the same way".
+- Reference numbers: cite from `verification-summary.json` after the first
+  `fisl build-baseline scenarios/factory-physics/fp00-measuring-the-factory`.
+:::

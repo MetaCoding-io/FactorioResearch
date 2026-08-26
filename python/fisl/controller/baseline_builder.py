@@ -199,7 +199,91 @@ LAB4 = LabLayout(
     save_name="fp04-baseline",
 )
 
-LAYOUTS: dict[str, LabLayout] = {layout.scenario_id: layout for layout in (LAB3, LAB4)}
+LAB0 = LabLayout(
+    scenario_id="fp-00-measuring-the-factory",
+    source_pos=(-12.5, 0.5),
+    sink_pos=(13.5, 0.5),
+    machines=[
+        (0.5, "assembling-machine-1", "fisl-machine-workpiece"),  # 4s per craft
+    ],
+    substation_xs=(-9.0, 9.0),
+    toolbox_items={
+        "transport-belt": 50,
+        "fast-inserter": 6,
+        "wooden-chest": 4,
+        "small-electric-pole": 10,
+    },
+    expected_counts={
+        "assembling-machine-1": 1,
+        "fisl-source-port": 1,
+        "fisl-sink-port": 1,
+        "transport-belt": 18,
+        "fast-inserter": 4,
+        "substation": 2,
+        "solar-panel": 18,
+        "steel-chest": 1,
+    },
+    save_name="fp00-baseline",
+)
+
+LAB1 = LabLayout(
+    scenario_id="fp-01-flow-and-capacity",
+    source_pos=(-16.5, 0.5),
+    sink_pos=(17.5, 0.5),
+    machines=[
+        # Installed capacities deliberately differ: 1.6s vs 2.0s per craft.
+        (-5.5, "assembling-machine-3", "fisl-machine-workpiece"),
+        (5.5, "assembling-machine-1", "fisl-inspect-workpiece"),
+    ],
+    substation_xs=(-9.0, 9.0),
+    toolbox_items={
+        "transport-belt": 100,
+        "fast-inserter": 12,
+        "wooden-chest": 6,
+        "assembling-machine-1": 2,
+        "assembling-machine-3": 1,
+        "small-electric-pole": 15,
+    },
+    expected_counts={
+        "assembling-machine-1": 1,
+        "assembling-machine-3": 1,
+        "fisl-source-port": 1,
+        "fisl-sink-port": 1,
+        "transport-belt": 21,
+        "fast-inserter": 6,
+        "substation": 2,
+        "solar-panel": 18,
+        "steel-chest": 1,
+    },
+    save_name="fp01-baseline",
+)
+
+# Lab 2 shares Lab 4's physical world (A fast -> B slow -> C fast is exactly
+# the ToC line the Lab 2 contract requires); the scenarios differ in
+# metrics, visibility, and reference solutions. Toolbox carries the upgrade
+# machines the constraint lesson needs.
+LAB2 = LabLayout(
+    scenario_id="fp-02-the-constraint",
+    source_pos=LAB4.source_pos,
+    sink_pos=LAB4.sink_pos,
+    machines=list(LAB4.machines),
+    substation_xs=LAB4.substation_xs,
+    toolbox_items={
+        "transport-belt": 100,
+        "fast-inserter": 20,
+        "wooden-chest": 10,
+        "assembling-machine-1": 2,
+        "assembling-machine-2": 2,
+        "assembling-machine-3": 2,
+        "small-electric-pole": 20,
+    },
+    expected_counts=dict(LAB4.expected_counts),
+    save_name="fp02-baseline",
+)
+
+LAYOUTS: dict[str, LabLayout] = {
+    layout.scenario_id: layout for layout in (LAB0, LAB1, LAB2, LAB3, LAB4)
+}
 
 
 def layout_for_scenario(scenario_dir: Path) -> LabLayout:

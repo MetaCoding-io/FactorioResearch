@@ -1,0 +1,79 @@
+# Lab 1 — Flow and Capacity
+
+**Scenario:** `fp-01-flow-and-capacity` · one run of ~10 minutes
+
+Lab 0 had one machine, so "the machine's speed" and "the factory's speed"
+were the same number. Add a second machine with a *different* speed and
+they come apart — and one of the most common industrial mistakes is born:
+reading a machine's spec sheet as a promise about system output.
+
+## The system
+
+Two stages in series. The first machine is a fast model (one workpiece per
+**1.6 s** — installed capacity 37.5/min). The second is a slow model (one
+per **2.0 s** — installed capacity 30/min). Material supply is effectively
+unlimited, so nothing upstream of the line can be blamed for anything.
+
+Measured: admission rate and completion throughput (both boundaries),
+current/average WIP, and each machine's productive/starved/blocked
+fractions.
+
+## Run it, and audit the capacities
+
+Predict before starting: the two machines *install* 37.5/min and 30/min of
+capacity. What will the sink actually receive per minute?
+
+During the run, walk the line:
+
+- Machine 1 runs, stalls against its packed output belt, runs again — it
+  has capacity it cannot use.
+- Machine 2 never rests.
+- The belt between them is solid; the belt after machine 2 is sparse.
+
+Afterward, the report gives the audit: completion throughput equals the
+*slower* machine's rate — serial capacity does not add, it bottlenecks.
+Machine 1's productive fraction is capped at the ratio of the rates
+(1.6/2.0 = 80%), and the report shows the shortfall explicitly as
+*blocked* time, not as a mystery.
+
+Three cross-checks worth doing by hand:
+
+1. **admission rate vs throughput** — during the warmup the input belt was
+   still filling, so admissions ran ahead of completions and WIP grew. In
+   the measured window (steady state) the two rates converge. The report's
+   two boundary measurements let you verify conservation numerically:
+   inflow − outflow = ΔWIP, exactly.
+2. **machine 1's craft count vs system throughput** — machine 1 transforms
+   more workpieces per minute than the sink receives *only while the
+   middle belt is still filling*; at steady state it cannot. Factorio's own
+   production statistics would happily show you crafts; FISL's throughput
+   is deliberately measured at the completion boundary because crafts are
+   not deliveries.
+3. **would more input help?** — the source already replenishes faster than
+   machine 1 draws. Piling more inventory upstream of a full line changes
+   the queue, not the output. (Try it: the toolbox has chests.)
+
+## Debrief
+
+- Your line "installs" 67.5/min of combined capacity and delivers 30/min.
+  Is any capacity *missing*? Where did it go, in the report's vocabulary?
+- A vendor offers to upgrade machine 1 to a model twice as fast. What does
+  the measured data say that's worth?
+- Write the rule you'd give a new plant manager for predicting a serial
+  line's output from its stage capacities. (You've just derived the first
+  half of the next lab.)
+
+::: {.callout-note collapse="true"}
+## Instructor notes
+
+- The three cross-checks are the lab. If time is short, drop the walking
+  and keep the arithmetic — the report contains everything needed.
+- Rates: M1 = 2 s recipe / 1.25 speed = 1.6 s; M2 = 1 s / 0.5 = 2.0 s.
+  Steady-state predictions: TH 30/min; M1 productive 80% / blocked ~20%
+  (less a little machine-buffer slack); M2 productive ~100%.
+- Reference numbers: cite from `verification-summary.json` after the first
+  `fisl build-baseline scenarios/factory-physics/fp01-flow-and-capacity`.
+- No committed reference solutions: the lab's experiments (extra upstream
+  inventory, rearranged belts) are cheap enough to do live, and the
+  formal upgrade comparison is Lab 2's whole subject.
+:::

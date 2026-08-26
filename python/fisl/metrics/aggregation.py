@@ -98,11 +98,24 @@ def wip_min_max(trajectory: list[tuple[int, int]], start_tick: int, end_tick: in
 
 
 def completed_work(data: TelemetryData, resolved: dict, flow_id: str, start_tick: int, end_tick: int) -> int:
+    return _boundary_work(data, resolved, flow_id, start_tick, end_tick,
+                          record_type="sink_delivery", port_role="completion_ports")
+
+
+def admitted_work(data: TelemetryData, resolved: dict, flow_id: str, start_tick: int, end_tick: int) -> int:
+    """Entry-boundary flow (ADR 0006): work-units withdrawn through the
+    flow's entry ports — the admission rate numerator."""
+    return _boundary_work(data, resolved, flow_id, start_tick, end_tick,
+                          record_type="source_withdrawal", port_role="entry_ports")
+
+
+def _boundary_work(data: TelemetryData, resolved: dict, flow_id: str, start_tick: int,
+                   end_tick: int, *, record_type: str, port_role: str) -> int:
     flow = resolved["flows"][flow_id]
-    completion_ports = set(flow["completion_ports"])
+    boundary_ports = set(flow[port_role])
     total = 0
-    for record in data.of_type("sink_delivery"):
-        if record["port"] in completion_ports and start_tick <= record["interval_start_tick"] < end_tick:
+    for record in data.of_type(record_type):
+        if record["port"] in boundary_ports and start_tick <= record["interval_start_tick"] < end_tick:
             item = resolved["ports"][record["port"]]["material"]["item"]
             coefficient = flow["basis"]["materials"].get(item, 0)
             total += record["quantity"] * coefficient
@@ -273,14 +286,21 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
             flow_id = metric["flow"]
             window = metric["window"]
             start_tick, end_tick = window["start_tick"], window["end_tick"]
-            completed = completed_work(data, resolved, flow_id, start_tick, end_tick)
+            boundary = metric.get("boundary", "completion")
+            if boundary == "entry":
+                completed = admitted_work(data, resolved, flow_id, start_tick, end_tick)
+                method = "entry_source_withdrawal"
+            else:
+                completed = completed_work(data, resolved, flow_id, start_tick, end_tick)
+                method = "completion_sink_delivery"
             ticks = end_tick - start_tick
             per_minute = Fraction(completed * TICKS_PER_MINUTE, ticks)
             metrics_out[metric_id] = {
                 "type": "throughput",
                 "flow": flow_id,
                 "window": window,
-                "method": "completion_sink_delivery",
+                "boundary": boundary,
+                "method": method,
                 "completed_quantity": completed,
                 "window_ticks": ticks,
                 "value_per_minute": float(per_minute),

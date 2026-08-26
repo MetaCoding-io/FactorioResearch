@@ -17,9 +17,15 @@ from fisl.controller.baseline_builder import (
 REPO = Path(__file__).resolve().parents[2]
 
 SCENARIO_DIRS = {
+    "fp-00-measuring-the-factory": "fp00-measuring-the-factory",
+    "fp-01-flow-and-capacity": "fp01-flow-and-capacity",
+    "fp-02-the-constraint": "fp02-the-constraint",
     "fp-03-littles-law": "fp03-littles-law",
     "fp-04-starvation-blocking": "fp04-starvation-blocking",
 }
+
+# The conserved transformation chain; each lab's machine list is a prefix.
+RECIPE_CHAIN = ["fisl-machine-workpiece", "fisl-inspect-workpiece", "fisl-finish-workpiece"]
 
 # Entity footprint sizes (tiles) for overlap checking.
 SIZES = {
@@ -93,9 +99,8 @@ def test_builder_matches_scenario_bindings_and_flow(layout):
     basis = set(raw["flows"]["workpiece_flow"]["basis"]["materials"])
     assert source["material"]["item"] in basis
     assert sink["material"]["item"] in basis
-    assert [recipe for _x, _proto, recipe in layout.machines] == [
-        "fisl-machine-workpiece", "fisl-inspect-workpiece", "fisl-finish-workpiece",
-    ]
+    recipes = [recipe for _x, _proto, recipe in layout.machines]
+    assert recipes == RECIPE_CHAIN[: len(recipes)]
 
 
 def test_flow_direction_is_monotonic_west_to_east(layout):

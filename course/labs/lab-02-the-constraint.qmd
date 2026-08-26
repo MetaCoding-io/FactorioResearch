@@ -1,0 +1,92 @@
+# Lab 2 — The Constraint
+
+**Scenario:** `fp-02-the-constraint` · runs of ~12 minutes each
+
+Lab 1 ended with a rule: a serial line delivers at its slowest stage's
+rate. This lab weaponizes it. You get a three-stage line, a toolbox full
+of faster machines, and one instruction: **raise throughput**. The
+instrumentation will not help you during the run — the panel shows current
+WIP and nothing else. Where you spend your upgrade is your diagnosis, made
+in public.
+
+## The system
+
+Three machines: fast → slow → fast (1.6 s, 2.0 s, and 1.33 s per
+workpiece — but nobody hands the learner this table; the models just look
+different). Ample supply, clean sink. The toolbox holds upgrade machines
+of every tier.
+
+Post-run — and only post-run — the report reveals each machine's
+productive/starved/blocked fractions. Live, you are as blind as a real
+plant manager on the floor: you can watch machines and you can watch the
+one WIP number.
+
+## Run 1 — baseline, and a choice
+
+Run the line untouched once and watch it the way Lab 4 will later
+formalize: which machine never rests? What piles up, and where? Then make
+your call: *which single machine would you upgrade?* Write it down before
+looking at the post-run report — then check the state table. The machine
+with ~zero idle time, upstream neighbors blocked and downstream neighbors
+starved, is the system's constraint.
+
+## Run 2 — spend the upgrade
+
+Two committed reference interventions bracket the choice (run either, or
+your own):
+
+- **A — upgrade a non-constraint**: replace the *downstream fast* machine
+  with the fastest model in the toolbox. A real machine gets really,
+  genuinely faster.
+- **B — upgrade the constraint**: replace the *middle* machine with a
+  mid-tier model — a smaller upgrade, to the right place.
+
+```sh
+fisl solutions scenarios/factory-physics/fp02-the-constraint --run \
+    --json course/data/lab-02-comparison.json
+```
+
+Predictions to lock in first: A moves throughput by ______; B moves it to
+______ (careful: *not* the new machine's own rate — work out which machine
+paces the line afterward).
+
+What the runs show: A changes nothing the customer can see — the upgraded
+machine simply starves harder, and every system metric holds flat. B lifts
+throughput ~25%, to the *upstream* machine's 1.6 s rate: the constraint
+didn't vanish, it moved, and the improvement stopped exactly where the
+next constraint began.
+
+## Debrief
+
+- Solutions A and B are the *same action* — swap one machine for a faster
+  one. Why are their outcomes so different? Finish the sentence: "an
+  improvement matters only if…"
+- After B, what would you upgrade next? Trace the sequence three steps
+  ahead. What does each step cost, and what stops the sequence from being
+  worth continuing forever?
+- The live view hid the state fractions on purpose. What did that force
+  you to do that a dashboard would have done for you — and which of those
+  skills survives in a real plant where the dashboard is wrong?
+- You diagnosed the constraint from *behavior* (who never rests, what
+  piles up where). Lab 4 turns that observation into a named, measured
+  signature — starvation and blocking — and then asks a harder question:
+  what do buffers actually buy?
+
+::: {.callout-note collapse="true"}
+## Instructor notes
+
+- The withheld-live-diagnosis visibility is the point of this lab's
+  configuration: `learner_live` exposes only `current_wip`; the state
+  fractions and per-machine table are post-run. The runtime still records
+  everything — disclosure policy, not measurement policy.
+- Reference interventions: `a-upgrade-non-constraint` (asm-2 → asm-3
+  downstream; expect +0% TH) and `b-upgrade-constraint` (asm-1 → asm-2 in
+  the middle; expect ~+25% TH, capped by the upstream 1.6 s stage at
+  37.5/min). Cite measured numbers after the first
+  `fisl build-baseline scenarios/factory-physics/fp02-the-constraint` and
+  `fisl solutions … --run`.
+- fp02 deliberately shares its physical layout with fp04 (both need
+  fast → slow → fast); the labs differ in metrics, visibility, and what
+  the learner is asked to do with the same world. Teaching order is
+  0 → 1 → 2 → 3 → 4.
+:::

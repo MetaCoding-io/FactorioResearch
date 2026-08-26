@@ -319,6 +319,9 @@ def _resolve_metrics(
                 "type": "throughput",
                 "flow": metric.flow,
                 "window": window,
+                # Key present only for the non-default boundary so scenarios
+                # predating it keep their resolved hash (comparability).
+                **({"boundary": "entry"} if metric.boundary == "entry" else {}),
                 **({"display_unit": metric.display_unit} if metric.display_unit else {}),
             }
         elif isinstance(metric, CycleTimeMetric):
@@ -397,6 +400,11 @@ def _resolve_metrics(
                 problems.append(
                     f"metrics.{metric_id}: throughput_metric {metric.throughput_metric!r} "
                     "must be a throughput metric"
+                )
+            elif throughput.boundary != "completion":
+                problems.append(
+                    f"metrics.{metric_id}: Little's-Law throughput must be measured at the "
+                    "completion boundary; entry-boundary admission rate is not system throughput"
                 )
             if isinstance(wip, AggregateMetric) and isinstance(throughput, ThroughputMetric):
                 wip_source = author.metrics.get(wip.source)

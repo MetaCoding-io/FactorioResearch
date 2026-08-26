@@ -212,9 +212,15 @@ class AggregateMetric(_Strict):
 
 
 class ThroughputMetric(_Strict):
+    """Boundary flow rate (ADR 0006). `completion` measures work leaving
+    through the flow's completion ports (the authoritative system
+    throughput); `entry` measures admissions through the entry ports —
+    Labs 0/1 use both to show input rate ≠ output rate while WIP changes."""
+
     type: Literal["throughput"]
     flow: str
     window: PhaseWindow
+    boundary: Literal["completion", "entry"] = "completion"
     display_unit: str | None = None
 
 

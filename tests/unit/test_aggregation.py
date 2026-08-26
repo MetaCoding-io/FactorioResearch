@@ -306,6 +306,34 @@ def test_dynamic_membership_eligibility_denominators(tmp_path):
     assert productive["coverage_complete"] is False
 
 
+def test_entry_boundary_throughput_counts_admissions(tmp_path):
+    import copy
+
+    resolved = copy.deepcopy(RESOLVED)
+    resolved["metrics"]["admission_rate"] = {
+        "type": "throughput", "flow": "flow", "boundary": "entry",
+        "window": {"phase": "measured", "start_tick": 100, "end_tick": 200},
+    }
+    records = base_records()
+    records[2:2] = [
+        {"type": "source_withdrawal", "port": "src", "quantity": 1,
+         "interval_start_tick": 49, "interval_end_tick": 50},
+        {"type": "source_withdrawal", "port": "src", "quantity": 1,
+         "interval_start_tick": 119, "interval_end_tick": 120},
+    ]
+    path = write_telemetry(tmp_path, records)
+    summary = compute_summary(resolved, RUN_CONFIG, path)
+
+    admission = summary["metrics"]["admission_rate"]
+    assert admission["method"] == "entry_source_withdrawal"
+    # Only the second withdrawal falls inside [100, 200).
+    assert admission["completed_quantity"] == 1
+    assert admission["value_per_minute"] == pytest.approx(1 * 3600 / 100)
+    completion = summary["metrics"]["throughput"]
+    assert completion["method"] == "completion_sink_delivery"
+    assert completion["completed_quantity"] == 2  # inflow != outflow; ΔWIP explains it
+
+
 def test_incomplete_run_marks_coverage(tmp_path):
     records = [r for r in base_records() if r["type"] != "experiment_completed"]
     records.append({"type": "experiment_aborted", "reason": "learner_disconnected", "summary": {}})

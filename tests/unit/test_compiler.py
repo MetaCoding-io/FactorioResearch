@@ -202,6 +202,43 @@ def test_state_fraction_rejects_coverage_missing_as_state(raw):
         _compile_raw(bad)
 
 
+FP04_COMMITTED_HASH = "sha256:98f6d0b46f3b464d1c94e13922576db636fc0b1afaff6b9fd7ebd6c7bb118dc7"
+
+
+def test_all_committed_scenarios_compile():
+    for scenario_yaml in sorted(SCENARIO_YAML.parent.parent.glob("*/scenario.yaml")):
+        resolved = compile_author_scenario(load_author_yaml(scenario_yaml))
+        assert resolved["experiment"]["total_duration_ticks"] > 0, scenario_yaml
+
+
+def test_fp04_resolved_hash_matches_committed_verification():
+    fp04_yaml = SCENARIO_YAML.parent.parent / "fp04-starvation-blocking" / "scenario.yaml"
+    resolved = compile_author_scenario(load_author_yaml(fp04_yaml))
+    assert resolved_hash(resolved) == FP04_COMMITTED_HASH
+
+
+def test_entry_boundary_throughput_compiles(raw):
+    doc = copy.deepcopy(raw)
+    doc["metrics"]["admission_rate"] = {
+        "type": "throughput",
+        "flow": "workpiece_flow",
+        "boundary": "entry",
+        "window": {"phase": "measured"},
+    }
+    resolved = _compile_raw(doc)
+    assert resolved["metrics"]["admission_rate"]["boundary"] == "entry"
+    # Default completion boundary stays keyless so existing hashes hold.
+    assert "boundary" not in resolved["metrics"]["measured_throughput"]
+
+
+def test_littles_law_rejects_entry_boundary_throughput(raw):
+    bad = copy.deepcopy(raw)
+    bad["metrics"]["measured_throughput"]["boundary"] = "entry"
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("completion boundary" in p for p in exc.value.problems)
+
+
 def test_fp04_scenario_compiles_with_machine_state_stack(raw):
     fp04_yaml = SCENARIO_YAML.parent.parent / "fp04-starvation-blocking" / "scenario.yaml"
     resolved = compile_author_scenario(load_author_yaml(fp04_yaml))

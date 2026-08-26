@@ -1,0 +1,156 @@
+spec: fisl/v1
+
+scenario:
+  id: fp-00-measuring-the-factory
+  version: 0.1.0
+  title: Measuring the Factory
+  description: >-
+    The smallest possible line — one machine between a source and a sink —
+    measured carefully: a declared boundary, a conserved unit, explicit
+    windows, and the difference between a stock (WIP now), a flow
+    (throughput), and a time average. The challenge is measurement, not
+    optimization.
+
+factorio:
+  version:
+    minimum: 2.0.77
+    maximum_exclusive: 2.1.0
+  baseline_save: baseline.zip
+  required_mods:
+    fisl-core: compatible
+    fisl-factory-physics: compatible
+
+experiment:
+  seed: 1
+  time:
+    game_speed:
+      policy: fixed
+      value: 1.0
+    pause_policy: prohibited
+  phases:
+    - id: warmup
+      duration: 1m
+    - id: measured
+      duration: 5m
+
+zones:
+  factory_floor:
+    surface: nauvis
+    area:
+      left_top: [-18, -16]
+      right_bottom: [18, 16]
+
+systems:
+  factory:
+    primary_zone: factory_floor
+    boundary_integrity:
+      entity_containment: flag
+
+ports:
+  workpiece_source:
+    system: factory
+    direction: source
+    binding:
+      surface: nauvis
+      position: [-12.5, 0.5]
+      prototype: fisl-source-port
+    material:
+      item: fisl-rough-workpiece
+    supply:
+      mode: replenish
+      target: 100
+
+  finished_goods:
+    system: factory
+    direction: sink
+    binding:
+      surface: nauvis
+      position: [13.5, 0.5]
+      prototype: fisl-sink-port
+    material:
+      item: fisl-machined-workpiece
+
+flows:
+  workpiece_flow:
+    system: factory
+    unit: workpiece
+    basis:
+      type: conserved_work_unit
+      materials:
+        fisl-rough-workpiece: 1
+        fisl-machined-workpiece: 1
+    entry_ports:
+      - workpiece_source
+    completion_ports:
+      - finished_goods
+
+metrics:
+  line_wip:
+    type: wip
+    flow: workpiece_flow
+    method: conservation_ledger
+    validation:
+      physical_census:
+        required: true
+        every: 60t
+        discrepancy_tolerance: 0
+        include_player_inventory: true
+
+  current_wip:
+    type: current_value
+    source: line_wip
+
+  average_wip:
+    type: aggregate
+    source: line_wip
+    aggregation: time_mean
+    window:
+      phase: measured
+
+  admission_rate:
+    type: throughput
+    flow: workpiece_flow
+    boundary: entry
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  measured_throughput:
+    type: throughput
+    flow: workpiece_flow
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+visibility:
+  learner_live:
+    metrics:
+      - current_wip
+  learner_post_run:
+    metrics:
+      - average_wip
+      - admission_rate
+      - measured_throughput
+  instructor:
+    metrics:
+      - line_wip
+    diagnostics:
+      - coverage
+      - census
+      - protocol_violations
+
+learning:
+  concepts:
+    - system boundary
+    - stock vs flow
+    - conserved unit
+    - measurement window
+  represents_directly:
+    - a declared rectangular boundary with explicit entry/exit ports
+    - deterministic single-stage transformation
+  remains_absent:
+    - variability
+    - optimization pressure
+    - monetary cost
+  not_warranted:
+    - inferring anything about good factory design from one machine

@@ -38,6 +38,7 @@ function experiment.init_accumulators(config)
     elseif metric.type == "throughput" then
       s.accumulators[metric_id] = {
         type = "throughput", flow = metric.flow,
+        boundary = metric.boundary or "completion",
         window = metric.window, completed = 0,
       }
     end
@@ -75,9 +76,15 @@ local function accumulate_interval(config, settlement, interval_start_tick)
       local window = acc.window
       if interval_start_tick >= window.start_tick and interval_start_tick < window.end_tick then
         local flow = config.resolved.flows[acc.flow]
-        for port_id, quantity in pairs(settlement.deliveries) do
-          for _, completion_port in ipairs(flow.completion_ports) do
-            if port_id == completion_port then
+        local quantities, boundary_ports
+        if acc.boundary == "entry" then
+          quantities, boundary_ports = settlement.withdrawals, flow.entry_ports
+        else
+          quantities, boundary_ports = settlement.deliveries, flow.completion_ports
+        end
+        for port_id, quantity in pairs(quantities) do
+          for _, boundary_port in ipairs(boundary_ports) do
+            if port_id == boundary_port then
               local item = s.ports[port_id].item
               local coefficient = flow.basis.materials[item] or 0
               acc.completed = acc.completed + quantity * coefficient
@@ -98,7 +105,7 @@ function experiment.summary(config)
         type = "throughput", flow = acc.flow, window = acc.window,
         completed_quantity = acc.completed,
         window_ticks = acc.window.end_tick - acc.window.start_tick,
-        method = "completion_sink_delivery",
+        method = acc.boundary == "entry" and "entry_source_withdrawal" or "completion_sink_delivery",
       }
     elseif acc.type == "time_mean" or acc.type == "time_integral" then
       metrics[metric_id] = {

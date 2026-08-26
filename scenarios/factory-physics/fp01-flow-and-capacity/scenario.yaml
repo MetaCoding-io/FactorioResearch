@@ -1,0 +1,200 @@
+spec: fisl/v1
+
+scenario:
+  id: fp-01-flow-and-capacity
+  version: 0.1.0
+  title: Flow and Capacity
+  description: >-
+    Two serial stages with deliberately different installed capacities.
+    Admission rate, local machine productive fractions, and completion
+    throughput are measured separately — and they disagree in exactly the
+    ways that teach the difference between installed capacity and achieved
+    system output.
+
+factorio:
+  version:
+    minimum: 2.0.77
+    maximum_exclusive: 2.1.0
+  baseline_save: baseline.zip
+  required_mods:
+    fisl-core: compatible
+    fisl-factory-physics: compatible
+
+experiment:
+  seed: 1
+  time:
+    game_speed:
+      policy: fixed
+      value: 1.0
+    pause_policy: prohibited
+  phases:
+    - id: warmup
+      duration: 4m
+    - id: measured
+      duration: 6m
+
+zones:
+  factory_floor:
+    surface: nauvis
+    area:
+      left_top: [-22, -16]
+      right_bottom: [22, 16]
+
+systems:
+  factory:
+    primary_zone: factory_floor
+    boundary_integrity:
+      entity_containment: flag
+
+entity_sets:
+  line_machines:
+    zone: factory_floor
+    types:
+      - assembling-machine
+    exclude_roles:
+      - fisl_apparatus
+    membership: dynamic
+
+ports:
+  workpiece_source:
+    system: factory
+    direction: source
+    binding:
+      surface: nauvis
+      position: [-16.5, 0.5]
+      prototype: fisl-source-port
+    material:
+      item: fisl-rough-workpiece
+    supply:
+      mode: replenish
+      target: 100
+
+  finished_goods:
+    system: factory
+    direction: sink
+    binding:
+      surface: nauvis
+      position: [17.5, 0.5]
+      prototype: fisl-sink-port
+    material:
+      item: fisl-inspected-workpiece
+
+flows:
+  workpiece_flow:
+    system: factory
+    unit: workpiece
+    basis:
+      type: conserved_work_unit
+      materials:
+        fisl-rough-workpiece: 1
+        fisl-machined-workpiece: 1
+        fisl-inspected-workpiece: 1
+    entry_ports:
+      - workpiece_source
+    completion_ports:
+      - finished_goods
+
+metrics:
+  line_wip:
+    type: wip
+    flow: workpiece_flow
+    method: conservation_ledger
+    validation:
+      physical_census:
+        required: true
+        every: 60t
+        discrepancy_tolerance: 0
+        include_player_inventory: true
+
+  current_wip:
+    type: current_value
+    source: line_wip
+
+  average_wip:
+    type: aggregate
+    source: line_wip
+    aggregation: time_mean
+    window:
+      phase: measured
+
+  admission_rate:
+    type: throughput
+    flow: workpiece_flow
+    boundary: entry
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  measured_throughput:
+    type: throughput
+    flow: workpiece_flow
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  machine_state:
+    type: production_state
+    entities: line_machines
+    adapter: crafting_machine
+
+  fraction_productive:
+    type: state_fraction
+    source: machine_state
+    state: productive
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+  fraction_starved:
+    type: state_fraction
+    source: machine_state
+    state: starved
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+  fraction_blocked:
+    type: state_fraction
+    source: machine_state
+    state: blocked
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+visibility:
+  learner_live:
+    metrics:
+      - current_wip
+  learner_post_run:
+    metrics:
+      - average_wip
+      - admission_rate
+      - measured_throughput
+      - fraction_productive
+      - fraction_starved
+      - fraction_blocked
+  instructor:
+    metrics:
+      - line_wip
+      - machine_state
+    diagnostics:
+      - coverage
+      - census
+      - protocol_violations
+
+learning:
+  concepts:
+    - rates
+    - installed capacity vs achieved output
+    - serial dependence
+  represents_directly:
+    - two coupled stages with unequal deterministic capacities
+  remains_absent:
+    - variability
+    - demand constraints
+    - monetary cost
+  not_warranted:
+    - treating local machine output statistics as system throughput
