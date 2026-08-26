@@ -101,7 +101,7 @@ def test_productive_then_starved_and_completion_wrap(factorio, tmp_path, baselin
     assert all(s["cause"] == "input_shortage" for s in starved_spans)
 
     fraction = summary["metrics"]["fraction_starved"]
-    assert fraction["denominator_machine_ticks"] == 36000  # 1 machine x 60 s
+    assert fraction["denominator_machine_ticks"] == 3600  # 1 machine x 60 s
     assert fraction["coverage_fraction"] == pytest.approx(1.0)
     assert summary["lua_cross_verification"]["agrees"], summary["lua_cross_verification"]
 
