@@ -119,3 +119,93 @@ def test_visibility_unknown_metric_rejected(raw):
     with pytest.raises(CompilationError) as exc:
         _compile_raw(bad)
     assert any("ghost_metric" in p for p in exc.value.problems)
+
+
+# --- machine-state metrics (ADR 0007, issue #7) -----------------------------
+
+# The resolved hash committed with the first verified baseline run. Machine-
+# state support must not disturb the identity of scenarios that don't use it
+# — existing runs stay comparable.
+FP03_COMMITTED_HASH = "sha256:4fafdd4cb4607338b4888b8b6b535f4ebd1f39f0d52b0b726ccc7c71183938f4"
+
+
+def test_fp03_resolved_hash_unchanged_by_machine_state_support(author):
+    resolved = compile_author_scenario(author)
+    assert resolved_hash(resolved) == FP03_COMMITTED_HASH
+    assert "machine_state" not in resolved["observation_plan"]
+
+
+def _with_machine_state(raw_doc):
+    doc = copy.deepcopy(raw_doc)
+    doc["metrics"]["machine_state"] = {
+        "type": "production_state",
+        "entities": "line_machines",
+        "adapter": "crafting_machine",
+    }
+    doc["metrics"]["fraction_starved"] = {
+        "type": "state_fraction",
+        "source": "machine_state",
+        "state": "starved",
+        "entity_aggregation": "pooled_machine_time",
+        "denominator": "full_window",
+        "window": {"phase": "measured"},
+    }
+    return doc
+
+
+def test_machine_state_metrics_compile(raw):
+    resolved = _compile_raw(_with_machine_state(raw))
+    production = resolved["metrics"]["machine_state"]
+    assert production["adapter"] == "crafting_machine"
+    assert production["activity"] == {"method": "craft_progress_delta", "cadence": "1tick"}
+    assert production["classification"] == {"profile": "factory_physics_v1"}
+    assert production["membership_resolution"] == "static_at_ready"
+    fraction = resolved["metrics"]["fraction_starved"]
+    assert fraction["denominator"] == "full_window"
+    assert (fraction["window"]["start_tick"], fraction["window"]["end_tick"]) == (7200, 43200)
+    plan = resolved["observation_plan"]["machine_state"]
+    assert plan == [
+        {
+            "metric": "machine_state",
+            "entity_set": "line_machines",
+            "adapter": "crafting_machine",
+            "activity_method": "craft_progress_delta",
+            "cadence": "1tick",
+            "classification_profile": "factory_physics_v1",
+            "membership_resolution": "static_at_ready",
+        }
+    ]
+
+
+def test_production_state_unknown_entity_set_rejected(raw):
+    bad = _with_machine_state(raw)
+    bad["metrics"]["machine_state"]["entities"] = "ghost_set"
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("ghost_set" in p for p in exc.value.problems)
+
+
+def test_state_fraction_source_must_be_production_state(raw):
+    bad = _with_machine_state(raw)
+    bad["metrics"]["fraction_starved"]["source"] = "line_wip"
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("must be a production_state metric" in p for p in exc.value.problems)
+
+
+def test_state_fraction_rejects_coverage_missing_as_state(raw):
+    # coverage_missing is missing measurement, never a requestable state
+    # (ADR 0007 §24) — the schema literal refuses it.
+    bad = _with_machine_state(raw)
+    bad["metrics"]["fraction_starved"]["state"] = "coverage_missing"
+    with pytest.raises(CompilationError):
+        _compile_raw(bad)
+
+
+def test_state_fraction_rejects_shrunken_denominator(raw):
+    # Only the explicit full-window denominator exists in the POC; anything
+    # that looks like classified-time-only is rejected (ADR 0010 §12).
+    bad = _with_machine_state(raw)
+    bad["metrics"]["fraction_starved"]["denominator"] = "classified_time"
+    with pytest.raises(CompilationError):
+        _compile_raw(bad)

@@ -227,7 +227,69 @@ class CycleTimeMetric(_Strict):
     interpretation: dict[str, str] = Field(default_factory=dict)
 
 
-Metric = WipMetric | CurrentValueMetric | AggregateMetric | ThroughputMetric | CycleTimeMetric
+# ADR 0007 headline vocabulary. `coverage_missing` is deliberately absent:
+# it is missing measurement, not a classifiable state (§24), and coverage is
+# reported alongside every state fraction rather than requested as one.
+HEADLINE_STATES = (
+    "productive",
+    "starved",
+    "blocked",
+    "unavailable",
+    "disabled",
+    "idle_other",
+    "unclassified",
+)
+
+
+class ActivitySpec(_Strict):
+    method: Literal["craft_progress_delta"] = "craft_progress_delta"
+    cadence: Literal["1tick"] = "1tick"
+
+
+class ClassificationSpec(_Strict):
+    profile: Literal["factory_physics_v1"] = "factory_physics_v1"
+
+
+class ProductionStateMetric(_Strict):
+    """Classified per-machine state series (ADR 0007): the adapter/profile
+    supply the validated mapping table; authors never restate it."""
+
+    type: Literal["production_state"]
+    entities: str
+    adapter: Literal["crafting_machine"] = "crafting_machine"
+    activity: ActivitySpec = Field(default_factory=ActivitySpec)
+    classification: ClassificationSpec = Field(default_factory=ClassificationSpec)
+
+
+class StateFractionMetric(_Strict):
+    """Pooled machine-time fraction in one headline state over a window.
+
+    The denominator is always the full window (ADR 0010 §11-§12: explicit
+    denominator, never silently shrunk); classification coverage is reported
+    next to the fraction instead of being folded into it. There is no bare
+    `utilization` metric.
+    """
+
+    type: Literal["state_fraction"]
+    source: str
+    state: Literal[
+        "productive", "starved", "blocked", "unavailable",
+        "disabled", "idle_other", "unclassified",
+    ]
+    entity_aggregation: Literal["pooled_machine_time"] = "pooled_machine_time"
+    denominator: Literal["full_window"] = "full_window"
+    window: PhaseWindow
+
+
+Metric = (
+    WipMetric
+    | CurrentValueMetric
+    | AggregateMetric
+    | ThroughputMetric
+    | CycleTimeMetric
+    | ProductionStateMetric
+    | StateFractionMetric
+)
 
 
 class VisibilityAudience(_Strict):

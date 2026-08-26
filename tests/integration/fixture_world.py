@@ -96,10 +96,16 @@ def fixture_scenario(
     measured: str = "60s",
     supply: dict | None = None,
     census_every: str = "60t",
+    machine_state: bool = False,
 ) -> dict:
-    """Author-form scenario dict for the fixture line."""
+    """Author-form scenario dict for the fixture line.
+
+    With machine_state=True the scenario also declares the ADR 0007
+    production-state metric over the line's crafting machines plus pooled
+    state fractions for the measured phase (issue #7 fixtures).
+    """
     supply = supply or {"mode": "replenish", "target": 20}
-    return {
+    doc = {
         "spec": "fisl/v1",
         "scenario": {
             "id": "rv-spike-fixture",
@@ -197,6 +203,30 @@ def fixture_scenario(
             },
         },
     }
+    if machine_state:
+        doc["entity_sets"] = {
+            "line_machines": {
+                "zone": "factory_floor",
+                "types": ["assembling-machine"],
+                "exclude_roles": ["fisl_apparatus"],
+                "membership": "dynamic",
+            }
+        }
+        doc["metrics"]["machine_state"] = {
+            "type": "production_state",
+            "entities": "line_machines",
+            "adapter": "crafting_machine",
+        }
+        for state in ("productive", "starved", "blocked", "unavailable", "disabled"):
+            doc["metrics"][f"fraction_{state}"] = {
+                "type": "state_fraction",
+                "source": "machine_state",
+                "state": state,
+                "entity_aggregation": "pooled_machine_time",
+                "denominator": "full_window",
+                "window": {"phase": "measured"},
+            }
+    return doc
 
 
 def create_baseline(factorio_bin: Path, workspace: Path) -> Path:

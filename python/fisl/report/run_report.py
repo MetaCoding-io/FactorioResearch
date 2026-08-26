@@ -70,11 +70,65 @@ def render_report(summary: dict, console: Console) -> None:
             exact = "-"
             method = metric["method"]
             validity_text = ""
+        elif metric_type == "state_fraction":
+            if metric.get("value") is not None:
+                value = f"{metric['value'] * 100:.1f}% {metric['state']}"
+                exact = f"{metric['exact']['numerator']}/{metric['exact']['denominator']} machine-ticks"
+                coverage = metric.get("coverage_fraction")
+                validity_text = _validity_text(metric)
+                if coverage is not None and coverage < 1:
+                    validity_text += f", [yellow]classified coverage {coverage * 100:.1f}%[/yellow]"
+            else:
+                value = "no data"
+                exact = "-"
+                validity_text = metric.get("reason", "")
+            window = metric["window"]
+            method = (
+                f"pooled machine-time / full window, {metric['machine_count']} machines "
+                f"over {window['phase']}"
+            )
         else:
             continue
         table.add_row(metric_id, value, method, exact, validity_text)
 
     console.print(table)
+
+    for metric_id, metric in summary.get("metrics", {}).items():
+        if metric.get("type") == "production_state":
+            _render_production_state(metric_id, metric, console)
+
+
+def _render_production_state(metric_id: str, metric: dict, console: Console) -> None:
+    console.print(
+        f"\n[bold]{metric_id}[/bold] — classified machine states "
+        f"(adapter {metric.get('adapter')}, classifier {metric.get('classifier_version')}, "
+        f"membership {metric.get('membership_resolution')})"
+    )
+    machines = {str(m["unit_number"]): m for m in metric.get("machines", [])}
+    run_ticks = metric.get("run_ticks") or 0
+    table = Table(show_header=True)
+    table.add_column("Machine")
+    for headline in ("productive", "starved", "blocked", "unavailable", "disabled",
+                     "idle_other", "unclassified", "coverage_missing"):
+        table.add_column(headline)
+    for unit_number, ticks_by_state in sorted(metric.get("per_machine_state_ticks", {}).items()):
+        info = machines.get(unit_number, {})
+        position = info.get("position", {})
+        label = f"{info.get('prototype', 'machine')} @ ({position.get('x')}, {position.get('y')})"
+        row = [label]
+        for headline in ("productive", "starved", "blocked", "unavailable", "disabled",
+                         "idle_other", "unclassified", "coverage_missing"):
+            ticks = ticks_by_state.get(headline, 0)
+            if ticks and run_ticks:
+                row.append(f"{ticks / run_ticks * 100:.1f}%")
+            else:
+                row.append("-" if not ticks else str(ticks))
+        table.add_row(*row)
+    console.print(table)
+    console.print(
+        f"Cell = share of the full run ({run_ticks} ticks) per machine; "
+        "exact machine-tick counts are in summary.json."
+    )
 
 
 def _validity_text(metric: dict) -> str:

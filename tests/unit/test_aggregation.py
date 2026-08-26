@@ -133,6 +133,111 @@ def test_census_discrepancy_flags_overlapping_window(tmp_path):
     assert summary["lua_cross_verification"]["agrees"] is True
 
 
+def machine_state_resolved() -> dict:
+    import copy
+
+    resolved = copy.deepcopy(RESOLVED)
+    resolved["metrics"]["machine_state"] = {
+        "type": "production_state",
+        "entities": "line_machines",
+        "adapter": "crafting_machine",
+        "activity": {"method": "craft_progress_delta", "cadence": "1tick"},
+        "classification": {"profile": "factory_physics_v1"},
+        "membership_resolution": "static_at_ready",
+    }
+    for state in ("productive", "starved"):
+        resolved["metrics"][f"fraction_{state}"] = {
+            "type": "state_fraction",
+            "source": "machine_state",
+            "state": state,
+            "entity_aggregation": "pooled_machine_time",
+            "denominator": "full_window",
+            "window": {"phase": "measured", "start_tick": 100, "end_tick": 200},
+        }
+    return resolved
+
+
+def machine_state_records() -> list[dict]:
+    records = base_records()
+    membership = {
+        "type": "machine_state_membership",
+        "metric": "machine_state",
+        "entity_set": "line_machines",
+        "adapter": "crafting_machine",
+        "classifier_version": "crafting_machine/1",
+        "membership_resolution": "static_at_ready",
+        "machines": [
+            {"unit_number": 101, "prototype": "assembling-machine-1", "position": {"x": 0.5, "y": 0.5}},
+            {"unit_number": 102, "prototype": "assembling-machine-1", "position": {"x": 8.5, "y": 0.5}},
+        ],
+    }
+    spans = [
+        # m101: productive [0,160), starved [160,200)
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 101,
+         "from_tick": 0, "to_tick": 160, "headline": "productive", "cause": "none",
+         "raw_status": "working", "mapped": True},
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 101,
+         "from_tick": 160, "to_tick": 200, "headline": "starved", "cause": "input_shortage",
+         "raw_status": "item_ingredient_shortage", "mapped": True},
+        # m102: productive [0,140), missing [140,150), blocked [150,200)
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 102,
+         "from_tick": 0, "to_tick": 140, "headline": "productive", "cause": "none",
+         "raw_status": "working", "mapped": True},
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 102,
+         "from_tick": 140, "to_tick": 150, "headline": "coverage_missing", "cause": "unknown",
+         "raw_status": None, "mapped": False},
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 102,
+         "from_tick": 150, "to_tick": 200, "headline": "blocked", "cause": "output_blocked",
+         "raw_status": "full_output", "mapped": True},
+    ]
+    records[-1:-1] = [membership] + spans  # before experiment_completed
+    records[-1]["summary"]["machine_state"] = {
+        "machine_state": {
+            "pooled_state_ticks": {"productive": 300, "starved": 40, "blocked": 50},
+            "coverage_missing_ticks": 10,
+        }
+    }
+    return records
+
+
+def test_state_fractions_full_window_denominator_and_coverage(tmp_path):
+    path = write_telemetry(tmp_path, machine_state_records())
+    summary = compute_summary(machine_state_resolved(), RUN_CONFIG, path)
+
+    production = summary["metrics"]["machine_state"]
+    assert production["machine_count"] == 2
+    assert production["pooled_state_ticks"] == {
+        "productive": 300, "starved": 40, "blocked": 50, "coverage_missing": 10,
+    }
+    assert production["classified_machine_ticks"] == 390
+    assert production["classifier_version"] == "crafting_machine/1"
+
+    # Window [100,200): m101 productive 60 + m102 productive 40 = 100 of the
+    # full 2x100 machine-tick denominator; the 10 missing ticks reduce
+    # coverage, never the denominator.
+    productive = summary["metrics"]["fraction_productive"]
+    assert productive["denominator_machine_ticks"] == 200
+    assert productive["exact"] == {"numerator": 100, "denominator": 200}
+    assert productive["value"] == pytest.approx(0.5)
+    assert productive["coverage_fraction"] == pytest.approx(190 / 200)
+    assert productive["coverage_complete"] is False
+
+    starved = summary["metrics"]["fraction_starved"]
+    assert starved["exact"] == {"numerator": 40, "denominator": 200}
+
+    # Lua streaming accumulators agree with the span recomputation.
+    verification = summary["lua_cross_verification"]
+    assert not any("machine_state" in m for m in verification["mismatches"])
+
+
+def test_lua_machine_state_mismatch_is_flagged(tmp_path):
+    records = machine_state_records()
+    records[-1]["summary"]["machine_state"]["machine_state"]["pooled_state_ticks"]["productive"] = 299
+    path = write_telemetry(tmp_path, records)
+    summary = compute_summary(machine_state_resolved(), RUN_CONFIG, path)
+    assert any("machine_state" in m for m in summary["lua_cross_verification"]["mismatches"])
+
+
 def test_incomplete_run_marks_coverage(tmp_path):
     records = [r for r in base_records() if r["type"] != "experiment_completed"]
     records.append({"type": "experiment_aborted", "reason": "learner_disconnected", "summary": {}})

@@ -9,6 +9,7 @@ local telemetry = require("fisl.telemetry")
 local ports = require("fisl.ports")
 local ledger = require("fisl.ledger")
 local census = require("fisl.census")
+local machine_state = require("fisl.machine_state")
 
 local experiment = {}
 
@@ -127,6 +128,7 @@ function experiment.summary(config)
     metrics = metrics,
     ledgers = ledgers,
     census = census_state,
+    machine_state = machine_state.summary(),
     protocol_events = s.validity.protocol_events,
     manual_carriage_seen = s.validity.manual_carriage_seen,
   }
@@ -134,6 +136,10 @@ end
 
 local function finalize(config, experiment_tick)
   local s = state.get()
+  -- Final machine-state boundary sample classifies the last interval
+  -- [total-1, total) before spans are flushed (ADR 0007 §21).
+  machine_state.checkpoint(config, experiment_tick)
+  machine_state.flush_spans(experiment_tick)
   -- Terminal census + residual manual-carriage escalation (ADR 0017 §12).
   census.cross_check_forced(config, experiment_tick)
   for _, entry in pairs(s.census) do
@@ -226,6 +232,7 @@ function experiment.checkpoint(config)
   -- Step 9: canonical prepared point-state samples + census cross-checks.
   census.cross_check(config, experiment_tick)
   accumulate_point_state(config, experiment_tick)
+  machine_state.checkpoint(config, experiment_tick)
 
   -- Step 10: commit batch.
   telemetry.maybe_flush(experiment_tick)
@@ -233,6 +240,9 @@ end
 
 function experiment.abort(config, reason)
   local s = state.get()
+  -- Emit what was actually observed: spans close at the last classified
+  -- boundary; nothing after it is invented (ADR 0007 §24).
+  machine_state.flush_spans(nil)
   telemetry.emit({
     type = "experiment_aborted", reason = reason,
     experiment_tick = s.run.experiment_start_map_tick

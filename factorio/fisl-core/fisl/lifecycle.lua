@@ -11,6 +11,7 @@ local ports = require("fisl.ports")
 local ledger = require("fisl.ledger")
 local census = require("fisl.census")
 local experiment = require("fisl.experiment")
+local machine_state = require("fisl.machine_state")
 
 local lifecycle = {}
 
@@ -134,6 +135,10 @@ function lifecycle.validate_ready()
   ledger.init(config)
   census.init(config)
   experiment.init_accumulators(config)
+
+  -- Static production-state membership (ADR 0007; interim until issue #8).
+  local machine_problems = machine_state.init(config)
+  if machine_problems then return machine_problems end
 
   -- Initial census establishes and validates initial WIP (ADR 0017 §4).
   for flow_id, led in pairs(s.ledgers) do

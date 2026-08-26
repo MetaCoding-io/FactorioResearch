@@ -20,7 +20,9 @@ from fisl.scenario.author_models import (
     AuthorScenario,
     CurrentValueMetric,
     CycleTimeMetric,
+    ProductionStateMetric,
     ScheduledSupply,
+    StateFractionMetric,
     ThroughputMetric,
     WipMetric,
 )
@@ -328,6 +330,36 @@ def _resolve_metrics(
                 "throughput_metric": metric.throughput_metric,
                 "interpretation": metric.interpretation,
             }
+        elif isinstance(metric, ProductionStateMetric):
+            if metric.entities not in author.entity_sets:
+                problems.append(f"metrics.{metric_id}: unknown entity_set {metric.entities!r}")
+                continue
+            resolved[metric_id] = {
+                "type": "production_state",
+                "entities": metric.entities,
+                "adapter": metric.adapter,
+                "activity": {
+                    "method": metric.activity.method,
+                    "cadence": metric.activity.cadence,
+                },
+                "classification": {"profile": metric.classification.profile},
+                # Interim ADR 0016 simplification (issue #8): the entity set is
+                # resolved once at READY. Semantically load-bearing, so it is
+                # part of the resolved document (and the hash).
+                "membership_resolution": "static_at_ready",
+            }
+        elif isinstance(metric, StateFractionMetric):
+            window = window_for(metric_id, metric.window)
+            if window is None:
+                continue
+            resolved[metric_id] = {
+                "type": "state_fraction",
+                "source": metric.source,
+                "state": metric.state,
+                "entity_aggregation": metric.entity_aggregation,
+                "denominator": metric.denominator,
+                "window": window,
+            }
         else:  # pragma: no cover - exhaustiveness guard
             problems.append(f"metrics.{metric_id}: unsupported metric type")
 
@@ -342,6 +374,15 @@ def _resolve_metrics(
                 problems.append(
                     f"metrics.{metric_id}: source {metric.source!r} must be a point-state "
                     "metric (wip) in the POC"
+                )
+        if isinstance(metric, StateFractionMetric):
+            source = author.metrics.get(metric.source)
+            if source is None:
+                problems.append(f"metrics.{metric_id}: unknown source metric {metric.source!r}")
+            elif not isinstance(source, ProductionStateMetric):
+                problems.append(
+                    f"metrics.{metric_id}: source {metric.source!r} must be a "
+                    "production_state metric"
                 )
         if isinstance(metric, CycleTimeMetric):
             wip = author.metrics.get(metric.wip_metric)
@@ -398,6 +439,20 @@ def _build_observation_plan(author: AuthorScenario, resolved_metrics: dict[str, 
         "census": [],
     }
     for metric_id, metric in resolved_metrics.items():
+        if metric["type"] == "production_state":
+            # Key added only when present so scenarios without machine-state
+            # metrics keep their existing resolved hash (comparability).
+            plan.setdefault("machine_state", []).append(
+                {
+                    "metric": metric_id,
+                    "entity_set": metric["entities"],
+                    "adapter": metric["adapter"],
+                    "activity_method": metric["activity"]["method"],
+                    "cadence": metric["activity"]["cadence"],
+                    "classification_profile": metric["classification"]["profile"],
+                    "membership_resolution": metric["membership_resolution"],
+                }
+            )
         if metric["type"] == "wip":
             plan["ledgers"].append({"metric": metric_id, "flow": metric["flow"]})
             census = metric["validation"]["physical_census"]

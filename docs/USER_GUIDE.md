@@ -194,6 +194,17 @@ Human-readable results: every metric with its method, window, exact
 numerator/denominator, and validity (coverage complete? census clean?).
 The same information lives in `runs/<run_id>/summary.json` as JSON.
 
+For scenarios that declare machine-state metrics (ADR 0007 — not fp03,
+whose identity is frozen; new Lab 2/4 scenarios will), the report adds a
+per-machine table: what fraction of the run each measured machine spent
+**productive / starved / blocked / unavailable / disabled / idle_other /
+unclassified**, plus `coverage_missing` when an interval couldn't be
+classified. Requested `state_fraction` metrics appear in the main table as
+pooled machine-time fractions of the *full window* — coverage gaps are
+shown next to the number, never silently folded into it, and there is
+deliberately no bare "utilization" metric: you always see which states are
+in the numerator and what the denominator is.
+
 ---
 
 ## 4. What the learner experiences (Lab 3)

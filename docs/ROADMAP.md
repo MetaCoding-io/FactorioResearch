@@ -28,10 +28,12 @@ Relationship to other planning documents:
 | Living user guide | `USER_GUIDE.md` |
 | `fisl compare` + scripted reference solutions (`--solution`) + fp03 solution A | [#6](https://github.com/MetaCoding-io/FactorioResearch/issues/6), `scenarios/.../solutions/a-pull-signal/` |
 | Course text scaffold (Quarto book, Lab 3 chapter drafted) | `course/` |
+| Machine-state classification implemented (classifier + runtime adapter + `production_state`/`state_fraction` metrics + per-state fixtures) — fixture execution vs real runtime pending | [#7](https://github.com/MetaCoding-io/FactorioResearch/issues/7), `factorio/fisl-core/fisl/classify.lua`, `tests/integration/test_machine_state.py` |
 
 Confirmed runtime assumptions: RV-001/002/003/005/008/009; RV-004 (straight
-belts); RV-006 (API evidence). Pending: RV-004 underground/splitter, RV-006
-interval classifier, RV-007, RV-011 interactive, RV-012.
+belts); RV-006 (API evidence; interval classifier implemented, fixtures
+awaiting a runtime execution). Pending: RV-004 underground/splitter, RV-007
+(fixture written), RV-011 interactive, RV-012.
 
 ---
 
@@ -42,7 +44,7 @@ In dependency order (later items consume earlier ones):
 | # | Work | Issue | Unlocks |
 |---|---|---|---|
 | 1 | `fisl compare` — side-by-side run debrief, no scalar score | [#6](https://github.com/MetaCoding-io/FactorioResearch/issues/6) | Lab 3 as a full experiment pair (**done**) |
-| 2 | Machine-state classification (ADR 0007) + state fractions + RV-006/007 | [#7](https://github.com/MetaCoding-io/FactorioResearch/issues/7) | Labs 2 & 4 |
+| 2 | Machine-state classification (ADR 0007) + state fractions + RV-006/007 — **implemented; remaining: run `FACTORIO_BIN=… pytest tests/integration/test_machine_state.py` on a Factorio-capable machine, commit evidence, then wire the metrics into a Lab 2/4 scenario** (note: adding them to `fp03` would change its resolved hash and break comparability with existing runs, so they go into new scenarios) | [#7](https://github.com/MetaCoding-io/FactorioResearch/issues/7) | Labs 2 & 4 |
 | 3 | Dynamic entity sets (ADR 0016, RV-012) | [#8](https://github.com/MetaCoding-io/FactorioResearch/issues/8) | mid-run redesign; pooled denominators |
 | 4 | Demand/service cohorts + on-time item rate (ADR 0008) | [#9](https://github.com/MetaCoding-io/FactorioResearch/issues/9) | Lab 5 push/pull |
 | 5 | Objectives + full visibility enforcement (ADR 0011/0012) | [#10](https://github.com/MetaCoding-io/FactorioResearch/issues/10) | Labs 5/6 evaluation |

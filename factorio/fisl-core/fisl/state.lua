@@ -24,6 +24,7 @@ function state.reset()
     ledgers = {},                 -- flow_id -> conservation ledger state
     census = {},                  -- metric_id -> census validation state
     accumulators = {},            -- metric_id -> exact streaming accumulator
+    machine_state = nil,          -- metric_id -> production-state tracker (ADR 0007)
     telemetry = {
       sequence = 0,
       buffer = {},                -- pending encoded JSONL lines

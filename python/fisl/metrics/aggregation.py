@@ -109,6 +109,48 @@ def completed_work(data: TelemetryData, resolved: dict, flow_id: str, start_tick
     return total
 
 
+def machine_state_membership(data: TelemetryData, metric_id: str) -> dict | None:
+    """The static-at-READY roster record for one production_state metric."""
+    membership = None
+    for record in data.of_type("machine_state_membership"):
+        if record["metric"] == metric_id:
+            membership = record
+    return membership
+
+
+def machine_state_spans(data: TelemetryData, metric_id: str) -> list[dict]:
+    return [r for r in data.of_type("machine_state_span") if r["metric"] == metric_id]
+
+
+def state_ticks_in_window(spans: list[dict], start_tick: int, end_tick: int) -> dict[str, dict[str, int]]:
+    """Clip classified spans to [start_tick, end_tick) and pool machine-ticks
+    by headline, per machine. `coverage_missing` stays a separate bucket —
+    it is missing measurement, never a state (ADR 0007 §24)."""
+    per_machine: dict[str, dict[str, int]] = {}
+    for span in spans:
+        lo = max(span["from_tick"], start_tick)
+        hi = min(span["to_tick"], end_tick)
+        if hi > lo:
+            ticks_by_state = per_machine.setdefault(str(span["unit_number"]), {})
+            ticks_by_state[span["headline"]] = ticks_by_state.get(span["headline"], 0) + (hi - lo)
+    return per_machine
+
+
+def _pool_states(per_machine: dict[str, dict[str, int]]) -> tuple[dict[str, int], int, int]:
+    """Returns (pooled headline->machine_ticks, classified ticks, covered
+    ticks incl. coverage_missing spans)."""
+    pooled: dict[str, int] = {}
+    classified = 0
+    covered = 0
+    for ticks_by_state in per_machine.values():
+        for headline, ticks in ticks_by_state.items():
+            pooled[headline] = pooled.get(headline, 0) + ticks
+            covered += ticks
+            if headline != "coverage_missing":
+                classified += ticks
+    return pooled, classified, covered
+
+
 def census_validity(data: TelemetryData, start_tick: int, end_tick: int) -> dict:
     """Strict WIP validity over a window under ADR 0017 §9: any conservative
     discrepancy interval overlapping the window flags it."""
@@ -207,6 +249,69 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
             pass  # second pass below; depends on other metric results
         elif metric["type"] == "current_value":
             metrics_out[metric_id] = {"type": "current_value", "source": metric["source"], "note": "live display metric"}
+        elif metric["type"] == "production_state":
+            membership = machine_state_membership(data, metric_id)
+            spans = machine_state_spans(data, metric_id)
+            final_tick = data.final_experiment_tick or max((s["to_tick"] for s in spans), default=0)
+            per_machine = state_ticks_in_window(spans, 0, final_tick) if final_tick else {}
+            pooled, classified, covered = _pool_states(per_machine)
+            machine_count = len(membership["machines"]) if membership else 0
+            metrics_out[metric_id] = {
+                "type": "production_state",
+                "adapter": membership["adapter"] if membership else None,
+                "classifier_version": membership["classifier_version"] if membership else None,
+                "membership_resolution": metric["membership_resolution"],
+                "entity_set": metric["entities"],
+                "machine_count": machine_count,
+                "machines": membership["machines"] if membership else [],
+                "run_ticks": final_tick,
+                "pooled_state_ticks": pooled,
+                "per_machine_state_ticks": per_machine,
+                "classified_machine_ticks": classified,
+                "covered_machine_ticks": covered,
+                "span_count": len(spans),
+            }
+        elif metric["type"] == "state_fraction":
+            membership = machine_state_membership(data, metric["source"])
+            spans = machine_state_spans(data, metric["source"])
+            window = metric["window"]
+            start_tick, end_tick = window["start_tick"], window["end_tick"]
+            ticks = end_tick - start_tick
+            machine_count = len(membership["machines"]) if membership else 0
+            per_machine = state_ticks_in_window(spans, start_tick, end_tick)
+            pooled, classified, _covered = _pool_states(per_machine)
+            # Full-window pooled machine-time denominator (ADR 0010 §11-§12):
+            # it NEVER shrinks to classified time; coverage is reported beside
+            # the fraction instead.
+            denominator_ticks = machine_count * ticks
+            state_ticks = pooled.get(metric["state"], 0)
+            entry = {
+                "type": "state_fraction",
+                "source": metric["source"],
+                "state": metric["state"],
+                "entity_aggregation": metric["entity_aggregation"],
+                "denominator": metric["denominator"],
+                "window": window,
+                "machine_count": machine_count,
+                "window_ticks": ticks,
+                "denominator_machine_ticks": denominator_ticks,
+                "state_machine_ticks": state_ticks,
+                "classified_machine_ticks": classified,
+                "coverage_complete": window_complete(end_tick) and classified == denominator_ticks,
+            }
+            if denominator_ticks > 0:
+                fraction = Fraction(state_ticks, denominator_ticks)
+                coverage = Fraction(classified, denominator_ticks)
+                entry.update(
+                    {
+                        "value": float(fraction),
+                        "exact": {"numerator": state_ticks, "denominator": denominator_ticks},
+                        "coverage_fraction": float(coverage),
+                    }
+                )
+            else:
+                entry.update({"value": None, "status": "no_data", "reason": "no machines in entity set"})
+            metrics_out[metric_id] = entry
 
     for metric_id, metric in resolved_metrics.items():
         if metric["type"] != "cycle_time":
@@ -293,4 +398,19 @@ def _verify_against_lua(data: TelemetryData, metrics_out: dict) -> dict:
                     f"{metric_id}: lua completed {lua_metric.get('completed_quantity')} != "
                     f"python {ours['completed_quantity']}"
                 )
+    lua_machine_state = data.lua_summary.get("machine_state") or {}
+    for metric_id, ours in metrics_out.items():
+        if ours["type"] != "production_state":
+            continue
+        lua_entry = lua_machine_state.get(metric_id)
+        if not lua_entry:
+            continue
+        lua_pooled = {k: v for k, v in (lua_entry.get("pooled_state_ticks") or {}).items()}
+        python_pooled = {k: v for k, v in ours["pooled_state_ticks"].items() if k != "coverage_missing"}
+        lua_pooled["coverage_missing"] = lua_entry.get("coverage_missing_ticks", 0)
+        python_pooled["coverage_missing"] = ours["pooled_state_ticks"].get("coverage_missing", 0)
+        if lua_pooled != python_pooled:
+            mismatches.append(
+                f"{metric_id}: lua pooled state ticks {lua_pooled} != python {python_pooled}"
+            )
     return {"available": True, "agrees": not mismatches, "mismatches": mismatches}
