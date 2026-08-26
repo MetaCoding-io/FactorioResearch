@@ -40,7 +40,9 @@ script.on_event(defines.events.on_tick, function()
 end)
 
 -- Sensor handlers: capture minimal raw notifications for the coordinator
--- (ADR 0004 §3). Entity-set maintenance consumes these in a later stage.
+-- (ADR 0004 §3). The coordinator drains these at the next checkpoint
+-- boundary; entity-set membership additions consume `entity` (a LuaEntity
+-- reference that never reaches telemetry — it is stripped at drain).
 local function queue_entity_notification(kind, event)
   local s = state.get()
   if s.lifecycle ~= "RUNNING" then return end
@@ -54,6 +56,7 @@ local function queue_entity_notification(kind, event)
     unit_number = entity.unit_number,
     position = { x = entity.position.x, y = entity.position.y },
     surface = entity.surface and entity.surface.name or nil,
+    entity = kind == "entity_created" and entity or nil,
   }
 end
 
@@ -63,10 +66,22 @@ end)
 script.on_event(defines.events.on_robot_built_entity, function(event)
   queue_entity_notification("entity_created", event)
 end)
+script.on_event(defines.events.script_raised_built, function(event)
+  queue_entity_notification("entity_created", event)
+end)
+script.on_event(defines.events.script_raised_revive, function(event)
+  queue_entity_notification("entity_created", event)
+end)
 script.on_event(defines.events.on_player_mined_entity, function(event)
   queue_entity_notification("entity_removed", event)
 end)
 script.on_event(defines.events.on_robot_mined_entity, function(event)
+  queue_entity_notification("entity_removed", event)
+end)
+script.on_event(defines.events.on_entity_died, function(event)
+  queue_entity_notification("entity_removed", event)
+end)
+script.on_event(defines.events.script_raised_destroy, function(event)
   queue_entity_notification("entity_removed", event)
 end)
 

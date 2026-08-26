@@ -196,7 +196,11 @@ The same information lives in `runs/<run_id>/summary.json` as JSON.
 
 For scenarios that declare machine-state metrics (ADR 0007 — not fp03,
 whose identity is frozen; new Lab 2/4 scenarios will), the report adds a
-per-machine table: what fraction of the run each measured machine spent
+per-machine table. Membership is dynamic (ADR 0016): a machine you build
+mid-run starts counting from the moment it's recognized, a machine you
+remove stops counting then — each machine's row shows its eligibility
+window, and pooled denominators sum only eligible machine-time. The table
+shows what fraction of its eligible time each measured machine spent
 **productive / starved / blocked / unavailable / disabled / idle_other /
 unclassified**, plus `coverage_missing` when an interval couldn't be
 classified. Requested `state_fraction` metrics appear in the main table as

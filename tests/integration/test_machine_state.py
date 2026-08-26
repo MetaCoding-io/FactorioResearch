@@ -3,9 +3,9 @@ assembler into each supported state against a real Factorio runtime and
 verify raw + classified output end-to-end (spans in telemetry, pooled state
 fractions in the Python summary, Lua/Python cross-check).
 
-Each world mutation happens BEFORE session.configure(): production-state
-membership resolves statically at READY (interim until issue #8), and READY
-validation runs inside configure's commit.
+Each world mutation happens BEFORE session.configure(): the READY scan
+seeds production-state membership (dynamic maintenance takes over while
+RUNNING), and READY validation runs inside configure's commit.
 
 Evidence: RV-006 (interval activity across craft completion) and RV-007
 (brownout keeps productive + energy_limited when progress is observed).
@@ -86,7 +86,7 @@ def test_productive_then_starved_and_completion_wrap(factorio, tmp_path, baselin
 
     total = session.resolved["experiment"]["total_duration_ticks"]
     membership = _membership(records)
-    assert membership["membership_resolution"] == "static_at_ready"
+    assert membership["membership_resolution"] == "dynamic_boundary"
     assert len(membership["machines"]) == 1  # the port apparatus is excluded
     _assert_span_partition(records, total)
 

@@ -11,9 +11,10 @@ The chapter references these files (as `.jpg` — see the conversion step):
 **Preferred: automated capture.** `fisl snap
 scenarios/factory-physics/fp03-littles-law` drives all three shots — you
 only connect the client when prompted; framing/zoom/overlays are scripted.
-PNGs land on your client under `script-output/fisl-snap/` with the correct
-base names. Game screenshots are always PNG (~5 MB at 1080p), so convert
-before committing to keep the site light:
+PNGs land on your client under `script-output/fisl-snap/` as
+`fisl-panel-ready.png`, `run1-jammed-belt.png`, and `run2-pull-gate.png`.
+Game screenshots are always PNG (~5 MB at 1080p), so convert before
+committing to keep the site light:
 
 ```sh
 python3 -c "

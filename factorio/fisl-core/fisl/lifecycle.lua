@@ -136,7 +136,8 @@ function lifecycle.validate_ready()
   census.init(config)
   experiment.init_accumulators(config)
 
-  -- Static production-state membership (ADR 0007; interim until issue #8).
+  -- Production-state membership seed roster (ADR 0007/0016): READY scan
+  -- starts eligibility at tick 0; boundary events maintain it from there.
   local machine_problems = machine_state.init(config)
   if machine_problems then return machine_problems end
 

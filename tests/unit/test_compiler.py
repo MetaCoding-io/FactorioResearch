@@ -159,7 +159,7 @@ def test_machine_state_metrics_compile(raw):
     assert production["adapter"] == "crafting_machine"
     assert production["activity"] == {"method": "craft_progress_delta", "cadence": "1tick"}
     assert production["classification"] == {"profile": "factory_physics_v1"}
-    assert production["membership_resolution"] == "static_at_ready"
+    assert production["membership_resolution"] == "dynamic_boundary"
     fraction = resolved["metrics"]["fraction_starved"]
     assert fraction["denominator"] == "full_window"
     assert (fraction["window"]["start_tick"], fraction["window"]["end_tick"]) == (7200, 43200)
@@ -172,7 +172,7 @@ def test_machine_state_metrics_compile(raw):
             "activity_method": "craft_progress_delta",
             "cadence": "1tick",
             "classification_profile": "factory_physics_v1",
-            "membership_resolution": "static_at_ready",
+            "membership_resolution": "dynamic_boundary",
         }
     ]
 

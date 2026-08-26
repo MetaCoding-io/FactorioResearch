@@ -122,6 +122,48 @@ def machine_state_spans(data: TelemetryData, metric_id: str) -> list[dict]:
     return [r for r in data.of_type("machine_state_span") if r["metric"] == metric_id]
 
 
+def machine_eligibility(data: TelemetryData, metric_id: str) -> tuple[dict, dict]:
+    """Machine identities and eligibility intervals (ADR 0016 §5) for one
+    production_state metric: the READY roster (eligible from tick 0) plus
+    boundary membership changes. Returns (machines, intervals) keyed by
+    unit_number string; an interval is (start, end) with end=None meaning
+    "member through the end of observation" — callers clip to their own
+    horizon. A removal boundary is a legitimate denominator end (§6); a
+    still-member machine's interval never shrinks for missing data."""
+    machines: dict[str, dict] = {}
+    intervals: dict[str, list] = {}
+    membership = machine_state_membership(data, metric_id)
+    if membership:
+        for machine in membership["machines"]:
+            unit = str(machine["unit_number"])
+            machines[unit] = machine
+            intervals[unit] = [0, None]
+    for record in data.of_type("machine_state_membership_change"):
+        if record["metric"] != metric_id:
+            continue
+        unit = str(record["unit_number"])
+        if record["change"] == "added":
+            machines.setdefault(
+                unit,
+                {
+                    "unit_number": record["unit_number"],
+                    "prototype": record.get("prototype"),
+                    "position": record.get("position"),
+                },
+            )
+            intervals[unit] = [record["boundary_tick"], None]
+        elif record["change"] == "removed" and unit in intervals:
+            intervals[unit][1] = record["boundary_tick"]
+    return machines, {unit: (lo, hi) for unit, (lo, hi) in intervals.items()}
+
+
+def eligible_ticks(interval: tuple[int, int | None], lo: int, hi: int) -> int:
+    """Machine-ticks of one eligibility interval inside [lo, hi)."""
+    start, end = interval
+    end = hi if end is None else min(end, hi)
+    return max(0, end - max(start, lo))
+
+
 def state_ticks_in_window(spans: list[dict], start_tick: int, end_tick: int) -> dict[str, dict[str, int]]:
     """Clip classified spans to [start_tick, end_tick) and pool machine-ticks
     by headline, per machine. `coverage_missing` stays a separate bucket —
@@ -252,18 +294,28 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
         elif metric["type"] == "production_state":
             membership = machine_state_membership(data, metric_id)
             spans = machine_state_spans(data, metric_id)
+            machines, intervals = machine_eligibility(data, metric_id)
             final_tick = data.final_experiment_tick or max((s["to_tick"] for s in spans), default=0)
             per_machine = state_ticks_in_window(spans, 0, final_tick) if final_tick else {}
             pooled, classified, covered = _pool_states(per_machine)
-            machine_count = len(membership["machines"]) if membership else 0
+            eligible = {
+                unit: eligible_ticks(interval, 0, final_tick)
+                for unit, interval in intervals.items()
+            }
             metrics_out[metric_id] = {
                 "type": "production_state",
                 "adapter": membership["adapter"] if membership else None,
                 "classifier_version": membership["classifier_version"] if membership else None,
                 "membership_resolution": metric["membership_resolution"],
                 "entity_set": metric["entities"],
-                "machine_count": machine_count,
-                "machines": membership["machines"] if membership else [],
+                "machine_count": len(machines),
+                "machines": [machines[unit] for unit in sorted(machines)],
+                "eligibility": {
+                    unit: {"from_tick": lo, "to_tick": hi if hi is not None else final_tick}
+                    for unit, (lo, hi) in sorted(intervals.items())
+                },
+                "eligible_machine_ticks": sum(eligible.values()),
+                "per_machine_eligible_ticks": eligible,
                 "run_ticks": final_tick,
                 "pooled_state_ticks": pooled,
                 "per_machine_state_ticks": per_machine,
@@ -272,18 +324,25 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
                 "span_count": len(spans),
             }
         elif metric["type"] == "state_fraction":
-            membership = machine_state_membership(data, metric["source"])
             spans = machine_state_spans(data, metric["source"])
+            _machines, intervals = machine_eligibility(data, metric["source"])
             window = metric["window"]
             start_tick, end_tick = window["start_tick"], window["end_tick"]
             ticks = end_tick - start_tick
-            machine_count = len(membership["machines"]) if membership else 0
             per_machine = state_ticks_in_window(spans, start_tick, end_tick)
             pooled, classified, _covered = _pool_states(per_machine)
-            # Full-window pooled machine-time denominator (ADR 0010 §11-§12):
-            # it NEVER shrinks to classified time; coverage is reported beside
-            # the fraction instead.
-            denominator_ticks = machine_count * ticks
+            # Pooled ELIGIBLE machine-time over the full window (ADR 0010
+            # §11-§12 + ADR 0016 §5-§6): a machine contributes exactly its
+            # eligibility ∩ window — a removal legitimately ends its
+            # denominator share, no retroactive history for late joiners —
+            # but the denominator NEVER shrinks for classification gaps;
+            # those stay visible as coverage next to the fraction.
+            per_machine_denominator = {
+                unit: eligible_ticks(interval, start_tick, end_tick)
+                for unit, interval in intervals.items()
+            }
+            denominator_ticks = sum(per_machine_denominator.values())
+            machine_count = sum(1 for value in per_machine_denominator.values() if value > 0)
             state_ticks = pooled.get(metric["state"], 0)
             entry = {
                 "type": "state_fraction",
@@ -295,6 +354,7 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
                 "machine_count": machine_count,
                 "window_ticks": ticks,
                 "denominator_machine_ticks": denominator_ticks,
+                "per_machine_denominator_ticks": dict(sorted(per_machine_denominator.items())),
                 "state_machine_ticks": state_ticks,
                 "classified_machine_ticks": classified,
                 "coverage_complete": window_complete(end_tick) and classified == denominator_ticks,
@@ -412,5 +472,11 @@ def _verify_against_lua(data: TelemetryData, metrics_out: dict) -> dict:
         if lua_pooled != python_pooled:
             mismatches.append(
                 f"{metric_id}: lua pooled state ticks {lua_pooled} != python {python_pooled}"
+            )
+        lua_eligible = lua_entry.get("eligible_machine_ticks")
+        if lua_eligible is not None and lua_eligible != ours.get("eligible_machine_ticks"):
+            mismatches.append(
+                f"{metric_id}: lua eligible machine-ticks {lua_eligible} != "
+                f"python {ours.get('eligible_machine_ticks')}"
             )
     return {"available": True, "agrees": not mismatches, "mismatches": mismatches}

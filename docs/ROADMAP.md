@@ -44,7 +44,7 @@ In dependency order (later items consume earlier ones):
 |---|---|---|---|
 | 1 | `fisl compare` — side-by-side run debrief, no scalar score | [#6](https://github.com/MetaCoding-io/FactorioResearch/issues/6) | Lab 3 as a full experiment pair (**done**) |
 | 2 | Machine-state classification (ADR 0007) + state fractions + RV-006/007 (**done** — 6/6 fixtures on real 2.0.77; wiring the metrics into Lab 2/4 scenarios happens with item 6, not fp03: adding them to fp03 would change its resolved hash and break comparability with existing runs) | [#7](https://github.com/MetaCoding-io/FactorioResearch/issues/7) | Labs 2 & 4 |
-| 3 | Dynamic entity sets (ADR 0016, RV-012) | [#8](https://github.com/MetaCoding-io/FactorioResearch/issues/8) | mid-run redesign; pooled denominators |
+| 3 | Dynamic entity sets (ADR 0016, RV-012) — **implemented; remaining: run `FACTORIO_BIN=… python3 -m pytest tests/integration/test_dynamic_membership.py` on a Factorio-capable machine and commit evidence** | [#8](https://github.com/MetaCoding-io/FactorioResearch/issues/8) | mid-run redesign; pooled denominators |
 | 4 | Demand/service cohorts + on-time item rate (ADR 0008) | [#9](https://github.com/MetaCoding-io/FactorioResearch/issues/9) | Lab 5 push/pull |
 | 5 | Objectives + full visibility enforcement (ADR 0011/0012) | [#10](https://github.com/MetaCoding-io/FactorioResearch/issues/10) | Labs 5/6 evaluation |
 | 6 | Lab content: builder generalization, Labs 0–2/4/6, RV partial fixtures, per-lab reference solutions + course chapters | [#11](https://github.com/MetaCoding-io/FactorioResearch/issues/11) | the rest of the course |

@@ -6,11 +6,18 @@
 -- aggregations from the spans; the in-run accumulators exist only for the
 -- summary cross-check (revision 8/9 division of labor).
 --
--- Membership is resolved ONCE at READY (static membership). This is an
--- interim simplification of ADR 0016 dynamic entity sets, tracked as GitHub
--- issue #8: entities placed/removed mid-run are not picked up. Each
--- membership record declares `membership_resolution = "static_at_ready"` so
--- run data is honest about it.
+-- Membership is DYNAMIC at canonical boundaries (ADR 0016, issue #8):
+-- the READY scan seeds the roster (eligibility from tick 0), additions come
+-- from the queued build-event notifications drained at checkpoint boundary
+-- T (eligibility starts at T; no retroactive history, §6), and removals are
+-- validity-driven — a member entity invalid at boundary T has its final
+-- prepared interval [T-1, T) classified coverage_missing (it was prepared
+-- at T-1), eligibility ends at T, and it leaves every later denominator.
+-- Membership records declare `membership_resolution = "dynamic_boundary"`.
+-- Known limitation: departure means the entity became invalid; an entity
+-- that stops matching the selector while staying alive (not possible for
+-- the v1 zone/type/prototype selectors — machines cannot move) is not
+-- re-evaluated.
 
 local state = require("fisl.state")
 local telemetry = require("fisl.telemetry")
@@ -52,6 +59,49 @@ local function is_port_apparatus(s, entity)
   return false
 end
 
+--- ADR 0016 §2/§9 selector predicate against one live entity (canonical
+--- zone containment per ADR 0002: position >= left_top, < right_bottom).
+local function matches_selector(s, config, selector, entity)
+  local zone = config.resolved.zones[selector.zone]
+  local position = entity.position
+  local lt, rb = zone.area.left_top, zone.area.right_bottom
+  if not (position.x >= lt[1] and position.x < rb[1]
+      and position.y >= lt[2] and position.y < rb[2]) then
+    return false
+  end
+  local type_ok = false
+  for _, entity_type in ipairs(selector.types) do
+    if entity.type == entity_type then type_ok = true end
+  end
+  if not type_ok then return false end
+  if selector.prototypes and #selector.prototypes > 0 then
+    local name_ok = false
+    for _, name in ipairs(selector.prototypes) do
+      if entity.name == name then name_ok = true end
+    end
+    if not name_ok then return false end
+  end
+  return not is_port_apparatus(s, entity)
+end
+
+local function new_member(entity, joined_tick)
+  return {
+    -- LuaEntity reference, deliberately held in storage (save/load-safe;
+    -- RUNTIME_VALIDATION finding 5: per-tick unit-number lookup was
+    -- unreliable on 2.0.77) — the reliable handle for sampling.
+    entity = entity,
+    unit_number = entity.unit_number,
+    prototype = entity.name,
+    position = { x = entity.position.x, y = entity.position.y },
+    joined_tick = joined_tick,   -- eligibility interval start (ADR 0016 §5)
+    left_tick = nil,             -- eligibility interval end; nil = still member
+    prev = nil,                  -- last point sample
+    span = nil,                  -- open run-length span
+    state_ticks = {},            -- headline -> classified interval count
+    coverage_missing_ticks = 0,
+  }
+end
+
 --- Resolve static membership for every production_state metric and emit the
 --- roster. Returns a list of problems (or nil) in READY-validation style.
 function machine_state.init(config)
@@ -75,36 +125,14 @@ function machine_state.init(config)
         })
         local machines, order = {}, {}
         for _, entity in ipairs(found) do
-          local keep = not is_port_apparatus(s, entity)
-          if keep and selector.prototypes and #selector.prototypes > 0 then
-            keep = false
-            for _, name in ipairs(selector.prototypes) do
-              if entity.name == name then keep = true end
+          if matches_selector(s, config, selector, entity) then
+            if SUPPORTED_TYPES[entity.type] then
+              machines[entity.unit_number] = new_member(entity, 0)
+              order[#order + 1] = entity.unit_number
+            else
+              problems[#problems + 1] = "metrics." .. metric_id .. ": entity type "
+                .. entity.type .. " is not supported by the crafting_machine adapter"
             end
-          end
-          if keep and not SUPPORTED_TYPES[entity.type] then
-            problems[#problems + 1] = "metrics." .. metric_id .. ": entity type "
-              .. entity.type .. " is not supported by the crafting_machine adapter"
-            keep = false
-          end
-          if keep then
-            machines[entity.unit_number] = {
-              -- LuaEntity reference, deliberately held in storage (Factorio
-              -- supports this; it revalidates on save/load). Empirical: on
-              -- 2.0.77 the per-tick game.get_entity_by_unit_number lookup
-              -- returned nil for these live machines, which classified every
-              -- interval as coverage_missing — see RUNTIME_VALIDATION.md
-              -- finding 5. The stored reference is the reliable handle.
-              entity = entity,
-              unit_number = entity.unit_number,
-              prototype = entity.name,
-              position = { x = entity.position.x, y = entity.position.y },
-              prev = nil,          -- last point sample {tick, recipe, ...}
-              span = nil,          -- open run-length span
-              state_ticks = {},    -- headline -> classified interval count
-              coverage_missing_ticks = 0,
-            }
-            order[#order + 1] = entity.unit_number
           end
         end
         table.sort(order)
@@ -135,7 +163,7 @@ function machine_state.init(config)
             entity_set = metric.entities,
             adapter = machine_state.ADAPTER,
             classifier_version = classify.CLASSIFIER_VERSION,
-            membership_resolution = "static_at_ready",
+            membership_resolution = "dynamic_boundary",
             machines = roster,
           })
         end
@@ -144,6 +172,48 @@ function machine_state.init(config)
   end
   if #problems > 0 then return problems end
   return nil
+end
+
+--- Consume one queued sensor notification at checkpoint boundary T
+--- (ADR 0016 §3-§4): a built entity matching a selector becomes a member
+--- at this boundary — eligibility [T, ...), first classified interval
+--- [T, T+1). Removals are validity-driven in checkpoint(), not event-driven.
+function machine_state.ingest(config, notification, boundary_tick)
+  local s = state.get()
+  if s.machine_state == nil then return end
+  if notification.type ~= "entity_created" then return end
+  local entity = notification.entity
+  if entity == nil or not entity.valid then return end
+  for metric_id, tracker in pairs(s.machine_state) do
+    local selector = config.resolved.entity_sets[tracker.entity_set]
+    if tracker.machines[entity.unit_number] == nil
+        and matches_selector(s, config, selector, entity) then
+      if SUPPORTED_TYPES[entity.type] then
+        tracker.machines[entity.unit_number] = new_member(entity, boundary_tick)
+        tracker.order[#tracker.order + 1] = entity.unit_number
+        telemetry.emit({
+          type = "machine_state_membership_change",
+          metric = metric_id,
+          change = "added",
+          unit_number = entity.unit_number,
+          prototype = entity.name,
+          position = { x = entity.position.x, y = entity.position.y },
+          boundary_tick = boundary_tick,
+        })
+      else
+        -- ADR 0016 §11: an unsupported matching subject is visible coverage,
+        -- never silently absent from the measurement.
+        telemetry.emit({
+          type = "machine_state_unsupported_member",
+          metric = metric_id,
+          unit_number = entity.unit_number,
+          prototype = entity.name,
+          entity_type = entity.type,
+          boundary_tick = boundary_tick,
+        })
+      end
+    end
+  end
 end
 
 --- Point sample of one machine's process state (ADR 0007 §5). Returns nil
@@ -216,12 +286,36 @@ function machine_state.checkpoint(config, experiment_tick)
   for metric_id, tracker in pairs(s.machine_state) do
     for _, unit_number in ipairs(tracker.order) do
       local machine = tracker.machines[unit_number]
-      local sample, raw_status = take_sample(machine)
-      if experiment_tick > 0 then
-        local record = classify.interval(machine.prev, sample, raw_status)
-        record_interval(metric_id, machine, experiment_tick - 1, record)
+      if machine.left_tick == nil then
+        local sample, raw_status = take_sample(machine)
+        if experiment_tick > machine.joined_tick then
+          -- Only intervals inside the eligibility window are classified: a
+          -- joiner's first classified interval is [joined, joined+1); its
+          -- prior nonexistence is not unavailable/idle/coverage (ADR 0016 §6).
+          local record = classify.interval(machine.prev, sample, raw_status)
+          record_interval(metric_id, machine, experiment_tick - 1, record)
+        end
+        machine.prev = sample
+        if sample == nil then
+          -- Member entity is gone: eligibility ends at this boundary. The
+          -- final prepared interval [T-1, T) above classified as
+          -- coverage_missing (it WAS prepared at T-1); nothing after T
+          -- belongs to this machine's denominator (ADR 0016 §5-§6).
+          close_span(metric_id, machine, experiment_tick)
+          machine.left_tick = experiment_tick
+          machine.entity = nil
+          telemetry.emit({
+            type = "machine_state_membership_change",
+            metric = metric_id,
+            change = "removed",
+            unit_number = machine.unit_number,
+            prototype = machine.prototype,
+            position = machine.position,
+            boundary_tick = experiment_tick,
+            eligible_from_tick = machine.joined_tick,
+          })
+        end
       end
-      machine.prev = sample
     end
     tracker.last_classified_tick = experiment_tick
   end
@@ -251,19 +345,26 @@ function machine_state.summary()
   local out = {}
   for metric_id, tracker in pairs(s.machine_state) do
     local pooled, coverage_missing = {}, 0
+    local eligible_ticks, current, total = 0, 0, 0
     for _, unit_number in ipairs(tracker.order) do
       local machine = tracker.machines[unit_number]
+      total = total + 1
+      if machine.left_tick == nil then current = current + 1 end
       for headline, ticks in pairs(machine.state_ticks) do
         pooled[headline] = (pooled[headline] or 0) + ticks
+        eligible_ticks = eligible_ticks + ticks
       end
       coverage_missing = coverage_missing + machine.coverage_missing_ticks
+      eligible_ticks = eligible_ticks + machine.coverage_missing_ticks
     end
     out[metric_id] = {
       adapter = tracker.adapter,
       classifier_version = tracker.classifier_version,
       entity_set = tracker.entity_set,
-      membership_resolution = "static_at_ready",
-      machine_count = #tracker.order,
+      membership_resolution = "dynamic_boundary",
+      machine_count = current,
+      members_total = total,
+      eligible_machine_ticks = eligible_ticks,
       pooled_state_ticks = pooled,
       coverage_missing_ticks = coverage_missing,
       last_classified_tick = tracker.last_classified_tick,

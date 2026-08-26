@@ -343,10 +343,11 @@ def _resolve_metrics(
                     "cadence": metric.activity.cadence,
                 },
                 "classification": {"profile": metric.classification.profile},
-                # Interim ADR 0016 simplification (issue #8): the entity set is
-                # resolved once at READY. Semantically load-bearing, so it is
+                # ADR 0016 dynamic membership: the READY scan seeds the
+                # roster; additions/removals take effect at canonical
+                # checkpoint boundaries. Semantically load-bearing, so it is
                 # part of the resolved document (and the hash).
-                "membership_resolution": "static_at_ready",
+                "membership_resolution": "dynamic_boundary",
             }
         elif isinstance(metric, StateFractionMetric):
             window = window_for(metric_id, metric.window)

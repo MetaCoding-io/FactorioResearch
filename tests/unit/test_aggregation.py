@@ -143,7 +143,7 @@ def machine_state_resolved() -> dict:
         "adapter": "crafting_machine",
         "activity": {"method": "craft_progress_delta", "cadence": "1tick"},
         "classification": {"profile": "factory_physics_v1"},
-        "membership_resolution": "static_at_ready",
+        "membership_resolution": "dynamic_boundary",
     }
     for state in ("productive", "starved"):
         resolved["metrics"][f"fraction_{state}"] = {
@@ -165,7 +165,7 @@ def machine_state_records() -> list[dict]:
         "entity_set": "line_machines",
         "adapter": "crafting_machine",
         "classifier_version": "crafting_machine/1",
-        "membership_resolution": "static_at_ready",
+        "membership_resolution": "dynamic_boundary",
         "machines": [
             {"unit_number": 101, "prototype": "assembling-machine-1", "position": {"x": 0.5, "y": 0.5}},
             {"unit_number": 102, "prototype": "assembling-machine-1", "position": {"x": 8.5, "y": 0.5}},
@@ -236,6 +236,74 @@ def test_lua_machine_state_mismatch_is_flagged(tmp_path):
     path = write_telemetry(tmp_path, records)
     summary = compute_summary(machine_state_resolved(), RUN_CONFIG, path)
     assert any("machine_state" in m for m in summary["lua_cross_verification"]["mismatches"])
+
+
+def test_dynamic_membership_eligibility_denominators(tmp_path):
+    """ADR 0016 §5-§6: a mid-run joiner contributes no retroactive history,
+    a removed machine leaves the denominator at its removal boundary, and the
+    pooled denominator is summed eligible machine-ticks — while classification
+    coverage still never shrinks it."""
+    records = base_records()
+    membership = {
+        "type": "machine_state_membership",
+        "metric": "machine_state",
+        "entity_set": "line_machines",
+        "adapter": "crafting_machine",
+        "classifier_version": "crafting_machine/1",
+        "membership_resolution": "dynamic_boundary",
+        "machines": [
+            {"unit_number": 101, "prototype": "assembling-machine-1", "position": {"x": 0.5, "y": 0.5}},
+        ],
+    }
+    changes_and_spans = [
+        membership,
+        # m201 built mid-run: eligible [140, 200), productive throughout.
+        {"type": "machine_state_membership_change", "metric": "machine_state",
+         "change": "added", "unit_number": 201, "prototype": "assembling-machine-1",
+         "position": {"x": 8.5, "y": 0.5}, "boundary_tick": 140},
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 201,
+         "from_tick": 140, "to_tick": 200, "headline": "productive", "cause": "none",
+         "raw_status": "working", "mapped": True},
+        # m101 removed at 180: final prepared interval [179,180) is coverage.
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 101,
+         "from_tick": 0, "to_tick": 170, "headline": "productive", "cause": "none",
+         "raw_status": "working", "mapped": True},
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 101,
+         "from_tick": 170, "to_tick": 179, "headline": "starved", "cause": "input_shortage",
+         "raw_status": "item_ingredient_shortage", "mapped": True},
+        {"type": "machine_state_span", "metric": "machine_state", "unit_number": 101,
+         "from_tick": 179, "to_tick": 180, "headline": "coverage_missing", "cause": "unknown",
+         "mapped": False},
+        {"type": "machine_state_membership_change", "metric": "machine_state",
+         "change": "removed", "unit_number": 101, "prototype": "assembling-machine-1",
+         "position": {"x": 0.5, "y": 0.5}, "boundary_tick": 180, "eligible_from_tick": 0},
+    ]
+    records[-1:-1] = changes_and_spans  # before experiment_completed
+    path = write_telemetry(tmp_path, records)
+    summary = compute_summary(machine_state_resolved(), RUN_CONFIG, path)
+
+    production = summary["metrics"]["machine_state"]
+    assert production["machine_count"] == 2
+    assert production["eligibility"] == {
+        "101": {"from_tick": 0, "to_tick": 180},
+        "201": {"from_tick": 140, "to_tick": 200},
+    }
+    assert production["eligible_machine_ticks"] == 180 + 60
+    assert production["per_machine_eligible_ticks"] == {"101": 180, "201": 60}
+
+    # Window [100,200): m101 contributes 80 eligible ticks (removed at 180),
+    # m201 contributes 60 (joined at 140) => denominator 140, not 200.
+    starved = summary["metrics"]["fraction_starved"]
+    assert starved["denominator_machine_ticks"] == 140
+    assert starved["per_machine_denominator_ticks"] == {"101": 80, "201": 60}
+    assert starved["exact"] == {"numerator": 9, "denominator": 140}
+    productive = summary["metrics"]["fraction_productive"]
+    # m101 productive in window [100,170) = 70; m201 all 60.
+    assert productive["exact"] == {"numerator": 130, "denominator": 140}
+    # The one coverage_missing tick shrinks coverage, never the denominator.
+    assert productive["classified_machine_ticks"] == 139
+    assert productive["coverage_fraction"] == pytest.approx(139 / 140)
+    assert productive["coverage_complete"] is False
 
 
 def test_incomplete_run_marks_coverage(tmp_path):

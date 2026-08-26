@@ -187,10 +187,14 @@ function experiment.checkpoint(config)
   local experiment_tick = game.tick - s.run.experiment_start_map_tick
   local total = config.resolved.experiment.total_duration_ticks
 
-  -- Step 1: ingest queued sensor notifications (normalization; POC keeps the
-  -- raw notification for diagnostics and entity-set maintenance later).
+  -- Step 1: ingest queued sensor notifications. Entity-set membership
+  -- changes take effect at THIS boundary (ADR 0016 §4: prepared for
+  -- [T, T+1)); the LuaEntity reference rides only inside the queue and is
+  -- stripped before the record goes to telemetry.
   if #s.events.raw_queue > 0 then
     for _, notification in ipairs(s.events.raw_queue) do
+      machine_state.ingest(config, notification, experiment_tick)
+      notification.entity = nil
       telemetry.emit(notification)
     end
     s.events.raw_queue = {}

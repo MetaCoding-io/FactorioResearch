@@ -105,29 +105,40 @@ def _render_production_state(metric_id: str, metric: dict, console: Console) -> 
         f"membership {metric.get('membership_resolution')})"
     )
     machines = {str(m["unit_number"]): m for m in metric.get("machines", [])}
+    eligibility = metric.get("eligibility", {})
+    eligible = metric.get("per_machine_eligible_ticks", {})
     run_ticks = metric.get("run_ticks") or 0
     table = Table(show_header=True)
     table.add_column("Machine")
+    table.add_column("eligible")
     for headline in ("productive", "starved", "blocked", "unavailable", "disabled",
                      "idle_other", "unclassified", "coverage_missing"):
         table.add_column(headline)
-    for unit_number, ticks_by_state in sorted(metric.get("per_machine_state_ticks", {}).items()):
+    for unit_number in sorted(machines):
         info = machines.get(unit_number, {})
-        position = info.get("position", {})
+        ticks_by_state = metric.get("per_machine_state_ticks", {}).get(unit_number, {})
+        position = info.get("position") or {}
         label = f"{info.get('prototype', 'machine')} @ ({position.get('x')}, {position.get('y')})"
-        row = [label]
+        interval = eligibility.get(unit_number, {})
+        machine_eligible = eligible.get(unit_number, 0)
+        if run_ticks and machine_eligible == run_ticks:
+            eligible_text = "full run"
+        else:
+            eligible_text = f"[{interval.get('from_tick')},{interval.get('to_tick')})"
+        row = [label, eligible_text]
         for headline in ("productive", "starved", "blocked", "unavailable", "disabled",
                          "idle_other", "unclassified", "coverage_missing"):
             ticks = ticks_by_state.get(headline, 0)
-            if ticks and run_ticks:
-                row.append(f"{ticks / run_ticks * 100:.1f}%")
+            if ticks and machine_eligible:
+                row.append(f"{ticks / machine_eligible * 100:.1f}%")
             else:
                 row.append("-" if not ticks else str(ticks))
         table.add_row(*row)
     console.print(table)
     console.print(
-        f"Cell = share of the full run ({run_ticks} ticks) per machine; "
-        "exact machine-tick counts are in summary.json."
+        "Cell = share of that machine's ELIGIBLE machine-ticks (ADR 0016: "
+        "machines added/removed mid-run count only while members); exact "
+        "counts are in summary.json."
     )
 
 
