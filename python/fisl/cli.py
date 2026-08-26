@@ -133,6 +133,11 @@ def build_baseline_command(
                 f"[green]Baseline verified[/green]: {throughput['completed_quantity']} workpieces "
                 f"completed in measured window; census valid; Lua/Python agree."
             )
+            import json as _json
+
+            verification_path = scenario_dir / "verification-summary.json"
+            verification_path.write_text(_json.dumps(summary, indent=2) + "\n")
+            console.print(f"Verification summary written: {verification_path}")
     except BuildError as exc:
         console.print(f"[red]Baseline build failed:[/red] {exc}")
         raise typer.Exit(code=1)

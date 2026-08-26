@@ -106,8 +106,10 @@ Factorio server. The layout is selected by the scenario id in
 6. saves the world and copies it to `<scenario-dir>/baseline.zip`;
 7. **verification** (default on): runs the full scenario headlessly at 10×
    speed against the new baseline and requires a completed lifecycle,
-   nonzero throughput, complete WIP coverage, clean census, and Lua/Python
-   agreement. Fails loudly otherwise.
+   nonzero throughput, complete WIP coverage, clean census, Lua/Python
+   agreement, and (for scenarios with machine-state metrics) complete
+   state-fraction classification coverage. Fails loudly otherwise, and on
+   success writes `<scenario-dir>/verification-summary.json`.
 
 When to re-run it:
 
