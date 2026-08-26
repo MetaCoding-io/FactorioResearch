@@ -89,6 +89,13 @@ function machine_state.init(config)
           end
           if keep then
             machines[entity.unit_number] = {
+              -- LuaEntity reference, deliberately held in storage (Factorio
+              -- supports this; it revalidates on save/load). Empirical: on
+              -- 2.0.77 the per-tick game.get_entity_by_unit_number lookup
+              -- returned nil for these live machines, which classified every
+              -- interval as coverage_missing — see RUNTIME_VALIDATION.md
+              -- finding 5. The stored reference is the reliable handle.
+              entity = entity,
               unit_number = entity.unit_number,
               prototype = entity.name,
               position = { x = entity.position.x, y = entity.position.y },
@@ -142,8 +149,8 @@ end
 --- Point sample of one machine's process state (ADR 0007 §5). Returns nil
 --- when the entity is gone/invalid — classified as missing coverage, never
 --- as an idle state (§24).
-local function take_sample(unit_number)
-  local entity = game.get_entity_by_unit_number(unit_number)
+local function take_sample(machine)
+  local entity = machine.entity
   if entity == nil or not entity.valid then return nil, nil end
   local recipe = entity.get_recipe()
   local sample = {
@@ -209,7 +216,7 @@ function machine_state.checkpoint(config, experiment_tick)
   for metric_id, tracker in pairs(s.machine_state) do
     for _, unit_number in ipairs(tracker.order) do
       local machine = tracker.machines[unit_number]
-      local sample, raw_status = take_sample(unit_number)
+      local sample, raw_status = take_sample(machine)
       if experiment_tick > 0 then
         local record = classify.interval(machine.prev, sample, raw_status)
         record_interval(metric_id, machine, experiment_tick - 1, record)

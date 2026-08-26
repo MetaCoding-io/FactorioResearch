@@ -24,7 +24,11 @@ function state.reset()
     ledgers = {},                 -- flow_id -> conservation ledger state
     census = {},                  -- metric_id -> census validation state
     accumulators = {},            -- metric_id -> exact streaming accumulator
-    machine_state = nil,          -- metric_id -> production-state tracker (ADR 0007)
+    machine_state = nil,          -- metric_id -> production-state tracker (ADR 0007).
+                                  -- Sole exception to "boring data": trackers hold
+                                  -- LuaEntity references (save/load-safe per the
+                                  -- runtime docs) because per-tick unit_number
+                                  -- lookup returned nil on 2.0.77 (RV finding 5).
     telemetry = {
       sequence = 0,
       buffer = {},                -- pending encoded JSONL lines

@@ -36,10 +36,12 @@ def lua():
         defines = { entity_status = {
           working = 1, item_ingredient_shortage = 2, no_power = 3, full_output = 4,
         } }
-        entities = {}
-        game = {
-          tick = 0,
-          get_entity_by_unit_number = function(n) return entities[n] end,
+        game = { tick = 0 }
+        entity7 = {
+          valid = true,
+          unit_number = 7,
+          get_recipe = function() return { name = "fisl-machine-workpiece" } end,
+          is_crafting = function() return true end,
         }
         local state = require("fisl.state")
         MS = require("fisl.machine_state")
@@ -50,6 +52,7 @@ def lua():
             classifier_version = "crafting_machine/1",
             entity_set = "line_machines",
             machines = { [7] = {
+              entity = entity7,
               unit_number = 7, prototype = "assembling-machine-1",
               position = { x = 0.5, y = 0.5 },
               prev = nil, span = nil, state_ticks = {}, coverage_missing_ticks = 0,
@@ -59,16 +62,12 @@ def lua():
           },
         }
         function set_machine(status_name, progress, finished)
-          entities[7] = {
-            valid = true,
-            status = defines.entity_status[status_name],
-            get_recipe = function() return { name = "fisl-machine-workpiece" } end,
-            is_crafting = function() return true end,
-            crafting_progress = progress,
-            products_finished = finished,
-          }
+          entity7.valid = true
+          entity7.status = defines.entity_status[status_name]
+          entity7.crafting_progress = progress
+          entity7.products_finished = finished
         end
-        function drop_machine() entities[7] = nil end
+        function drop_machine() entity7.valid = false end
         function checkpoint(tick) MS.checkpoint(nil, tick) end
         function flush(tick) MS.flush_spans(tick) end
         function summary_json()

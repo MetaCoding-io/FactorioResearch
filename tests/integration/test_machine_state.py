@@ -133,7 +133,7 @@ def test_blocked_when_output_cannot_discharge(factorio, tmp_path, baseline, evid
         "RV-006",
         fixture="machine-state blocked fixture (output inserter removed)",
         expected="full output buffer classifies as blocked/output_blocked",
-        observed=f"pooled={pooled}, raw={sorted({s['raw_status'] for s in blocked_spans})}",
+        observed=f"pooled={pooled}, raw={sorted({s.get('raw_status') for s in blocked_spans})}",
         passed=True,
     )
 
@@ -160,7 +160,7 @@ def test_unavailable_without_power(factorio, tmp_path, baseline, evidence):
         "RV-006",
         fixture="machine-state no-power fixture",
         expected="zero progress with no_power classifies unavailable/energy_unavailable",
-        observed=f"pooled={pooled}, raw={sorted({s['raw_status'] for s in unavailable_spans})}",
+        observed=f"pooled={pooled}, raw={sorted({s.get('raw_status') for s in unavailable_spans})}",
         passed=True,
     )
 
@@ -185,7 +185,7 @@ def test_disabled_by_script_is_disabled_not_unavailable(factorio, tmp_path, base
         "RV-006",
         fixture="machine-state disabled fixture (active=false)",
         expected="script disablement classifies disabled/disabled_control, distinct from unavailable",
-        observed=f"pooled={pooled}, raw={sorted({s['raw_status'] for s in disabled_spans})}",
+        observed=f"pooled={pooled}, raw={sorted({s.get('raw_status') for s in disabled_spans})}",
         passed=True,
     )
 
@@ -211,7 +211,7 @@ def test_no_recipe_machine_is_idle_other(factorio, tmp_path, baseline, evidence)
         "RV-006",
         fixture="machine-state no-recipe fixture (second bare assembler)",
         expected="recipe-less machine classifies idle_other/configuration; per-machine identity retained",
-        observed=f"idle machines={idle_machines}, raw={sorted({s['raw_status'] for s in idle_spans})}",
+        observed=f"idle machines={idle_machines}, raw={sorted({s.get('raw_status') for s in idle_spans})}",
         passed=True,
     )
 
@@ -242,10 +242,10 @@ def test_rv007_brownout_stays_productive_with_energy_limited(factorio, tmp_path,
     observed = {
         "pooled": pooled,
         "productive_energy_limited_spans": len(productive_limited),
-        "raw_statuses": sorted({s["raw_status"] for s in spans if s["raw_status"]}),
+        "raw_statuses": sorted({s.get("raw_status") for s in spans if s.get("raw_status")}),
     }
     assert productive_limited, observed
-    assert all(s["raw_status"] == "low_power" for s in productive_limited)
+    assert all(s.get("raw_status") == "low_power" for s in productive_limited)
     evidence.record(
         "RV-007",
         fixture="machine-state brownout fixture (EEI at ~700 J/tick)",

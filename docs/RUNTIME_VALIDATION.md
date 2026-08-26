@@ -37,11 +37,11 @@ The first implementation work should execute this validation matrix before large
 | RV-011 | 0001, 0015 | Dedicated/local-server pause and disconnect behavior can be configured to match deterministic POC policy. | Launch server with intended auto-pause settings; test connected, disconnected, reconnect, and headless operation. | Server does not silently pause a running interactive experiment; disconnect is detectable and can trigger the declared abort policy. | Headless profile confirmed on Factorio 2.0.77 (`test_rv011_headless_no_pause_and_post_completion_rcon`: ticks advance with zero players under `auto_pause:false`; RCON responsive post-completion). Interactive connect/disconnect/reconnect still pending. |
 | RV-012 | 0016 | Dynamic production-entity membership can be maintained incrementally from runtime events with canonical eligibility boundaries. | Build/remove matching machines during a run and record membership intervals. | New/removed machines enter/leave pooled denominators on the intended FISL boundaries. | Pending (deferred by Issue #2) |
 
-## Spike findings (Factorio 2.0.77, 2026-08-25)
+## Spike findings (Factorio 2.0.77, 2026-08-25 onward)
 
 Executed by `tests/integration/` against a real 2.0.77 headless server;
 per-check records live in `tests/integration/evidence/rv-evidence.jsonl`.
-Four runtime behaviors contradicted the implementation as first written —
+These runtime behaviors contradicted the implementation as first written —
 in each case the accepted semantic survived and only the technique changed:
 
 1. **First Lua console command is swallowed.** Factorio 2.0 answers the
@@ -71,6 +71,18 @@ in each case the accepted semantic survived and only the technique changed:
    per-entity/per-line sum reconciles exactly with the conservation ledger.
    The census now uses the naive sum. Underground belts and splitters were
    not exercised and keep RV-004 partially pending.
+5. **Per-tick `game.get_entity_by_unit_number` returned nil for live
+   machines (2026-08-26).** The machine-state adapter's first execution
+   classified 100% of intervals as `coverage_missing` with no raw status:
+   the per-tick unit-number lookup returned nil for the very machines the
+   READY membership scan had just found (unit numbers were valid;
+   membership, telemetry, and the whole run pipeline worked). The adapter
+   now stores the `LuaEntity` references themselves in the tracker
+   (explicitly supported in `storage`; revalidated on save/load) and checks
+   `entity.valid` each tick — the standard modding pattern, and immune to
+   whatever the lookup's actual contract is. Missing measurement announced
+   itself as `coverage_missing` rather than fake idle time, exactly as ADR
+   0007 §24 intends — the failure mode was visible, not silent.
 
 ## First validation fixture: one-workpiece vertical slice
 
