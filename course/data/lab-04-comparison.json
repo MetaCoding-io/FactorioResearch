@@ -13,7 +13,7 @@
   },
   "runs": [
     {
-      "run_id": "01M0YHYH9TAVJP0SK6F60XX8W9",
+      "run_id": "01M0YJFAV3DZ4FSTVZXYEGVW06",
       "lifecycle": "COMPLETED",
       "scripted_intervention": null,
       "validity": {
@@ -25,7 +25,7 @@
       }
     },
     {
-      "run_id": "01M0YJ0RNJCQZ7ZRSXVC75J1VR",
+      "run_id": "01M0YJHJCTBMJPM38SJE847NF9",
       "lifecycle": "COMPLETED",
       "scripted_intervention": {
         "id": "a-buffer-before-constraint",
@@ -46,7 +46,7 @@
       }
     },
     {
-      "run_id": "01M0YJ304T2T1GQ8R2AFEPS62J",
+      "run_id": "01M0YJKSW3MC25ET6D4XH6KAGB",
       "lifecycle": "COMPLETED",
       "scripted_intervention": {
         "id": "b-upgrade-constraint",
@@ -99,14 +99,14 @@
     {
       "metric": "fraction_blocked",
       "values": [
-        null,
-        null,
-        null
+        0.06060185185185185,
+        0.0,
+        0.0
       ],
       "displays": [
-        "\u2014",
-        "\u2014",
-        "\u2014"
+        "6.1% blocked",
+        "0.0% blocked",
+        "0.0% blocked"
       ],
       "validities": [
         "",
@@ -114,27 +114,27 @@
         ""
       ],
       "deltas_vs_first": [
-        null,
-        null,
-        null
+        0.0,
+        -0.06060185185185185,
+        -0.06060185185185185
       ],
       "delta_pcts_vs_first": [
-        null,
-        null,
-        null
+        0.0,
+        -100.0,
+        -100.0
       ]
     },
     {
       "metric": "fraction_productive",
       "values": [
-        null,
-        null,
-        null
+        0.825949074074074,
+        0.8916666666666667,
+        0.78125
       ],
       "displays": [
-        "\u2014",
-        "\u2014",
-        "\u2014"
+        "82.6% productive",
+        "89.2% productive",
+        "78.1% productive"
       ],
       "validities": [
         "",
@@ -142,27 +142,27 @@
         ""
       ],
       "deltas_vs_first": [
-        null,
-        null,
-        null
+        0.0,
+        0.06571759259259269,
+        -0.04469907407407403
       ],
       "delta_pcts_vs_first": [
-        null,
-        null,
-        null
+        0.0,
+        7.956615565707251,
+        -5.411843838457437
       ]
     },
     {
       "metric": "fraction_starved",
       "values": [
-        null,
-        null,
-        null
+        0.11344907407407408,
+        0.10833333333333334,
+        0.21875
       ],
       "displays": [
-        "\u2014",
-        "\u2014",
-        "\u2014"
+        "11.3% starved",
+        "10.8% starved",
+        "21.9% starved"
       ],
       "validities": [
         "",
@@ -170,14 +170,14 @@
         ""
       ],
       "deltas_vs_first": [
-        null,
-        null,
-        null
+        0.0,
+        -0.00511574074074074,
+        0.10530092592592592
       ],
       "delta_pcts_vs_first": [
-        null,
-        null,
-        null
+        0.0,
+        -4.509283819628647,
+        92.8177922872883
       ]
     },
     {
@@ -206,34 +206,6 @@
         0.0,
         110.34482758620689,
         -41.37931034482759
-      ]
-    },
-    {
-      "metric": "machine_state",
-      "values": [
-        null,
-        null,
-        null
-      ],
-      "displays": [
-        "\u2014",
-        "\u2014",
-        "\u2014"
-      ],
-      "validities": [
-        "",
-        "",
-        ""
-      ],
-      "deltas_vs_first": [
-        null,
-        null,
-        null
-      ],
-      "delta_pcts_vs_first": [
-        null,
-        null,
-        null
       ]
     },
     {

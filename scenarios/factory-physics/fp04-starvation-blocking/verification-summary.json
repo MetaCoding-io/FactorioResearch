@@ -1,0 +1,262 @@
+{
+  "run_id": "01M0YHW9MQKST9QDWWEJJ1FBTW",
+  "resolved_scenario_hash": "sha256:98f6d0b46f3b464d1c94e13922576db636fc0b1afaff6b9fd7ebd6c7bb118dc7",
+  "scenario": {
+    "id": "fp-04-starvation-blocking",
+    "version": "0.1.0",
+    "title": "Starvation and Blocking"
+  },
+  "metrics": {
+    "average_wip": {
+      "type": "aggregate",
+      "aggregation": "time_mean",
+      "source": "line_wip",
+      "window": {
+        "phase": "measured",
+        "start_tick": 14400,
+        "end_tick": 43200
+      },
+      "coverage_complete": true,
+      "census_validity": {
+        "census_checks_in_window": 480,
+        "discrepancy_intervals": [],
+        "valid": true
+      },
+      "value": 57.54,
+      "unit": "work units",
+      "exact": {
+        "numerator": 1657152,
+        "denominator": 28800
+      },
+      "area_work_unit_ticks": 1657152,
+      "window_ticks": 28800
+    },
+    "current_wip": {
+      "type": "current_value",
+      "source": "line_wip",
+      "note": "live display metric"
+    },
+    "fraction_blocked": {
+      "type": "state_fraction",
+      "source": "machine_state",
+      "state": "blocked",
+      "entity_aggregation": "pooled_machine_time",
+      "denominator": "full_window",
+      "window": {
+        "phase": "measured",
+        "start_tick": 14400,
+        "end_tick": 43200
+      },
+      "machine_count": 3,
+      "window_ticks": 28800,
+      "denominator_machine_ticks": 86400,
+      "per_machine_denominator_ticks": {
+        "3": 28800,
+        "6": 28800,
+        "9": 28800
+      },
+      "state_machine_ticks": 5236,
+      "classified_machine_ticks": 86400,
+      "coverage_complete": true,
+      "value": 0.06060185185185185,
+      "exact": {
+        "numerator": 5236,
+        "denominator": 86400
+      },
+      "coverage_fraction": 1.0
+    },
+    "fraction_productive": {
+      "type": "state_fraction",
+      "source": "machine_state",
+      "state": "productive",
+      "entity_aggregation": "pooled_machine_time",
+      "denominator": "full_window",
+      "window": {
+        "phase": "measured",
+        "start_tick": 14400,
+        "end_tick": 43200
+      },
+      "machine_count": 3,
+      "window_ticks": 28800,
+      "denominator_machine_ticks": 86400,
+      "per_machine_denominator_ticks": {
+        "3": 28800,
+        "6": 28800,
+        "9": 28800
+      },
+      "state_machine_ticks": 71362,
+      "classified_machine_ticks": 86400,
+      "coverage_complete": true,
+      "value": 0.825949074074074,
+      "exact": {
+        "numerator": 71362,
+        "denominator": 86400
+      },
+      "coverage_fraction": 1.0
+    },
+    "fraction_starved": {
+      "type": "state_fraction",
+      "source": "machine_state",
+      "state": "starved",
+      "entity_aggregation": "pooled_machine_time",
+      "denominator": "full_window",
+      "window": {
+        "phase": "measured",
+        "start_tick": 14400,
+        "end_tick": 43200
+      },
+      "machine_count": 3,
+      "window_ticks": 28800,
+      "denominator_machine_ticks": 86400,
+      "per_machine_denominator_ticks": {
+        "3": 28800,
+        "6": 28800,
+        "9": 28800
+      },
+      "state_machine_ticks": 9802,
+      "classified_machine_ticks": 86400,
+      "coverage_complete": true,
+      "value": 0.11344907407407408,
+      "exact": {
+        "numerator": 9802,
+        "denominator": 86400
+      },
+      "coverage_fraction": 1.0
+    },
+    "line_wip": {
+      "type": "wip",
+      "method": "conservation_ledger",
+      "flow": "workpiece_flow",
+      "final_wip": 58,
+      "change_points": 765
+    },
+    "machine_state": {
+      "type": "production_state",
+      "adapter": "crafting_machine",
+      "classifier_version": "crafting_machine/1",
+      "membership_resolution": "dynamic_boundary",
+      "entity_set": "line_machines",
+      "machine_count": 3,
+      "machines": [
+        {
+          "unit_number": 3,
+          "prototype": "assembling-machine-3",
+          "position": {
+            "x": -10.5,
+            "y": 0.5
+          }
+        },
+        {
+          "unit_number": 6,
+          "prototype": "assembling-machine-1",
+          "position": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        {
+          "unit_number": 9,
+          "prototype": "assembling-machine-2",
+          "position": {
+            "x": 11.5,
+            "y": 0.5
+          }
+        }
+      ],
+      "eligibility": {
+        "3": {
+          "from_tick": 0,
+          "to_tick": 43200
+        },
+        "6": {
+          "from_tick": 0,
+          "to_tick": 43200
+        },
+        "9": {
+          "from_tick": 0,
+          "to_tick": 43200
+        }
+      },
+      "eligible_machine_ticks": 129600,
+      "per_machine_eligible_ticks": {
+        "3": 43200,
+        "6": 43200,
+        "9": 43200
+      },
+      "run_ticks": 43200,
+      "pooled_state_ticks": {
+        "starved": 15567,
+        "productive": 108483,
+        "blocked": 5550
+      },
+      "per_machine_state_ticks": {
+        "3": {
+          "starved": 631,
+          "productive": 37019,
+          "blocked": 5550
+        },
+        "6": {
+          "starved": 423,
+          "productive": 42777
+        },
+        "9": {
+          "starved": 14513,
+          "productive": 28687
+        }
+      },
+      "classified_machine_ticks": 129600,
+      "covered_machine_ticks": 129600,
+      "span_count": 1212
+    },
+    "measured_throughput": {
+      "type": "throughput",
+      "flow": "workpiece_flow",
+      "window": {
+        "phase": "measured",
+        "start_tick": 14400,
+        "end_tick": 43200
+      },
+      "method": "completion_sink_delivery",
+      "completed_quantity": 240,
+      "window_ticks": 28800,
+      "value_per_minute": 30.0,
+      "exact_per_minute": {
+        "numerator": 30,
+        "denominator": 1
+      },
+      "coverage_complete": true
+    },
+    "loaded_cycle_time": {
+      "type": "cycle_time",
+      "flow": "workpiece_flow",
+      "method": "little_law_derived",
+      "measurement_class": "derived",
+      "wip_metric": "average_wip",
+      "throughput_metric": "measured_throughput",
+      "value_seconds": 115.08,
+      "exact_ticks": {
+        "numerator": 34524,
+        "denominator": 5
+      },
+      "coverage_complete": true,
+      "census_validity": {
+        "census_checks_in_window": 480,
+        "discrepancy_intervals": [],
+        "valid": true
+      }
+    }
+  },
+  "validity": {
+    "completed": true,
+    "aborted": false,
+    "abort_reason": null,
+    "protocol_events": {},
+    "manual_carriage_residual": 0
+  },
+  "lua_cross_verification": {
+    "available": true,
+    "agrees": true,
+    "mismatches": []
+  },
+  "lifecycle": "COMPLETED"
+}
