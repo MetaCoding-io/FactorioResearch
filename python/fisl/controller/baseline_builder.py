@@ -138,6 +138,24 @@ def lab3_placements() -> list[Placement]:
 
 # --- Lua generation ---------------------------------------------------------
 
+# Maps made with `factorio --create` run the freeplay scenario, whose intro
+# (crash-site cutscene, ship wreckage, rocket objective, starter items) is
+# deferred until the FIRST player ever joins. A headlessly built/verified
+# baseline therefore joins "armed": the first human connection crash-lands a
+# ship onto the lab. Neutralize it via freeplay's remote interface before
+# saving; the settings persist in the save.
+NEUTRALIZE_FREEPLAY_LUA = (
+    "local ok = pcall(function() "
+    'local freeplay = remote.interfaces["freeplay"] '
+    "if freeplay then "
+    'if freeplay["set_skip_intro"] then remote.call("freeplay", "set_skip_intro", true) end '
+    'if freeplay["set_disable_crashsite"] then remote.call("freeplay", "set_disable_crashsite", true) end '
+    'if freeplay["set_created_items"] then remote.call("freeplay", "set_created_items", {}) end '
+    'if freeplay["set_respawn_items"] then remote.call("freeplay", "set_respawn_items", {}) end '
+    "end end) "
+    'rcon.print(ok and "freeplay-neutralized" or "freeplay-neutralize-failed")'
+)
+
 _PREAMBLE = (
     'local surface = game.surfaces["nauvis"] '
     "surface.always_day = true "
@@ -258,6 +276,9 @@ def build_baseline(
     server.launch()
     try:
         client: RconClient = server.wait_for_rcon()
+        response = client.command("/silent-command " + NEUTRALIZE_FREEPLAY_LUA)
+        if "freeplay-neutralized" not in response:
+            raise BuildError(f"freeplay intro could not be neutralized: {response!r}")
         for command in placement_commands(lab3_placements()):
             response = client.command("/silent-command " + command)
             if "ok" not in response and "prepared" not in response and "finished" not in response:

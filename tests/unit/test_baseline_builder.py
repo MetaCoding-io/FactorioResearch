@@ -100,3 +100,13 @@ def test_commands_are_transmission_safe():
         assert len(command) < 3800, f"command too long ({len(command)})"
         assert "--" not in command, "Lua comments break single-line transmission"
         assert "rcon.print" in command  # every command acknowledges
+
+
+def test_freeplay_neutralization_command():
+    from fisl.controller.baseline_builder import NEUTRALIZE_FREEPLAY_LUA
+
+    assert "--" not in NEUTRALIZE_FREEPLAY_LUA
+    assert len(NEUTRALIZE_FREEPLAY_LUA) < 3800
+    for call in ("set_skip_intro", "set_disable_crashsite", "set_created_items", "set_respawn_items"):
+        assert call in NEUTRALIZE_FREEPLAY_LUA
+    assert "rcon.print" in NEUTRALIZE_FREEPLAY_LUA

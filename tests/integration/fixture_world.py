@@ -246,10 +246,16 @@ class SpikeSession:
         self.run_config: dict | None = None
 
     def __enter__(self) -> "SpikeSession":
+        from fisl.controller.baseline_builder import NEUTRALIZE_FREEPLAY_LUA
+
         self.server.prepare()
         self.server.launch()
         rcon = self.server.wait_for_rcon()
         self.protocol = FislProtocol(rcon)
+        # Disarm the deferred freeplay intro (crash site fires on first player
+        # join) so interactive spike tests join a clean world.
+        response = rcon.command("/silent-command " + NEUTRALIZE_FREEPLAY_LUA)
+        assert "freeplay-neutralized" in response, f"freeplay neutralize failed: {response!r}"
         response = rcon.command("/silent-command " + BOOTSTRAP_LUA.replace("\n", " "))
         assert "bootstrap-ok" in response, f"bootstrap failed: {response!r}"
         return self
