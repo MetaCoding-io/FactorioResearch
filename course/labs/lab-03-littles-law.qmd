@@ -34,6 +34,10 @@ answer would spoil the diagnosis.
 
 ## Run 1 — observe
 
+<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
+![The FISL panel in READY: the experiment waits for you to press Start.](../images/lab-03/fisl-panel-ready.png){#fig-ready width=60%}
+-->
+
 Start the experiment and *don't change anything*. Spend the twelve minutes
 walking the line (hold **Alt** for the detail overlay):
 
@@ -60,6 +64,10 @@ the system. Where were the other 199 seconds?
 You walked past the answer: the packed input belt. Over 95% of each
 workpiece's life was spent *waiting in a queue*, and nearly all of the
 system's inventory was that queue.
+
+<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
+![Run 1, mid-experiment: the input belt packed solid with waiting workpieces — this queue *is* the WIP number on the panel.](../images/lab-03/run1-jammed-belt.png){#fig-jam}
+-->
 
 ## The theory you just watched
 
@@ -95,20 +103,34 @@ swing, while the bottleneck consumes one workpiece per 4 s. The fix is not
 a faster machine — it's admitting work at the rate the system actually
 consumes it. Factorio's circuit network lets you build exactly that.
 
+One question decides everything: **where should the signal watch?** The
+queue forms where work waits — immediately upstream of the bottleneck. A
+gate anywhere else only stops the queue growing past the gate; everything
+between the gate and the machine still packs solid.
+
 Start a new run, and **before pressing Start**:
 
 1. Walk to the source inserter (beside the blue chest).
 2. Select the **red wire** tool from the shortcut strip (bottom right;
    enable it via the `…` menu if hidden).
-3. Click the inserter, then a belt tile 3–4 tiles downstream. Press **Q**
-   to put the wire away.
+3. Click the inserter, then walk east and click the **last belt tile
+   before the first machine's input inserter**. Press **Q** to put the
+   wire away.
 4. Open that belt tile: enable **Read belt contents**, mode **Hold**.
-5. Open the inserter: set **Enable/disable** with the condition
-   *rough workpiece < 1*.
+5. Open the source inserter: set **Enable/disable** with the condition
+   *rough workpiece < 2*. (Why 2 and not 1? The belt trip from the source
+   takes ~5 s while the machine eats one workpiece per 4 s — a staging
+   allowance of one extra piece covers the travel time so the bottleneck
+   never starves. Try 1 later and watch what happens to throughput.)
 
-You have built a *pull signal*: the inserter admits a workpiece only when
-the previous one has moved on. Press Start and watch the same twelve
-minutes — the belt never fills, and the WIP number tells the story live.
+<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
+![The pull gate: red wire from the source inserter to the last belt tile before machine 1.](../images/lab-03/run2-pull-gate.png){#fig-gate}
+-->
+
+You have built a *pull signal*: a workpiece is admitted only while fewer
+than two are staged at the machine. Press Start and watch the same twelve
+minutes — the belt stays nearly empty, and the WIP number tells the story
+live.
 
 Then compare your two attempts:
 
@@ -117,8 +139,28 @@ fisl compare runs/<run-1> runs/<run-2>
 ```
 
 Predict before you look: what happened to throughput? To WIP? To cycle
-time? Check every prediction against the delta column — and check that
-Little's Law still binds all three numbers in run 2.
+time? Check every prediction against the deltas — and check that Little's
+Law still binds all three numbers in run 2.
+
+::: {.callout-warning}
+## If your WIP only dropped ~20%…
+
+…your gate is watching a tile near the *source*. Walk the line: everything
+downstream of your monitored tile is still packed. The signal must watch
+the point where the queue actually forms. This exact mistake was made by
+the first version of this lab's own reference solution — it measured
+avg WIP 41.66 instead of ~17. Diagnosing a control system by *walking the
+physical line* is itself the skill being taught here.
+:::
+
+**And why doesn't WIP go to ~2?** Walk the line in run 2 and count what's
+left: one or two workpieces staged at the gate, a few *moving* on belts,
+one inside each machine. This line is ~90 tiles long — about 48 s of pure
+belt travel — so even a perfect pull system must carry
+$\text{TH} \times \text{transit} \approx 0.25 \times 48 \approx 12$
+workpieces of in-transit inventory. **Conveyors are inventory.** The
+run-1 queue was waste; the run-2 residual is transportation. Little's Law
+prices both identically.
 
 ## Debrief
 
@@ -143,17 +185,31 @@ question of the variability course that follows. Do not conclude from this
 lab that all inventory is bad; conclude that inventory has a *price
 denominated in flow time*, and that the price is exact: CT = WIP / TH.
 
+<!-- TODO(screenshots): drop PNGs into course/images/lab-03/ and uncomment.
+![The debrief: `fisl compare` of the push baseline vs the pull run.](../images/lab-03/compare-terminal.png){#fig-compare}
+-->
+
 ::: {.callout-note collapse="true"}
 ## Instructor notes
 
 - The reference intervention is committed as
   `scenarios/factory-physics/fp03-littles-law/solutions/a-pull-signal/` and
-  runs headlessly via `fisl run … --headless --solution a-pull-signal`,
-  producing comparison data without a human — use it to regenerate the
-  expected numbers after any scenario/baseline change.
-- Baseline reference numbers in this chapter come from run
-  `01M0XP8VJ78KXRC8DB6BATBW39` (committed verification summary matches).
+  the whole lab dataset regenerates with one deterministic command:
+  `fisl solutions scenarios/factory-physics/fp03-littles-law --run --json
+  course/data/lab-03-comparison.json` — rerun it after any scenario or
+  baseline change and re-check the numbers cited in this chapter.
+- Baseline reference numbers come from run `01M0XP8VJ78KXRC8DB6BATBW39`
+  (committed verification summary matches). Expected pull-solution result:
+  TH unchanged at 15.00/min, avg WIP ~16–19, CT ~65–75 s (transit floor —
+  see the solution README for the analysis).
+- The ~20% "gate near the source" failure in the callout is real: it was
+  version 1 of the reference solution (run `01M0Y063ACYSD8JWRF78EJAWTF`).
+  Learners who make it are in good company; send them to walk the line.
 - Common learner friction: selecting the red wire tool (walk them to the
   shortcut `…` menu), and pressing F near belts (vacuums workpieces into
   the inventory — harmless to the ledger, but confusing).
+- Screenshot capture: run windowed (`--window-size 1680x950`), hold **Alt**
+  for the info overlay, zoom to frame the line; plain OS screenshots into
+  `course/images/lab-03/` with the filenames listed in that folder's
+  README, then uncomment the figure blocks in this chapter.
 :::
