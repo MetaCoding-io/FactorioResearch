@@ -202,6 +202,19 @@ def test_state_fraction_rejects_coverage_missing_as_state(raw):
         _compile_raw(bad)
 
 
+def test_fp04_scenario_compiles_with_machine_state_stack(raw):
+    fp04_yaml = SCENARIO_YAML.parent.parent / "fp04-starvation-blocking" / "scenario.yaml"
+    resolved = compile_author_scenario(load_author_yaml(fp04_yaml))
+    assert resolved["experiment"]["total_duration_ticks"] == (4 + 8) * 3600
+    assert resolved["metrics"]["machine_state"]["membership_resolution"] == "dynamic_boundary"
+    for state in ("productive", "starved", "blocked"):
+        fraction = resolved["metrics"][f"fraction_{state}"]
+        assert fraction["denominator"] == "full_window"
+        assert (fraction["window"]["start_tick"], fraction["window"]["end_tick"]) == (14400, 43200)
+    plan = resolved["observation_plan"]["machine_state"]
+    assert plan[0]["entity_set"] == "line_machines"
+
+
 def test_state_fraction_rejects_shrunken_denominator(raw):
     # Only the explicit full-window denominator exists in the POC; anything
     # that looks like classified-time-only is rejected (ADR 0010 §12).

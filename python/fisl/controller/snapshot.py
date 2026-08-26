@@ -61,6 +61,28 @@ SHOT_SETS: dict[str, list[Shot]] = {
             position=(-36.0, 0.0), zoom=0.55,
         ),
     ],
+    # Lab 4 shot list — filenames match course/images/lab-04/README.md.
+    # Steady state needs the M1->M2 buffer full: shoot at ~6 min.
+    "fp-04-starvation-blocking": [
+        Shot(
+            filename="lab4-line-overview.png",
+            caption="the whole compact line at READY: three different machines",
+            at_experiment_tick=0, solution=None,
+            position=(0.5, 0.5), zoom=0.45, show_gui=False,
+        ),
+        Shot(
+            filename="lab4-blocked-starved.png",
+            caption="baseline mid-run: M1 backed up solid, M3 waiting on an empty belt",
+            at_experiment_tick=6 * 3600, solution=None,
+            position=(0.5, 0.5), zoom=0.45,
+        ),
+        Shot(
+            filename="lab4-buffer-chest.png",
+            caption="solution A: the inline buffer chest absorbing M1's surplus",
+            at_experiment_tick=6 * 3600, solution="a-buffer-before-constraint",
+            position=(-4.0, 0.5), zoom=0.7,
+        ),
+    ],
 }
 
 

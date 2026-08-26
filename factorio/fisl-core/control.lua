@@ -45,7 +45,10 @@ end)
 -- reference that never reaches telemetry — it is stripped at drain).
 local function queue_entity_notification(kind, event)
   local s = state.get()
-  if s.lifecycle ~= "RUNNING" then return end
+  -- READY events matter too: entities built between READY and start (a
+  -- learner's pre-start edit, a scripted solution) are drained at the start
+  -- checkpoint and join entity sets at boundary 0 (ADR 0016 §4).
+  if s.lifecycle ~= "RUNNING" and s.lifecycle ~= "READY" then return end
   local entity = event.entity or event.created_entity
   if entity == nil or not entity.valid then return end
   s.events.raw_queue[#s.events.raw_queue + 1] = {

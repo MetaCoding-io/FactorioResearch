@@ -38,6 +38,17 @@ def test_fp03_pull_signal_solution_loads():
     assert provenance["applied_at"] == "pre_start"
 
 
+def test_all_committed_solutions_load_transmission_safe():
+    solution_dirs = sorted((REPO / "scenarios").glob("*/*/solutions/*"))
+    assert len(solution_dirs) >= 3  # fp03 a; fp04 a+b
+    for directory in solution_dirs:
+        solution = load_solution(directory)
+        for step in solution.steps:
+            assert "--" not in step.command, directory
+            assert STEP_OK in step.command, directory
+            assert len(step.command) < 3500, directory
+
+
 def test_inline_comment_rejected(tmp_path):
     directory = write_solution(
         tmp_path, "bad", {"solution.lua": 'local x = 1 -- boom\nrcon.print("solution-step-ok")\n'}

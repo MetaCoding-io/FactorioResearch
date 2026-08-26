@@ -92,7 +92,9 @@ anything semantic does).
 ### `fisl build-baseline <scenario-dir>`
 
 Constructs the scenario's `baseline.zip` from nothing, against a real
-Factorio server. What it actually does, in order:
+Factorio server. The layout is selected by the scenario id in
+`scenario.yaml` (registered labs: `fp-03-littles-law`,
+`fp-04-starvation-blocking`). What it actually does, in order:
 
 1. creates a fresh deterministic map (fixed seed, no water/trees/enemies);
 2. launches a temporary headless server with the FISL mods;
@@ -211,7 +213,7 @@ in the numerator and what the denominator is.
 
 ---
 
-## 4. What the learner experiences (Lab 3)
+## 4. What the learner experiences (Labs 3 & 4)
 
 - Spawn next to a **toolbox chest** holding belts, inserters, chests,
   assemblers, poles — the materials for redesigning the line. (These items
@@ -229,6 +231,20 @@ in the numerator and what the denominator is.
   run **aborts it** (data preserved, run marked aborted).
 - Carrying workpieces in your inventory doesn't break WIP accounting (they
   still count), but leftovers at the end of the run flag the run's validity.
+
+**Lab 4 (fp04-starvation-blocking)** uses the same architecture,
+compressed, with three *different* machine models so the constraint sits in
+the middle of the line (blocked above, starved below). Timing: 4 min warmup
+(the inter-stage buffer needs ~3–4 min to fill and reach steady state) +
+8 min measured. Post-run the learner additionally sees pooled
+productive/starved/blocked fractions, and the report's per-machine table
+shows each machine's state distribution over its eligibility window —
+machines the learner adds or removes mid-run enter/leave the measurement at
+the right boundaries. Two committed reference solutions
+(`a-buffer-before-constraint`, `b-upgrade-constraint`) make the buffer-vs-
+constraint comparison reproducible: `fisl solutions
+scenarios/factory-physics/fp04-starvation-blocking --run` runs baseline +
+both and compares.
 
 ---
 
