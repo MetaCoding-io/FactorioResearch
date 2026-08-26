@@ -1,39 +1,48 @@
--- fp03 solution A: pull signal on the source inserter (v2).
+-- fp03 solution A: pull signal on the source inserter (v3).
 --
--- Wires the source-side inserter to the LAST belt tile before machine 1's
--- input pickup (-33.5): the queue always forms immediately upstream of the
--- bottleneck, so that is where the gate must watch. Condition "< 2" keeps
--- at most ~2 workpieces staged at the machine, which covers the ~4.8 s
--- belt transit so the bottleneck never starves (feed capacity ~22/min vs
--- 15/min demand).
+-- Wires the source-side inserter (-43.5) to the LAST belt tile before
+-- machine 1's input pickup (-33.5): the queue always forms immediately
+-- upstream of the bottleneck, so that is where the gate must watch.
+-- Condition "< 2" keeps at most ~2 workpieces staged at the machine, which
+-- covers the ~4.8 s belt transit so the bottleneck never starves.
 --
--- v1 of this solution monitored a tile near the SOURCE and only cut WIP by
--- ~19%: everything downstream of the monitored tile still packed solid.
--- Gate placement is the lesson — see the solution README.
---
--- Control-behavior property names differ slightly across 2.0 point
--- releases; both spellings are attempted and the step fails loudly if
--- neither takes effect.
+-- Version history is course material (see README):
+-- v1 monitored a tile near the SOURCE: WIP only dropped ~19% because
+--   everything downstream of the monitored tile still packed solid.
+-- v2 wired directly to the right tile, 10.0 tiles away -- past the 9-tile
+--   circuit wire reach. connect_to() returns false WITHOUT raising, the
+--   unconnected inserter ignores its enable condition entirely, and the
+--   run came out bit-identical to the baseline. Silent no-ops are worse
+--   than loud failures: v3 relays through the belt at -38.5 (5.0 tiles to
+--   each neighbor) and fails the step on any false return.
 local surface = game.surfaces["nauvis"]
-local inserter = surface.find_entities_filtered{name = "fast-inserter", position = {-43.5, 0.5}, radius = 0.4}[1]
-local belt = surface.find_entities_filtered{name = "transport-belt", position = {-33.5, 0.5}, radius = 0.4}[1]
-if inserter == nil or belt == nil then rcon.print("solution-step-fail: source inserter or gate belt not found") return end
+local function grab(name, x)
+  return surface.find_entities_filtered{name = name, position = {x, 0.5}, radius = 0.4}[1]
+end
+local inserter = grab("fast-inserter", -43.5)
+local relay = grab("transport-belt", -38.5)
+local gate = grab("transport-belt", -33.5)
+if not (inserter and relay and gate) then rcon.print("solution-step-fail: line entities not found") return end
 local red = defines.wire_connector_id.circuit_red
 local ok, err = pcall(function()
-  inserter.get_wire_connector(red, true).connect_to(belt.get_wire_connector(red, true))
-  local belt_cb = belt.get_or_create_control_behavior()
-  belt_cb.read_contents = true
-  belt_cb.read_contents_mode = defines.control_behavior.transport_belt.content_read_mode.hold
+  local hop1 = inserter.get_wire_connector(red, true).connect_to(relay.get_wire_connector(red, true))
+  local hop2 = relay.get_wire_connector(red, true).connect_to(gate.get_wire_connector(red, true))
+  if not hop1 then error("wire inserter->relay did not connect (reach?)") end
+  if not hop2 then error("wire relay->gate did not connect (reach?)") end
+  local relay_cb = relay.get_or_create_control_behavior()
+  relay_cb.circuit_enable_disable = false
+  relay_cb.read_contents = false
+  local gate_cb = gate.get_or_create_control_behavior()
+  gate_cb.circuit_enable_disable = false
+  gate_cb.read_contents = true
+  gate_cb.read_contents_mode = defines.control_behavior.transport_belt.content_read_mode.hold
   local inserter_cb = inserter.get_or_create_control_behavior()
-  local enabled = pcall(function() inserter_cb.circuit_enable_disable = true end)
-  local enabled2 = pcall(function() inserter_cb.circuit_enabled = true end)
-  if not (enabled or enabled2) then error("could not enable circuit control on inserter") end
-  local condition = { comparator = "<", first_signal = { type = "item", name = "fisl-rough-workpiece" }, constant = 2 }
-  local set1 = pcall(function() inserter_cb.circuit_condition = condition end)
-  if not set1 then
-    local set2 = pcall(function() inserter_cb.circuit_condition = { condition = condition } end)
-    if not set2 then error("could not set circuit condition on inserter") end
-  end
+  inserter_cb.circuit_enable_disable = true
+  inserter_cb.circuit_condition = { comparator = "<", first_signal = { type = "item", name = "fisl-rough-workpiece" }, constant = 2 }
+  local a = inserter.get_wire_connector(red, true)
+  local b = gate.get_wire_connector(red, true)
+  local same_ok, same = pcall(function() return a.network_id == b.network_id end)
+  if same_ok and not same then error("inserter and gate belt are on different circuit networks") end
 end)
 if not ok then rcon.print("solution-step-fail: " .. tostring(err)) return end
 rcon.print("solution-step-ok")

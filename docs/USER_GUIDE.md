@@ -297,6 +297,7 @@ FACTORIO_BIN=... pytest tests/integration -v   # the real-runtime spike suite
 | Run aborted `learner_disconnected` | client closed/crashed mid-run — intended behavior; just run again |
 | Metric reported `incomplete` / objective undetermined | the run didn't cover the metric's window (aborted early) or census flagged a discrepancy — `fisl report` shows which |
 | `wip_census_discrepancy` events | tracked workpieces appeared/vanished without crossing a port (conservation violation) — the report shows the suspect interval; the ledger is never silently corrected |
+| Scripted solution "applied" but metrics identical to baseline | the intervention silently did nothing — most likely a circuit wire past its 9-tile reach: `connect_to()` returns false without raising, and an unconnected inserter ignores its enable condition. Check every `connect_to` return value in the solution script (see fp03 solution A v2 → v3) |
 
 Known runtime findings (why some code looks odd) are catalogued in
 `docs/RUNTIME_VALIDATION.md` § "Spike findings".

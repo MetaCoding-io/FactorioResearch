@@ -113,10 +113,15 @@ Start a new run, and **before pressing Start**:
 1. Walk to the source inserter (beside the blue chest).
 2. Select the **red wire** tool from the shortcut strip (bottom right;
    enable it via the `…` menu if hidden).
-3. Click the inserter, then walk east and click the **last belt tile
-   before the first machine's input inserter**. Press **Q** to put the
-   wire away.
-4. Open that belt tile: enable **Read belt contents**, mode **Hold**.
+3. Click the inserter, then click a belt tile **about halfway to the first
+   machine** — circuit wire only reaches 9 tiles, and the full span is 10,
+   so the wire needs one relay hop. Then click the **last belt tile before
+   the first machine's input inserter**. Press **Q** to put the wire away.
+   (If a click refuses to attach the wire, you're stretching past its
+   reach — pick a closer tile.)
+4. Open the **last** belt tile (the gate): enable **Read belt contents**,
+   mode **Hold**. Open the halfway tile too and make sure *its* circuit
+   options are all off — it only carries the wire.
 5. Open the source inserter: set **Enable/disable** with the condition
    *rough workpiece < 2*. (Why 2 and not 1? The belt trip from the source
    takes ~5 s while the machine eats one workpiece per 4 s — a staging
@@ -151,6 +156,21 @@ the point where the queue actually forms. This exact mistake was made by
 the first version of this lab's own reference solution — it measured
 avg WIP 41.66 instead of ~17. Diagnosing a control system by *walking the
 physical line* is itself the skill being taught here.
+:::
+
+::: {.callout-warning}
+## If nothing changed *at all*…
+
+…your wire never connected. An inserter with an enable condition but no
+circuit network **ignores the condition completely** — the run comes out
+identical to the baseline, down to the last decimal. The usual cause is
+wire reach: a red wire spans at most 9 tiles, and the direct
+inserter-to-gate span here is 10, so it needs the relay hop from step 3.
+Walk the wire and check both segments are actually drawn. This, too, was a
+mistake the reference solution made (version 2 wired the distance directly;
+the script reported success and changed nothing). A control system has two
+halves — the *decision* and the *actuation path* — and configuring the
+first does nothing without the second.
 :::
 
 **And why doesn't WIP go to ~2?** Walk the line in run 2 and count what's
@@ -207,6 +227,11 @@ then uncomment. This figure regenerates from run data — never hand-capture it.
 - The ~20% "gate near the source" failure in the callout is real: it was
   version 1 of the reference solution (run `01M0Y063ACYSD8JWRF78EJAWTF`).
   Learners who make it are in good company; send them to walk the line.
+- The "nothing changed at all" failure is also real: version 2 of the
+  reference solution wired the 10-tile span directly, past the 9-tile
+  circuit wire reach — `connect_to()` returns false without raising, and
+  run `01M0Y31VW4X12TBZN8S0HQA4T0` was bit-identical to baseline. Send
+  those learners to walk the *wire*.
 - Common learner friction: selecting the red wire tool (walk them to the
   shortcut `…` menu), and pressing F near belts (vacuums workpieces into
   the inventory — harmless to the ledger, but confusing).
