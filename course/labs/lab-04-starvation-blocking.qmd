@@ -84,19 +84,25 @@ Then compare:
 fisl compare runs/<baseline> runs/<intervention>
 ```
 
-What actually happens (run it before believing prose):
+What actually happens — reference runs of the committed solutions, against
+a baseline that measured **TH 30.00/min, avg WIP 57.54, CT 115.08 s**:
 
 - **A** makes M1's blocked fraction collapse and its productive fraction
-  climb — the machine *looks* healthier. Throughput does not move at all:
-  M2 never stopped being the constraint, and a buffer feeds no one faster.
-  The surplus M1 produces now accumulates in the chest for the entire run,
-  so WIP climbs and climbs, and cycle time with it (Little's Law is not
-  optional). You improved a machine and worsened every workpiece.
-- **B** moves throughput — up ~25%, to the *next* constraint (M1's
-  1.6 s ⇒ 37.5/min). And watch the state signature migrate: M1's blocked
-  time vanishes, while M2 and M3 now show starved time. Walk the line
-  again: blocked-above/starved-below now points at M1. The method still
-  works; the answer moved, because the constraint moved.
+  climb — the machine *looks* healthier. Throughput does not move at all
+  (measured: **30.00/min, +0.0%**): M2 never stopped being the constraint,
+  and a buffer feeds no one faster. The surplus M1 produces now accumulates
+  in the chest for the entire run, so WIP climbs and climbs — average WIP
+  **91.16 (+58.4%)**, and *still rising* when the experiment ended (final
+  WIP 122 vs the baseline's steady 58) — and cycle time with it: **182.31 s
+  (+58.4%)**. Little's Law is not optional. You improved a machine and
+  worsened every workpiece.
+- **B** moves throughput — measured **37.50/min (+25.0%)**, exactly the
+  *next* constraint's rate (M1's 1.6 s). Average WIP fell to **33.23
+  (−42.3%)** and cycle time to **53.17 s (−53.8%)** as the pre-constraint
+  queue drained. And watch the state signature migrate: M1's blocked time
+  vanishes, while M2 and M3 now show starved time. Walk the line again:
+  blocked-above/starved-below now points at M1. The method still works;
+  the answer moved, because the constraint moved.
 
 ## Debrief
 
@@ -136,9 +142,12 @@ then uncomment. This figure regenerates from run data — never hand-capture it.
   (`a-buffer-before-constraint`, `b-upgrade-constraint`); the full lab
   dataset — baseline plus both solutions, compared — regenerates with
   `fisl solutions scenarios/factory-physics/fp04-starvation-blocking --run
-  --json course/data/lab-04-comparison.json`. Cite measured numbers in
-  this chapter after the first verified run; the rate arithmetic above
-  (30/min baseline, 37.5/min after B) is the prediction to check.
+  --json course/data/lab-04-comparison.json`. Reference runs (2026-08-26):
+  baseline `01M0YHYH9TAVJP0SK6F60XX8W9` (TH 30.00/min, avg WIP 57.54,
+  CT 115.08 s — the rate arithmetic hit exactly), buffer
+  `01M0YJ0RNJCQZ7ZRSXVC75J1VR`, upgrade `01M0YJ304T2T1GQ8R2AFEPS62J`
+  (37.50/min, again exact). Rerun the command after any scenario or
+  baseline change and re-check the numbers cited in this chapter.
 - Machine-state fractions come from ADR 0007 classification: productive is
   measured *craft progress*, never the status lamp; unknown states surface
   as `unclassified`/coverage rather than disappearing into idle. The

@@ -14,13 +14,16 @@ The surplus has to live somewhere, and now it lives in the chest: WIP grows
 for the entire run (a wooden chest holds 1,600 workpieces; the rate
 mismatch fills it at ~0.125/s, so it never fills within the experiment).
 
-Expected vs baseline:
+Measured (run `01M0YJ0RNJCQZ7ZRSXVC75J1VR` vs baseline
+`01M0YHYH9TAVJP0SK6F60XX8W9`, TH 30.00/min / avg WIP 57.54 / CT 115.08 s):
 
-- throughput: **unchanged** (~30/min — machine 2's rate)
-- machine 1 blocked fraction: **→ ~0**; its productive fraction **rises**
-- machine 3 starved fraction: **unchanged** (still paced by machine 2)
-- average WIP and cycle time: **grow throughout the run** (unbounded while
-  the buffer has capacity)
+- throughput: **30.00/min, +0.0%** — machine 2's rate, untouched
+- average WIP: **91.16 (+58.4%)** and still growing at run end (final WIP
+  122 vs the baseline's steady 58 — the linear-growth signature of a
+  buffer absorbing a permanent rate mismatch)
+- cycle time: **182.31 s (+58.4%)**
+- machine 1 blocked fraction: **→ ~0**; its productive fraction **rises**;
+  machine 3's starved fraction unchanged (still paced by machine 2)
 
 That is the lesson stated by the lab: a buffer buys *decoupling* — machine 1
 stops feeling machine 2's pace — and the price is inventory, paid in flow

@@ -12,13 +12,16 @@ machine 2 and machine 3 now show *starved* time because machine 1 can't
 feed them at their new appetite. Blocked-above/starved-below points at
 machine 1 now: the diagnosis method still works, the answer changed.
 
-Expected vs baseline:
+Measured (run `01M0YJ304T2T1GQ8R2AFEPS62J` vs baseline
+`01M0YHYH9TAVJP0SK6F60XX8W9`, TH 30.00/min / avg WIP 57.54 / CT 115.08 s):
 
-- throughput: **+25%** (~37.5/min, machine 1's rate)
+- throughput: **37.50/min (+25.0%)** — machine 1's rate, exactly
+- average WIP: **33.23 (−42.3%)**; cycle time **53.17 s (−53.8%)** as the
+  pre-constraint queue drains
 - machine 1: blocked **→ ~0**, productive → ~100% (it *is* the constraint)
 - machines 2 and 3: newly/more **starved** (paced by machine 1)
-- the M1→M2 belt queue drains; the source-side queue remains (admission is
-  still uncontrolled — that queue is Lab 3's lesson, not this one)
+- the source-side queue remains (admission is still uncontrolled — that
+  queue is Lab 3's lesson, not this one)
 
 Contrast with solution A: the buffer made a machine look better and moved
 no throughput; the upgrade moved throughput because it attacked the

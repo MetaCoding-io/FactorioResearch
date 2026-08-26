@@ -137,3 +137,28 @@ def test_svg_export(tmp_path):
     content = svg_path.read_text()
     assert content.lstrip().startswith("<svg")
     assert "average_wip" in content
+
+
+def test_state_fraction_rows_compare_and_production_state_skipped(tmp_path):
+    dirs = []
+    for name, starved, coverage in (("A", 0.11, 1.0), ("B", 0.02, 0.98)):
+        run_dir = make_run(tmp_path, name, avg_wip=50.0, throughput=30.0, ct=100.0)
+        summary = json.loads((run_dir / "summary.json").read_text())
+        summary["metrics"]["fraction_starved"] = {
+            "type": "state_fraction", "state": "starved", "value": starved,
+            "coverage_fraction": coverage, "coverage_complete": coverage == 1.0,
+        }
+        summary["metrics"]["machine_state"] = {
+            "type": "production_state", "machine_count": 3,
+            "pooled_state_ticks": {"productive": 1},
+        }
+        (run_dir / "summary.json").write_text(json.dumps(summary))
+        dirs.append(run_dir)
+
+    rows = comparison_rows([RunRecord.load(d) for d in dirs])
+    by_metric = {row["metric"]: row for row in rows}
+    assert "machine_state" not in by_metric  # detail table, not a scalar
+    starved_row = by_metric["fraction_starved"]
+    assert starved_row["displays"][0] == "11.0% starved"
+    assert "cov 98%" in starved_row["displays"][1]
+    assert starved_row["delta_pcts_vs_first"][1] == pytest.approx(-81.8, abs=0.1)

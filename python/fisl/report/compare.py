@@ -70,6 +70,15 @@ def _metric_value(metric: dict) -> tuple[float | None, str]:
     if metric_type == "wip":
         value = metric.get("final_wip")
         return (float(value) if value is not None else None), f"final {value}"
+    if metric_type == "state_fraction":
+        value = metric.get("value")
+        if value is None:
+            return None, "no data"
+        display = f"{value * 100:.1f}% {metric.get('state', '')}".rstrip()
+        coverage = metric.get("coverage_fraction")
+        if coverage is not None and coverage < 1:
+            display += f" (cov {coverage * 100:.0f}%)"
+        return value, display
     return None, "—"
 
 
@@ -96,6 +105,10 @@ def comparison_rows(runs: list[RunRecord]) -> list[dict]:
         metrics = [run.summary["metrics"][metric_id] for run in runs]
         if metrics[0].get("type") == "current_value":
             continue  # live display metric; nothing to compare post-run
+        if metrics[0].get("type") == "production_state":
+            # Per-machine state detail lives in `fisl report`; the comparison
+            # vector carries its pooled fractions via state_fraction metrics.
+            continue
         values, displays, validities = [], [], []
         for metric in metrics:
             value, display = _metric_value(metric)
