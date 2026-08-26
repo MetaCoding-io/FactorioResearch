@@ -1,0 +1,47 @@
+# Welcome {.unnumbered}
+
+This is the course text for **Factory Physics Through Factorio**: a sequence
+of laboratory experiments in which you operate, measure, and redesign real
+(simulated) production systems, and meet the formal theory only *after* you
+have experienced the phenomenon it explains.
+
+The laboratory is [FISL](https://github.com/MetaCoding-io/FactorioResearch)
+— the Factorio Industrial Systems Laboratory. Factorio provides the physics
+of production: machines, belts, buffers, recipes, power. FISL provides the
+experimental apparatus around it: controlled material supply, declared
+system boundaries, an exact experiment clock, and measurement whose every
+number carries its method, window, and validity.
+
+The governing idea:
+
+> **Use Factorio to model the system. Use FISL to model the experiment.**
+
+## How the labs work
+
+Each lab follows the same protocol:
+
+1. **Encounter** a deliberately constructed production system.
+2. **Run** a controlled, timed experiment while it operates (or while you
+   modify it).
+3. **Read the report** — reproducible measurements, not impressions.
+4. **Meet the theory** that names what you observed.
+5. **Intervene and re-run**, then compare attempts side by side.
+
+Every run you perform produces an auditable record; two runs of the same
+scenario are exactly comparable, and the deterministic simulation means a
+repeated run without intervention reproduces its numbers *exactly*. Your
+experiments are experiments in the scientific sense.
+
+## What this course assumes
+
+No Factorio experience is required — the labs teach the handful of controls
+you need. No mathematics beyond arithmetic is required to *do* the labs; the
+theory sections introduce each formal relationship as it is earned.
+
+## What the simulation assumes away {.unnumbered}
+
+Factorio's machines execute perfectly, never fail, and hide nothing. Real
+factories — and real organizations — do none of these things. Each lab ends
+by stating explicitly what the simulation represented, what it omitted, and
+which conclusions are (and are not) warranted. Treat that discipline as part
+of the subject: knowing the limits of a model is what makes it usable.

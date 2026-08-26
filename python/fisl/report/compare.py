@@ -126,7 +126,9 @@ def render_comparison(run_dirs: list[Path], console: Console) -> None:
     console.print(f"[bold]FISL run comparison[/bold]  ({scenario.get('id')})")
     for index, run in enumerate(runs):
         lifecycle = run.summary.get("lifecycle", "?")
-        console.print(f"  run {chr(65 + index)}: {run.run_id}  [{lifecycle}]")
+        intervention = run.manifest.get("scripted_intervention")
+        suffix = f"  (scripted solution: {intervention['id']})" if intervention else ""
+        console.print(f"  run {chr(65 + index)}: {run.run_id}  [{lifecycle}]{suffix}")
 
     if compat["same_experiment_semantics"]:
         console.print("[green]Same experiment semantics[/green] (identical resolved scenario hash)")

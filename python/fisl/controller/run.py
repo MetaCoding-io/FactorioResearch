@@ -53,6 +53,7 @@ def execute_run(
     headless_speed: float = 10.0,
     console: Console | None = None,
     seed: int | None = None,
+    solution: str | None = None,
 ) -> RunResult:
     console = console or Console()
     if factorio_bin is None:
@@ -132,6 +133,27 @@ def execute_run(
         if status.get("lifecycle") != "READY":
             raise RunError(f"runtime not READY after configuration: {status}")
         console.print("[green]READY[/green]")
+
+        # Scripted reference solution: applied after READY, before start, so
+        # the intervention exists exactly like a learner's pre-start build.
+        if solution is not None:
+            from fisl.controller.solutions import (
+                SolutionError,
+                apply_solution,
+                load_solution,
+                resolve_solution_path,
+            )
+
+            try:
+                loaded = load_solution(resolve_solution_path(scenario_dir, solution))
+                apply_solution(loaded, protocol.rcon)
+            except SolutionError as exc:
+                raise RunError(str(exc)) from exc
+            intervention = loaded.provenance()
+            run_config["scripted_intervention"] = intervention
+            (run_dir / "run-config.json").write_text(json.dumps(run_config, indent=2))
+            manifest["scripted_intervention"] = intervention
+            console.print(f"Applied scripted solution [bold]{loaded.solution_id}[/bold]")
 
         manifest["factorio_version"] = _server_factorio_version(server)
         manifest["reproducibility_fingerprint"] = reproducibility_fingerprint(

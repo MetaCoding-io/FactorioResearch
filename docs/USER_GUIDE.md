@@ -18,6 +18,7 @@ Documentation map — which document answers what:
 | Which Factorio assumptions are empirically proven? | `docs/RUNTIME_VALIDATION.md` |
 | What are the course labs? | `docs/FACTORY_PHYSICS_LABS_V1.md` |
 | Where are we / what's next? | `docs/ROADMAP.md` |
+| Where is the course text? | `course/` (Quarto book; see its README) |
 
 ---
 
@@ -135,6 +136,16 @@ The run ends when the last phase completes (panel shows results) or aborts
 way, artifacts are collected into `runs/<run_id>/` and a `summary.json` is
 computed. Retry = run the command again: new run id, same experiment
 identity.
+
+`--solution <id-or-path>` applies a **scripted reference solution** after
+READY, before start: ordered `*.lua` steps from
+`<scenario>/solutions/<id>/`, sent over RCON exactly like a learner's
+pre-start build. Same scenario, same baseline — so `fisl compare` treats
+learner and solution runs as the same experiment — and fully deterministic,
+so solution runs double as regression fixtures and course answer keys. The
+solution id + per-step script hashes are recorded in the run's provenance
+and shown by `fisl compare`. Step files must be transmission-safe: full-line
+comments only, and each step ends with `rcon.print("solution-step-ok")`.
 
 ### `fisl compare runs/<id-a> runs/<id-b> [...]`
 

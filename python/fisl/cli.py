@@ -78,6 +78,9 @@ def run(
     run_ticks: int | None = typer.Option(
         None, help="Headless only: execute this many ticks then finish (defaults to full experiment)"
     ),
+    solution: str | None = typer.Option(
+        None, help="Apply a scripted reference solution (id under <scenario>/solutions/ or a path) after READY"
+    ),
 ) -> None:
     """Compile, launch a local Factorio server, execute a run, collect artifacts."""
     from fisl.controller.run import RunError, execute_run
@@ -90,6 +93,7 @@ def run(
             runs_dir=runs_dir,
             run_ticks=run_ticks,
             console=console,
+            solution=solution,
         )
     except RunError as exc:
         console.print(f"[red]Run failed:[/red] {exc}")

@@ -1,0 +1,159 @@
+# Lab 3 — WIP and Little's Law
+
+**Scenario:** `fp-03-littles-law` · two runs of ~12 minutes each
+
+You will operate a small workpiece line twice: first exactly as you find it,
+then after making one modification. Between the two runs, three numbers —
+inventory, output rate, and flow time — will rearrange themselves in a way
+that is not a coincidence, and the law that binds them is the subject of
+this lab.
+
+## The system
+
+A conveyor line runs west to east: a blue **source** chest where raw
+workpieces enter the system, three machines that transform them in stages
+(rough → machined → inspected → finished), and an orange **sink** chest
+where finished work leaves. The source and sink are laboratory equipment —
+indestructible, and the exact points where FISL counts material entering
+and leaving. A toolbox chest near your spawn holds spare belts, inserters,
+and machines; its contents are ordinary materials and are never counted in
+any measurement.
+
+Three quantities are measured, all against the same declared boundary:
+
+- **WIP** (work in process): workpieces that have entered at the source and
+  not yet left at the sink — wherever they physically are: on belts, in
+  machine buffers, mid-craft, even in your pockets.
+- **Throughput (TH):** finished workpieces leaving through the sink, per
+  minute, over the measured window.
+- **Cycle time (CT):** how long a workpiece spends inside the system.
+
+During the run you can see only the current WIP. Everything else is
+withheld until the experiment ends — instrumentation that announces the
+answer would spoil the diagnosis.
+
+## Run 1 — observe
+
+Start the experiment and *don't change anything*. Spend the twelve minutes
+walking the line (hold **Alt** for the detail overlay):
+
+- Follow the belt west from the middle. What state is the first belt
+  segment in? Estimate how many workpieces are sitting on it.
+- Watch each machine for thirty seconds. Which one is always busy? What are
+  the other two doing most of the time?
+- Watch the WIP number on the panel. Is it moving?
+
+Afterward, read your report (`fisl report runs/<run-id>`). A reference run
+of this exact scenario produced:
+
+| Metric | Value |
+|---|---|
+| average WIP | 51.70 work units |
+| throughput | 15.00 / min |
+| cycle time (derived) | 206.78 s |
+
+Now a calculation you can do in your head: total *processing* time per
+workpiece — the time machines actually spend working on it — is about
+**8 seconds** (4 + 2 + 2). Yet each workpiece spent **207 seconds** inside
+the system. Where were the other 199 seconds?
+
+You walked past the answer: the packed input belt. Over 95% of each
+workpiece's life was spent *waiting in a queue*, and nearly all of the
+system's inventory was that queue.
+
+## The theory you just watched
+
+Multiply throughput by cycle time, in consistent units:
+
+$$
+0.25\ \text{workpieces/s} \times 206.78\ \text{s} = 51.70\ \text{workpieces}
+$$
+
+That is your average WIP, exactly. This is **Little's Law**:
+
+$$
+\text{WIP} = \text{TH} \times \text{CT}
+$$
+
+It holds for any stable flow system with a declared boundary — factories,
+hospitals, ticket queues, software teams — with no assumptions about what
+happens inside. It is an accounting identity of flow, and you have now
+measured all three of its terms simultaneously in a system you could walk
+around in.
+
+Read it as a constraint: the three quantities are not independent. If
+throughput is pinned by a bottleneck (yours is: the first machine can only
+do one workpiece per 4 s, i.e. 15/min), then **WIP and cycle time are the
+same decision**. Carry 52 units of inventory and your flow time *must* be
+~207 s. Want a 30-second flow time? Then you may hold at most
+$0.25 \times 30 = 7.5$ units of WIP — no clever routing can evade this.
+
+## Run 2 — intervene
+
+The queue exists because the source inserter admits work as fast as it can
+swing, while the bottleneck consumes one workpiece per 4 s. The fix is not
+a faster machine — it's admitting work at the rate the system actually
+consumes it. Factorio's circuit network lets you build exactly that.
+
+Start a new run, and **before pressing Start**:
+
+1. Walk to the source inserter (beside the blue chest).
+2. Select the **red wire** tool from the shortcut strip (bottom right;
+   enable it via the `…` menu if hidden).
+3. Click the inserter, then a belt tile 3–4 tiles downstream. Press **Q**
+   to put the wire away.
+4. Open that belt tile: enable **Read belt contents**, mode **Hold**.
+5. Open the inserter: set **Enable/disable** with the condition
+   *rough workpiece < 1*.
+
+You have built a *pull signal*: the inserter admits a workpiece only when
+the previous one has moved on. Press Start and watch the same twelve
+minutes — the belt never fills, and the WIP number tells the story live.
+
+Then compare your two attempts:
+
+```sh
+fisl compare runs/<run-1> runs/<run-2>
+```
+
+Predict before you look: what happened to throughput? To WIP? To cycle
+time? Check every prediction against the delta column — and check that
+Little's Law still binds all three numbers in run 2.
+
+## Debrief
+
+- Throughput did not change. Why not? What *would* change it?
+- Nearly all cycle time in run 1 was queueing. Is queue time always waste?
+  What did the big queue *buy* the system, if anything, in this
+  deterministic world? (Hold this question — it returns with force when
+  variability enters the course.)
+- The intervention limited admission, not capacity. Name a real system you
+  know that controls flow time this way — and one that instead lets the
+  queue grow.
+- Your factory processed work in 8 s but delivered in 207 s. If a customer
+  asked "why does my order take so long," what is the honest answer?
+
+## What the simulation assumed away
+
+This world is deterministic: machines never fail, never vary, and the
+supply never fluctuates. In such a world a large input queue is *pure*
+waste — it buys nothing. Real systems hold inventory partly to absorb
+variability, and whether a buffer is waste or insurance is the central
+question of the variability course that follows. Do not conclude from this
+lab that all inventory is bad; conclude that inventory has a *price
+denominated in flow time*, and that the price is exact: CT = WIP / TH.
+
+::: {.callout-note collapse="true"}
+## Instructor notes
+
+- The reference intervention is committed as
+  `scenarios/factory-physics/fp03-littles-law/solutions/a-pull-signal/` and
+  runs headlessly via `fisl run … --headless --solution a-pull-signal`,
+  producing comparison data without a human — use it to regenerate the
+  expected numbers after any scenario/baseline change.
+- Baseline reference numbers in this chapter come from run
+  `01M0XP8VJ78KXRC8DB6BATBW39` (committed verification summary matches).
+- Common learner friction: selecting the red wire tool (walk them to the
+  shortcut `…` menu), and pressing F near belts (vacuums workpieces into
+  the inventory — harmless to the ledger, but confusing).
+:::

@@ -41,7 +41,8 @@ Then use the broader documents as the destination/full-v1 specification:
 
 - `factorio/` — in-game FISL Lua runtime (`fisl-core`) and Factory Physics content mod (`fisl-factory-physics`).
 - `python/` — scenario compiler, controller, metrics, and report tooling (`fisl` package).
-- `scenarios/` — reproducible teaching/experimental scenario packages.
+- `scenarios/` — reproducible teaching/experimental scenario packages (with scripted reference solutions under `solutions/`).
+- `course/` — the course text: Quarto book sources (see `course/README.md`).
 - `tests/unit/` — deterministic unit tests (no Factorio required).
 - `tests/integration/` — runtime-validation spike against a real Factorio headless server (see its README).
 - `docs/` — architecture, contracts, pedagogy, PRD, and ADRs.

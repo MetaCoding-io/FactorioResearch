@@ -1,0 +1,16 @@
+project:
+  type: book
+
+book:
+  title: "Factory Physics Through Factorio"
+  subtitle: "An experiential, reproducible laboratory for production-system behavior"
+  author: "FISL"
+  chapters:
+    - index.qmd
+    - labs/lab-03-littles-law.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true

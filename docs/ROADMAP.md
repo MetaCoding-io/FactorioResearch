@@ -26,6 +26,8 @@ Relationship to other planning documents:
 | Verified fp03 Lab 3 baseline (builder + acceptance run) | [#4](https://github.com/MetaCoding-io/FactorioResearch/issues/4), `scenarios/factory-physics/fp03-littles-law/verification-summary.json` |
 | **First human-played experiment** (COMPLETED, cross-verified, bit-identical to headless verification) | run `01M0XP8VJ78KXRC8DB6BATBW39`, closing comment on [#2](https://github.com/MetaCoding-io/FactorioResearch/issues/2) |
 | Living user guide | `USER_GUIDE.md` |
+| `fisl compare` + scripted reference solutions (`--solution`) + fp03 solution A | [#6](https://github.com/MetaCoding-io/FactorioResearch/issues/6), `scenarios/.../solutions/a-pull-signal/` |
+| Course text scaffold (Quarto book, Lab 3 chapter drafted) | `course/` |
 
 Confirmed runtime assumptions: RV-001/002/003/005/008/009; RV-004 (straight
 belts); RV-006 (API evidence). Pending: RV-004 underground/splitter, RV-006
@@ -44,7 +46,7 @@ In dependency order (later items consume earlier ones):
 | 3 | Dynamic entity sets (ADR 0016, RV-012) | [#8](https://github.com/MetaCoding-io/FactorioResearch/issues/8) | mid-run redesign; pooled denominators |
 | 4 | Demand/service cohorts + on-time item rate (ADR 0008) | [#9](https://github.com/MetaCoding-io/FactorioResearch/issues/9) | Lab 5 push/pull |
 | 5 | Objectives + full visibility enforcement (ADR 0011/0012) | [#10](https://github.com/MetaCoding-io/FactorioResearch/issues/10) | Labs 5/6 evaluation |
-| 6 | Lab content: builder generalization, Labs 0–2/4/6, RV partial fixtures | [#11](https://github.com/MetaCoding-io/FactorioResearch/issues/11) | the rest of the course |
+| 6 | Lab content: builder generalization, Labs 0–2/4/6, RV partial fixtures, per-lab reference solutions + course chapters | [#11](https://github.com/MetaCoding-io/FactorioResearch/issues/11) | the rest of the course |
 
 **Gate carried over from the design review:** before polishing Labs 5–6
 machinery, one learner who is not the maintainer runs Lab 3 end-to-end and
