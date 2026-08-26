@@ -1,0 +1,117 @@
+# Lab 5 — Push and Pull
+
+**Scenario:** `fp-05-push-and-pull` · runs of ~13 minutes each
+
+Every lab so far had a silent customer: the sink took whatever arrived,
+whenever it arrived. This lab gives the customer a voice — a deterministic
+demand of **12 workpieces/min** with a declared patience of **30 seconds**
+— and one number that speaks for them: the fraction of demanded work
+served within that patience, the **on-time item rate**. The factory is
+Lab 3's line, capacity 15/min. It *can* serve this customer. The question
+is what else your control policy does while serving them — and what
+happens when a policy stops serving them.
+
+## What "95% service" means here, exactly
+
+FISL refuses to print an ambiguous "service level." The on-time item rate
+is defined so every part is auditable:
+
+- demand arrives in **cohorts** — the quantity created at each boundary
+  tick, aged from that tick;
+- deliveries are matched to the **oldest outstanding demand first** (FIFO)
+  — a fresh delivery can't be declared on-time while older demand waits;
+- a demanded unit is **on time** if fulfilled within 30 s of its creation;
+  passing the deadline *fixes* the outcome — later fulfillment still
+  reduces backlog, but history is not rewritten;
+- the rate's numerator and denominator refer to the **same cohorts**:
+  demand created during the measured phase, followed to their deadlines
+  through a short `service_tail` phase after production measurement ends.
+  Demand created before the window (opening backlog) or after it never
+  touches the ratio;
+- a deadline the experiment didn't live to observe is **censored** —
+  reported as unresolved, never guessed on-time or late.
+
+You get a second customer number: the **p95 wait** — the wait below which
+95% of demanded quantity was served. If any selected demand was never
+served within the horizon, this comes back *censored* rather than as a
+number, because an unserved unit's wait is not zero, not infinite, and
+not knowable.
+
+## Run 1 — push
+
+Run the line untouched: admission at full inserter speed, production at
+15/min against demand of 12/min. Predict: on-time rate? p95 wait? And what
+does the factory look like? (You did Lab 3. You know: the input belt packs
+solid, WIP in the dozens.) The customer, notice, is perfectly happy —
+overproduction *does* serve demand. It just pays for that service with
+inventory, flow time, and a stream of surplus the customer never asked
+for (surplus is recorded separately and never credits future demand).
+
+## Run 2 — pull, two ways
+
+- **A — pull to consumption**: Lab 3's gate, verbatim (wire, relay hop,
+  `rough < 2` at the last belt before machine 1). Admission paces itself
+  to the bottleneck (15/min ≥ 12/min demand). Prediction: service
+  *unchanged*, WIP collapses. Pull is free here — capacity covers demand.
+- **B — the over-tight pull** (deliberately wrong): a combinator clock
+  admits one workpiece per 6 seconds — 10/min, *below* demand. WIP becomes
+  the smallest number in this course. And: backlog +2/min forever, on-time
+  rate craters, and the p95 wait comes back **censored** because some
+  demand was simply never served. Read that report slowly — it is what a
+  "lean" factory that forgot its customer looks like in honest
+  instrumentation.
+
+```sh
+fisl solutions scenarios/factory-physics/fp05-push-and-pull --run \
+    --json course/data/lab-05-comparison.json
+```
+
+The three-run comparison is the lab: push (served, bloated), pull-tuned
+(served, lean), pull-over-tight (lean, failed). Two of these have nearly
+identical WIP charts and opposite customers.
+
+## Debrief
+
+- The canonical objective form here is a **requirement** plus a
+  **preference**: *maintain on-time ≥ 95% within 30 s; then minimize
+  average WIP*. Why must it be ordered like that, rather than a single
+  blended score? What would a blended score have said about run B?
+- Solution A's gate watches the *bottleneck*, not the customer. Why does
+  that work here? Under what change (demand 16/min? machine slowdown?)
+  would it stop working, and which metric would tell you first?
+- Backlog and on-time rate measure different things. Construct a run
+  (mentally) with high on-time rate and repeated nonzero backlog — and one
+  with the opposite. Which customer is angrier?
+- The censored p95 in run B is a *feature*. What would a dashboard that
+  filled it in with "the waits we happened to observe" have concluded?
+
+## What the simulation assumed away
+
+Demand here is a metronome. Real demand fluctuates — and the moment it
+does, the buffer question from Lab 4 and the service question from this
+lab collide: safety stock and safety capacity exist to protect *service*
+against *variability*. That collision is the variability course. What
+carries over unchanged: service is a constraint you state explicitly —
+with a tolerance, a cohort population, and an observation horizon — or it
+is a vibe.
+
+::: {.callout-note collapse="true"}
+## Instructor notes
+
+- Reference interventions: `a-pull-to-consumption` (fp03's proven gate)
+  and `b-starve-the-customer` (combinator clock, ~10/min against 12/min
+  demand). Solution B is the first scripted use of 2.0 combinator control
+  behaviors — if its step fails loudly on a parameter name, that's the
+  fail-fast design working; fix and rerun.
+- Predictions to check on first execution: baseline & A on-time = 100%,
+  p95 wait well under 30 s, A's WIP ≈ fp03's pulled WIP; B on-time
+  roughly 40–70% (waits grow linearly), p95 censored, Lua backlog ≈ 20 at
+  run end. Cite measured numbers in this chapter afterward.
+- The `service_tail` phase (1 min, demand inactive) exists so the last
+  measured cohort's 30 s deadline is observable — the compiler enforces
+  that property and will reject a scenario that couldn't resolve its own
+  reported deadlines.
+- Live view shows only current WIP; service status live is deliberately
+  withheld in this first version (objectives/visibility land with the
+  objectives issue).
+:::

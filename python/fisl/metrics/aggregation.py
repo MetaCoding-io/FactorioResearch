@@ -206,6 +206,111 @@ def _pool_states(per_machine: dict[str, dict[str, int]]) -> tuple[dict[str, int]
     return pooled, classified, covered
 
 
+def demand_cohorts(data: TelemetryData, demand_id: str) -> dict[int, dict]:
+    """Reconstruct the cohort ledger for one demand process from the
+    primitive records (ADR 0008 §3-§5): created quantity per creation
+    boundary plus the FIFO allocations against it."""
+    cohorts: dict[int, dict] = {}
+    for record in data.of_type("demand_created"):
+        if record["demand"] == demand_id:
+            cohort = cohorts.setdefault(
+                record["experiment_tick"], {"created": 0, "allocations": []}
+            )
+            cohort["created"] += record["quantity"]
+    for record in data.of_type("demand_allocation"):
+        if record["demand"] == demand_id:
+            cohort = cohorts.get(record["created_tick"])
+            if cohort is not None:
+                cohort["allocations"].append(
+                    (record["fulfillment_tick"], record["quantity"])
+                )
+    return cohorts
+
+
+def on_time_item_rate(data: TelemetryData, metric: dict, final_tick: int) -> dict:
+    """ADR 0008 §8-§12: numerator and denominator over the SAME cohort
+    population; deadlines fix outcomes; unobserved deadlines are censored,
+    never late; partial fulfillment is quantity-weighted."""
+    window = metric["cohort_window"]
+    horizon_end = metric["observation_horizon"]["end_tick"]
+    observed_end = min(horizon_end, final_tick)
+    max_wait = metric["max_wait_ticks"]
+    cohorts = demand_cohorts(data, metric["demand"])
+
+    total = on_time = late_fulfilled = outstanding_past_deadline = unresolved = 0
+    for created_tick in sorted(cohorts):
+        if not (window["start_tick"] <= created_tick < window["end_tick"]):
+            continue
+        cohort = cohorts[created_tick]
+        deadline = created_tick + max_wait
+        total += cohort["created"]
+        fulfilled = 0
+        for fulfillment_tick, quantity in cohort["allocations"]:
+            if fulfillment_tick > observed_end:
+                continue  # beyond what this metric was allowed to observe
+            fulfilled += quantity
+            if fulfillment_tick <= deadline:
+                on_time += quantity
+            else:
+                late_fulfilled += quantity
+        remaining = cohort["created"] - fulfilled
+        if remaining > 0:
+            if deadline <= observed_end:
+                # Deadline observed passing unfulfilled: the on-time outcome
+                # is fixed (§11) even if backlog is recovered later.
+                outstanding_past_deadline += remaining
+            else:
+                unresolved += remaining  # censored (§10) — never counted late
+    return {
+        "total_demand_quantity": total,
+        "on_time_quantity": on_time,
+        "late_fulfilled_quantity": late_fulfilled,
+        "outstanding_past_deadline_quantity": outstanding_past_deadline,
+        "unresolved_quantity": unresolved,
+        "observed_through_tick": observed_end,
+    }
+
+
+def demand_wait_quantiles(data: TelemetryData, metric: dict, final_tick: int) -> dict:
+    """Quantity-weighted nearest-rank wait percentile (ADR 0008 §22,
+    ADR 0010 §17-§18). Strict censoring: any selected demanded unit not
+    fulfilled within the observed horizon leaves the percentile incomplete
+    — an unresolved wait has no safe rank position."""
+    window = metric["cohort_window"]
+    observed_end = min(metric["observation_horizon"]["end_tick"], final_tick)
+    cohorts = demand_cohorts(data, metric["demand"])
+
+    waits: list[tuple[int, int]] = []  # (wait_ticks, quantity)
+    total = resolved = 0
+    for created_tick, cohort in sorted(cohorts.items()):
+        if not (window["start_tick"] <= created_tick < window["end_tick"]):
+            continue
+        total += cohort["created"]
+        for fulfillment_tick, quantity in cohort["allocations"]:
+            if fulfillment_tick <= observed_end:
+                waits.append((fulfillment_tick - created_tick, quantity))
+                resolved += quantity
+    result = {
+        "total_demand_quantity": total,
+        "resolved_quantity": resolved,
+        "observed_through_tick": observed_end,
+    }
+    if total == 0 or resolved < total:
+        result["value_ticks"] = None
+        return result
+    waits.sort()
+    import math
+
+    rank = max(1, math.ceil(metric["p"] * total))  # nearest-rank, 1-indexed
+    cumulative = 0
+    for wait, quantity in waits:
+        cumulative += quantity
+        if cumulative >= rank:
+            result["value_ticks"] = wait
+            break
+    return result
+
+
 def census_validity(data: TelemetryData, start_tick: int, end_tick: int) -> dict:
     """Strict WIP validity over a window under ADR 0017 §9: any conservative
     discrepancy interval overlapping the window flags it."""
@@ -392,6 +497,61 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
             else:
                 entry.update({"value": None, "status": "no_data", "reason": "no machines in entity set"})
             metrics_out[metric_id] = entry
+        elif metric["type"] == "on_time_item_rate":
+            final_tick = data.final_experiment_tick or 0
+            counts = on_time_item_rate(data, metric, final_tick)
+            entry = {
+                "type": "on_time_item_rate",
+                "demand": metric["demand"],
+                "port": metric["port"],
+                "cohort_window": metric["cohort_window"],
+                "max_wait_ticks": metric["max_wait_ticks"],
+                "observation_horizon": metric["observation_horizon"],
+                "method": "fifo_cohort_allocation",
+                **counts,
+                "coverage_complete": (
+                    counts["unresolved_quantity"] == 0
+                    and window_complete(metric["observation_horizon"]["end_tick"])
+                ),
+            }
+            if counts["total_demand_quantity"] > 0:
+                rate = Fraction(counts["on_time_quantity"], counts["total_demand_quantity"])
+                entry["value"] = float(rate)
+                entry["exact"] = {
+                    "numerator": counts["on_time_quantity"],
+                    "denominator": counts["total_demand_quantity"],
+                }
+            else:
+                entry.update({"value": None, "status": "no_data", "reason": "no demand created in cohort window"})
+            metrics_out[metric_id] = entry
+        elif metric["type"] == "demand_wait_percentile":
+            final_tick = data.final_experiment_tick or 0
+            quantile = demand_wait_quantiles(data, metric, final_tick)
+            entry = {
+                "type": "demand_wait_percentile",
+                "demand": metric["demand"],
+                "p": metric["p"],
+                "cohort_window": metric["cohort_window"],
+                "observation_horizon": metric["observation_horizon"],
+                "method": "weighted_nearest_rank",
+                **quantile,
+                "coverage_complete": (
+                    quantile["total_demand_quantity"] > 0
+                    and quantile["resolved_quantity"] == quantile["total_demand_quantity"]
+                    and window_complete(metric["observation_horizon"]["end_tick"])
+                ),
+            }
+            if quantile["value_ticks"] is not None:
+                entry["value_seconds"] = quantile["value_ticks"] / 60.0
+            else:
+                entry["value_seconds"] = None
+                entry["status"] = "censored" if quantile["total_demand_quantity"] else "no_data"
+                entry["reason"] = (
+                    "unfulfilled demand in cohort window — waits unresolved within the observation horizon"
+                    if quantile["total_demand_quantity"]
+                    else "no demand created in cohort window"
+                )
+            metrics_out[metric_id] = entry
 
     for metric_id, metric in resolved_metrics.items():
         if metric["type"] != "cycle_time":
@@ -498,5 +658,21 @@ def _verify_against_lua(data: TelemetryData, metrics_out: dict) -> dict:
             mismatches.append(
                 f"{metric_id}: lua eligible machine-ticks {lua_eligible} != "
                 f"python {ours.get('eligible_machine_ticks')}"
+            )
+    lua_demand = data.lua_summary.get("demand") or {}
+    for demand_id, lua_entry in lua_demand.items():
+        created = sum(
+            r["quantity"] for r in data.of_type("demand_created") if r["demand"] == demand_id
+        )
+        fulfilled = sum(
+            r["quantity"] for r in data.of_type("demand_allocation") if r["demand"] == demand_id
+        )
+        if lua_entry.get("created") != created:
+            mismatches.append(
+                f"demand {demand_id}: lua created {lua_entry.get('created')} != python {created}"
+            )
+        if lua_entry.get("fulfilled") != fulfilled:
+            mismatches.append(
+                f"demand {demand_id}: lua fulfilled {lua_entry.get('fulfilled')} != python {fulfilled}"
             )
     return {"available": True, "agrees": not mismatches, "mismatches": mismatches}

@@ -97,12 +97,20 @@ def fixture_scenario(
     supply: dict | None = None,
     census_every: str = "60t",
     machine_state: bool = False,
+    demand: dict | None = None,
+    max_wait: str = "10s",
+    service_tail: str = "15s",
 ) -> dict:
     """Author-form scenario dict for the fixture line.
 
     With machine_state=True the scenario also declares the ADR 0007
     production-state metric over the line's crafting machines plus pooled
     state fractions for the measured phase (issue #7 fixtures).
+
+    With demand set (e.g. {"rate": "10/min"}), the sink gains an ADR 0008
+    FIFO-backlog demand process active during the measured phase, a
+    service_tail phase is appended, and on_time_item_rate +
+    demand_wait_percentile metrics are declared over the measured cohorts.
     """
     supply = supply or {"mode": "replenish", "target": 20}
     doc = {
@@ -203,6 +211,31 @@ def fixture_scenario(
             },
         },
     }
+    if demand:
+        doc["experiment"]["phases"].append({"id": "service_tail", "duration": service_tail})
+        doc["ports"]["finished_goods"]["demand"] = {
+            "id": "customer_demand",
+            "shortage_policy": "backlog",
+            "allocation": "fifo",
+            "active_phases": ["measured"],
+            "schedule": {"type": "constant", "rate": demand["rate"]},
+        }
+        doc["metrics"]["customer_service"] = {
+            "type": "on_time_item_rate",
+            "demand": "customer_demand",
+            "cohort_window": {"phase": "measured"},
+            "max_wait": max_wait,
+            "observation_horizon": {"through_phase": "service_tail"},
+        }
+        doc["metrics"]["p90_wait"] = {
+            "type": "demand_wait_percentile",
+            "demand": "customer_demand",
+            "cohort_window": {"phase": "measured"},
+            "observation_horizon": {"through_phase": "service_tail"},
+            "p": 0.9,
+            "weighting": "demanded_quantity",
+            "quantile_method": "weighted_nearest_rank",
+        }
     if machine_state:
         doc["entity_sets"] = {
             "line_machines": {

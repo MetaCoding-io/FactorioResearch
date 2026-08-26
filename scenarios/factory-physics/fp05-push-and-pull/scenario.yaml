@@ -1,0 +1,236 @@
+spec: fisl/v1
+
+scenario:
+  id: fp-05-push-and-pull
+  version: 0.1.0
+  title: Push and Pull
+  description: >-
+    The Lab 3 line meets an external customer: deterministic demand at the
+    sink with a FIFO backlog and an explicit maximum wait. The learner
+    compares push-style overproduction with pull/WIP-limited control while
+    a quantity-based on-time item rate watches the customer. Low WIP is
+    not success if the customer is not served.
+
+factorio:
+  version:
+    minimum: 2.0.77
+    maximum_exclusive: 2.1.0
+  baseline_save: baseline.zip
+  required_mods:
+    fisl-core: compatible
+    fisl-factory-physics: compatible
+
+experiment:
+  seed: 1
+  time:
+    game_speed:
+      policy: fixed
+      value: 1.0
+    pause_policy: prohibited
+  phases:
+    - id: warmup
+      duration: 2m
+    - id: measured
+      duration: 10m
+    - id: service_tail
+      duration: 1m
+
+zones:
+  factory_floor:
+    surface: nauvis
+    area:
+      left_top: [-48, -24]
+      right_bottom: [48, 24]
+
+systems:
+  factory:
+    primary_zone: factory_floor
+    boundary_integrity:
+      entity_containment: flag
+
+entity_sets:
+  line_machines:
+    zone: factory_floor
+    types:
+      - assembling-machine
+    exclude_roles:
+      - fisl_apparatus
+    membership: dynamic
+
+ports:
+  workpiece_source:
+    system: factory
+    direction: source
+    binding:
+      surface: nauvis
+      position: [-44.5, 0.5]
+      prototype: fisl-source-port
+    material:
+      item: fisl-rough-workpiece
+    supply:
+      mode: replenish
+      target: 100
+
+  finished_goods:
+    system: factory
+    direction: sink
+    binding:
+      surface: nauvis
+      position: [44.5, 0.5]
+      prototype: fisl-sink-port
+    material:
+      item: fisl-finished-workpiece
+    demand:
+      id: customer_demand
+      shortage_policy: backlog
+      allocation: fifo
+      active_phases:
+        - measured
+      schedule:
+        type: constant
+        rate: 12/min
+
+flows:
+  workpiece_flow:
+    system: factory
+    unit: workpiece
+    basis:
+      type: conserved_work_unit
+      materials:
+        fisl-rough-workpiece: 1
+        fisl-machined-workpiece: 1
+        fisl-inspected-workpiece: 1
+        fisl-finished-workpiece: 1
+    entry_ports:
+      - workpiece_source
+    completion_ports:
+      - finished_goods
+
+metrics:
+  line_wip:
+    type: wip
+    flow: workpiece_flow
+    method: conservation_ledger
+    validation:
+      physical_census:
+        required: true
+        every: 60t
+        discrepancy_tolerance: 0
+        include_player_inventory: true
+
+  current_wip:
+    type: current_value
+    source: line_wip
+
+  average_wip:
+    type: aggregate
+    source: line_wip
+    aggregation: time_mean
+    window:
+      phase: measured
+
+  admission_rate:
+    type: throughput
+    flow: workpiece_flow
+    boundary: entry
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  measured_throughput:
+    type: throughput
+    flow: workpiece_flow
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  loaded_cycle_time:
+    type: cycle_time
+    flow: workpiece_flow
+    method: little_law_derived
+    wip_metric: average_wip
+    throughput_metric: measured_throughput
+    interpretation:
+      profile: stable_flow
+
+  customer_service:
+    type: on_time_item_rate
+    demand: customer_demand
+    cohort_window:
+      phase: measured
+    max_wait: 30s
+    observation_horizon:
+      through_phase: service_tail
+
+  p95_customer_wait:
+    type: demand_wait_percentile
+    demand: customer_demand
+    cohort_window:
+      phase: measured
+    observation_horizon:
+      through_phase: service_tail
+    p: 0.95
+    weighting: demanded_quantity
+    quantile_method: weighted_nearest_rank
+
+  machine_state:
+    type: production_state
+    entities: line_machines
+    adapter: crafting_machine
+
+  fraction_productive:
+    type: state_fraction
+    source: machine_state
+    state: productive
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+  fraction_starved:
+    type: state_fraction
+    source: machine_state
+    state: starved
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+visibility:
+  learner_live:
+    metrics:
+      - current_wip
+  learner_post_run:
+    metrics:
+      - average_wip
+      - admission_rate
+      - measured_throughput
+      - loaded_cycle_time
+      - customer_service
+      - p95_customer_wait
+      - fraction_productive
+      - fraction_starved
+  instructor:
+    metrics:
+      - line_wip
+      - machine_state
+    diagnostics:
+      - coverage
+      - census
+      - protocol_violations
+
+learning:
+  concepts:
+    - push vs pull
+    - customer service as an explicit constraint
+    - WIP control
+    - demand cohorts and on-time measurement
+  represents_directly:
+    - deterministic external demand with FIFO backlog
+    - an explicit maximum customer wait
+  remains_absent:
+    - variability
+    - lost sales (backlog only)
+    - monetary cost
+  not_warranted:
+    - reading service percentages without their max-wait and cohort window

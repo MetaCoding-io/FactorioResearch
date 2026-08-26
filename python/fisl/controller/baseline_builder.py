@@ -281,8 +281,31 @@ LAB2 = LabLayout(
     save_name="fp02-baseline",
 )
 
+# Lab 5 shares Lab 3's physical world — customer demand is external
+# accounting attached to the sink, not a physical change. The toolbox adds
+# circuit components for learner-built pull/throttle logic.
+LAB5 = LabLayout(
+    scenario_id="fp-05-push-and-pull",
+    source_pos=LAB3.source_pos,
+    sink_pos=LAB3.sink_pos,
+    machines=list(LAB3.machines),
+    substation_xs=LAB3.substation_xs,
+    toolbox_items={
+        "transport-belt": 200,
+        "fast-inserter": 20,
+        "wooden-chest": 20,
+        "assembling-machine-1": 6,
+        "small-electric-pole": 30,
+        "decider-combinator": 4,
+        "constant-combinator": 4,
+        "arithmetic-combinator": 4,
+    },
+    expected_counts=dict(LAB3.expected_counts),
+    save_name="fp05-baseline",
+)
+
 LAYOUTS: dict[str, LabLayout] = {
-    layout.scenario_id: layout for layout in (LAB0, LAB1, LAB2, LAB3, LAB4)
+    layout.scenario_id: layout for layout in (LAB0, LAB1, LAB2, LAB3, LAB4, LAB5)
 }
 
 

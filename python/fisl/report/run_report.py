@@ -70,6 +70,37 @@ def render_report(summary: dict, console: Console) -> None:
             exact = "-"
             method = metric["method"]
             validity_text = ""
+        elif metric_type == "on_time_item_rate":
+            if metric.get("value") is not None:
+                value = f"{metric['value'] * 100:.1f}% on time"
+                exact = f"{metric['exact']['numerator']}/{metric['exact']['denominator']} units"
+            else:
+                value = "no data"
+                exact = "-"
+            window = metric["cohort_window"]
+            method = (
+                f"FIFO cohorts over {window['phase']}, max wait {metric['max_wait_ticks']} ticks, "
+                f"observed through {metric['observation_horizon']['through_phase']}"
+            )
+            parts = ["complete" if metric.get("coverage_complete") else "[red]incomplete[/red]"]
+            if metric.get("late_fulfilled_quantity"):
+                parts.append(f"late {metric['late_fulfilled_quantity']}")
+            if metric.get("outstanding_past_deadline_quantity"):
+                parts.append(f"[yellow]outstanding {metric['outstanding_past_deadline_quantity']}[/yellow]")
+            if metric.get("unresolved_quantity"):
+                parts.append(f"[red]censored {metric['unresolved_quantity']}[/red]")
+            validity_text = ", ".join(parts)
+        elif metric_type == "demand_wait_percentile":
+            if metric.get("value_seconds") is not None:
+                value = f"p{int(metric['p'] * 100)} wait {metric['value_seconds']:.2f} s"
+                exact = f"{metric['value_ticks']} ticks"
+                validity_text = "complete" if metric.get("coverage_complete") else "[red]incomplete[/red]"
+            else:
+                value = "no data" if metric.get("status") == "no_data" else "[red]censored[/red]"
+                exact = f"{metric.get('resolved_quantity', 0)}/{metric.get('total_demand_quantity', 0)} resolved"
+                validity_text = metric.get("reason", "")
+            window = metric["cohort_window"]
+            method = f"weighted nearest-rank over {window['phase']} cohorts"
         elif metric_type == "state_fraction":
             if metric.get("value") is not None:
                 value = f"{metric['value'] * 100:.1f}% {metric['state']}"

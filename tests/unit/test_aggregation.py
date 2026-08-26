@@ -343,3 +343,129 @@ def test_incomplete_run_marks_coverage(tmp_path):
     assert summary["validity"]["aborted"] is True
     assert summary["metrics"]["average_wip"]["coverage_complete"] is False
     assert summary["metrics"]["throughput"]["coverage_complete"] is False
+
+
+def service_resolved() -> dict:
+    import copy
+
+    resolved = copy.deepcopy(RESOLVED)
+    resolved["metrics"]["customer_service"] = {
+        "type": "on_time_item_rate", "demand": "customer_demand", "port": "snk",
+        "cohort_window": {"phase": "measured", "start_tick": 100, "end_tick": 200},
+        "max_wait_ticks": 30,
+        "observation_horizon": {"through_phase": "tail", "end_tick": 230},
+    }
+    resolved["metrics"]["p90_wait"] = {
+        "type": "demand_wait_percentile", "demand": "customer_demand",
+        "cohort_window": {"phase": "measured", "start_tick": 100, "end_tick": 200},
+        "observation_horizon": {"through_phase": "tail", "end_tick": 230},
+        "p": 0.9, "weighting": "demanded_quantity",
+        "quantile_method": "weighted_nearest_rank",
+    }
+    return resolved
+
+
+def demand_records(final_tick: int) -> list[dict]:
+    records = [r for r in base_records() if r["type"] != "experiment_completed"]
+    records += [
+        # Opening backlog: created BEFORE the cohort window; its fulfillment
+        # during the window must not inflate the ratio (ADR 0008 SS8).
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 5, "experiment_tick": 50},
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 50, "fulfillment_tick": 120, "quantity": 5},
+        # In-window cohorts.
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 10, "experiment_tick": 100},
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 100, "fulfillment_tick": 110, "quantity": 8},   # on time (wait 10)
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 100, "fulfillment_tick": 140, "quantity": 2},   # late (wait 40)
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 10, "experiment_tick": 150},
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 150, "fulfillment_tick": 170, "quantity": 10},  # on time (wait 20)
+        # End-of-window cohort: deadline 220 observed; partial fulfillment.
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 10, "experiment_tick": 190},
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 190, "fulfillment_tick": 215, "quantity": 4},   # on time (wait 25)
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 5, "experiment_tick": 199},                          # never fulfilled
+        # After the window: excluded from this cohort population entirely.
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 7, "experiment_tick": 205},
+    ]
+    records.append({"type": "experiment_completed", "experiment_tick": final_tick, "summary": {
+        "metrics": {"average_wip": {"area": 120}, "throughput": {"completed_quantity": 2}},
+        "demand": {"customer_demand": {"created": 47, "fulfilled": 29, "surplus": 0}},
+    }})
+    return records
+
+
+def test_on_time_item_rate_cohort_accounting(tmp_path):
+    path = write_telemetry(tmp_path, demand_records(final_tick=230))
+    summary = compute_summary(service_resolved(), RUN_CONFIG, path)
+
+    service = summary["metrics"]["customer_service"]
+    # Population: cohorts created in [100, 200) only => 10+10+10+5 = 35.
+    assert service["total_demand_quantity"] == 35
+    assert service["on_time_quantity"] == 22          # 8 + 10 + 4
+    assert service["late_fulfilled_quantity"] == 2
+    # Deadlines observed passing unfulfilled: outcomes fixed, not censored.
+    assert service["outstanding_past_deadline_quantity"] == 11  # 6 + 5
+    assert service["unresolved_quantity"] == 0
+    assert service["exact"] == {"numerator": 22, "denominator": 35}
+    assert service["value"] == pytest.approx(22 / 35)
+    assert service["coverage_complete"] is True
+    # Lua ledger totals cross-check counts created 47 (incl. out-of-window)
+    # and fulfilled 29 (incl. the opening-backlog allocation).
+    assert summary["lua_cross_verification"]["agrees"] is True
+
+
+def test_on_time_rate_censors_unobserved_deadlines(tmp_path):
+    # Run ends at 210: cohorts created at 190/199 have deadlines 220/229 —
+    # their unfulfilled remainder is CENSORED, never late (ADR 0008 SS10).
+    path = write_telemetry(tmp_path, demand_records(final_tick=210))
+    summary = compute_summary(service_resolved(), RUN_CONFIG, path)
+
+    service = summary["metrics"]["customer_service"]
+    assert service["observed_through_tick"] == 210
+    # t=190 allocation at 215 is beyond observation: 10 unresolved there.
+    assert service["unresolved_quantity"] == 15  # 10 + 5
+    assert service["outstanding_past_deadline_quantity"] == 0
+    assert service["on_time_quantity"] == 18     # 8 + 10
+    assert service["coverage_complete"] is False
+
+
+def test_demand_wait_percentile_strict_censoring_and_value(tmp_path):
+    path = write_telemetry(tmp_path, demand_records(final_tick=230))
+    summary = compute_summary(service_resolved(), RUN_CONFIG, path)
+    p90 = summary["metrics"]["p90_wait"]
+    # 24 of 35 selected units resolved: percentile is censored, not guessed.
+    assert p90["value_seconds"] is None
+    assert p90["status"] == "censored"
+    assert p90["resolved_quantity"] == 24
+
+    # Fully-resolved population: waits (10 x10), (15 x5), (30 x5);
+    # p90 rank = ceil(0.9 * 20) = 18 -> wait 30 ticks = 0.5 s.
+    records = [r for r in base_records() if r["type"] != "experiment_completed"]
+    records += [
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 10, "experiment_tick": 100},
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 100, "fulfillment_tick": 110, "quantity": 10},
+        {"type": "demand_created", "demand": "customer_demand", "port": "snk",
+         "quantity": 10, "experiment_tick": 150},
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 150, "fulfillment_tick": 165, "quantity": 5},
+        {"type": "demand_allocation", "demand": "customer_demand", "port": "snk",
+         "created_tick": 150, "fulfillment_tick": 180, "quantity": 5},
+        {"type": "experiment_completed", "experiment_tick": 230, "summary": {}},
+    ]
+    path = write_telemetry(tmp_path, records)
+    summary = compute_summary(service_resolved(), RUN_CONFIG, path)
+    p90 = summary["metrics"]["p90_wait"]
+    assert p90["value_ticks"] == 30
+    assert p90["value_seconds"] == pytest.approx(0.5)
+    assert p90["coverage_complete"] is True

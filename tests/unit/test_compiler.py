@@ -259,3 +259,75 @@ def test_state_fraction_rejects_shrunken_denominator(raw):
     bad["metrics"]["fraction_starved"]["denominator"] = "classified_time"
     with pytest.raises(CompilationError):
         _compile_raw(bad)
+
+
+# --- demand / service metrics (ADR 0008, issue #9) --------------------------
+
+def _with_demand(raw_doc, *, max_wait="30s", horizon_phase="service_tail"):
+    doc = copy.deepcopy(raw_doc)
+    doc["experiment"]["phases"].append({"id": "service_tail", "duration": "1m"})
+    doc["ports"]["finished_goods"]["demand"] = {
+        "id": "customer_demand",
+        "shortage_policy": "backlog",
+        "allocation": "fifo",
+        "active_phases": ["measured"],
+        "schedule": {"type": "constant", "rate": "12/min"},
+    }
+    doc["metrics"]["customer_service"] = {
+        "type": "on_time_item_rate",
+        "demand": "customer_demand",
+        "cohort_window": {"phase": "measured"},
+        "max_wait": max_wait,
+        "observation_horizon": {"through_phase": horizon_phase},
+    }
+    return doc
+
+
+def test_demand_and_service_metric_compile(raw):
+    resolved = _compile_raw(_with_demand(raw))
+    demand = resolved["ports"]["finished_goods"]["demand"]
+    assert demand["schedule"] == {"type": "constant", "quantity": 1, "period_ticks": 300}
+    service = resolved["metrics"]["customer_service"]
+    assert service["max_wait_ticks"] == 1800
+    assert service["observation_horizon"]["end_tick"] == 43200 + 3600
+    assert resolved["observation_plan"]["demand"] == [
+        {"demand": "customer_demand", "port": "finished_goods", "allocation": "fifo"}
+    ]
+
+
+def test_fp03_hash_unchanged_by_demand_support(author):
+    # No demand declared => no demand keys anywhere in the resolved document.
+    resolved = compile_author_scenario(author)
+    assert resolved_hash(resolved) == FP03_COMMITTED_HASH
+    assert "demand" not in resolved["observation_plan"]
+
+
+def test_unobservable_deadline_rejected(raw):
+    # Horizon ends with the measured phase: the last cohort's deadline can
+    # never be observed -> compile error, not a silently censored metric.
+    bad = _with_demand(raw, horizon_phase="measured")
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("deadline" in p for p in exc.value.problems)
+
+
+def test_zero_max_wait_rejected(raw):
+    bad = _with_demand(raw, max_wait="0t")
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("max_wait" in p for p in exc.value.problems)
+
+
+def test_unknown_demand_reference_rejected(raw):
+    bad = _with_demand(raw)
+    bad["metrics"]["customer_service"]["demand"] = "ghost_demand"
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("ghost_demand" in p for p in exc.value.problems)
+
+
+def test_source_port_cannot_declare_demand(raw):
+    bad = _with_demand(raw)
+    bad["ports"]["workpiece_source"]["demand"] = bad["ports"]["finished_goods"]["demand"]
+    with pytest.raises(CompilationError):
+        _compile_raw(bad)

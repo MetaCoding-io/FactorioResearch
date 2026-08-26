@@ -20,6 +20,8 @@ from fisl.scenario.author_models import (
     AuthorScenario,
     CurrentValueMetric,
     CycleTimeMetric,
+    DemandWaitPercentileMetric,
+    OnTimeItemRateMetric,
     ProductionStateMetric,
     ScheduledSupply,
     StateFractionMetric,
@@ -212,7 +214,41 @@ def _resolve_ports(
             else:
                 supply["target"] = port.supply.target
             entry["supply"] = supply
+        if port.demand is not None:
+            demand: dict[str, Any] = {
+                "id": port.demand.id,
+                "shortage_policy": port.demand.shortage_policy,
+                "allocation": port.demand.allocation,
+            }
+            try:
+                rate = parse_rate(port.demand.schedule.rate)
+                demand["schedule"] = {
+                    "type": "constant",
+                    "quantity": rate.quantity,
+                    "period_ticks": rate.period_ticks,
+                }
+            except UnitError as exc:
+                problems.append(f"ports.{port_id}.demand.schedule.rate: {exc}")
+            active = port.demand.active_phases
+            if active is not None:
+                unknown = [p for p in active if p not in phase_by_id]
+                if unknown:
+                    problems.append(f"ports.{port_id}.demand.active_phases: unknown phases {unknown}")
+                demand["active_phases"] = active
+            else:
+                demand["active_phases"] = [p["id"] for p in phase_by_id.values()]
+            entry["demand"] = demand
         resolved[port_id] = entry
+    demand_ids: dict[str, str] = {}
+    for port_id, entry in resolved.items():
+        demand = entry.get("demand")
+        if demand:
+            if demand["id"] in demand_ids:
+                problems.append(
+                    f"ports.{port_id}.demand: id {demand['id']!r} already used by "
+                    f"port {demand_ids[demand['id']]!r} — demand processes are distinct (ADR 0008 §18)"
+                )
+            demand_ids[demand["id"]] = port_id
     return resolved
 
 
@@ -264,6 +300,11 @@ def _resolve_metrics(
     author: AuthorScenario, phase_by_id: dict[str, Any], problems: list[str]
 ) -> dict[str, Any]:
     resolved: dict[str, Any] = {}
+    demand_ports = {
+        port.demand.id: port_id
+        for port_id, port in author.ports.items()
+        if port.demand is not None
+    }
 
     def window_for(metric_id: str, window) -> dict[str, int] | None:
         phase = phase_by_id.get(window.phase)
@@ -271,6 +312,32 @@ def _resolve_metrics(
             problems.append(f"metrics.{metric_id}.window: unknown phase {window.phase!r}")
             return None
         return {"phase": window.phase, "start_tick": phase["start_tick"], "end_tick": phase["end_tick"]}
+
+    def demand_service_base(metric_id: str, metric) -> dict[str, Any] | None:
+        """Shared resolution for demand-cohort service metrics: demand ref,
+        cohort window, observation horizon."""
+        if metric.demand not in demand_ports:
+            problems.append(f"metrics.{metric_id}: unknown demand process {metric.demand!r}")
+            return None
+        window = window_for(metric_id, metric.cohort_window)
+        if window is None:
+            return None
+        horizon_phase = phase_by_id.get(metric.observation_horizon.through_phase)
+        if horizon_phase is None:
+            problems.append(
+                f"metrics.{metric_id}.observation_horizon: unknown phase "
+                f"{metric.observation_horizon.through_phase!r}"
+            )
+            return None
+        return {
+            "demand": metric.demand,
+            "port": demand_ports[metric.demand],
+            "cohort_window": window,
+            "observation_horizon": {
+                "through_phase": metric.observation_horizon.through_phase,
+                "end_tick": horizon_phase["end_tick"],
+            },
+        }
 
     for metric_id, metric in sorted(author.metrics.items()):
         if isinstance(metric, WipMetric):
@@ -364,6 +431,50 @@ def _resolve_metrics(
                 "denominator": metric.denominator,
                 "window": window,
             }
+        elif isinstance(metric, OnTimeItemRateMetric):
+            base = demand_service_base(metric_id, metric)
+            if base is None:
+                continue
+            try:
+                max_wait = parse_duration_ticks(metric.max_wait)
+            except UnitError as exc:
+                problems.append(f"metrics.{metric_id}.max_wait: {exc}")
+                continue
+            if max_wait < 1:
+                problems.append(
+                    f"metrics.{metric_id}.max_wait: must be >= 1 tick — port-backed demand "
+                    "cannot be fulfilled before the next settlement boundary (ADR 0008 §7)"
+                )
+                continue
+            # The direct deadline property (ADR 0008 §9-§10 / schema §13.8):
+            # the latest selected cohort is created at cohort_end - 1; its
+            # deadline must be observable, or the reported rate would be
+            # censored by construction.
+            latest_deadline = (base["cohort_window"]["end_tick"] - 1) + max_wait
+            horizon_end = base["observation_horizon"]["end_tick"]
+            if horizon_end < latest_deadline:
+                problems.append(
+                    f"metrics.{metric_id}: observation horizon ends at tick {horizon_end} but the "
+                    f"latest selected cohort's deadline is tick {latest_deadline}; extend the "
+                    "horizon phase (e.g. a service_tail) so every reported deadline is observed"
+                )
+                continue
+            resolved[metric_id] = {
+                "type": "on_time_item_rate",
+                **base,
+                "max_wait_ticks": max_wait,
+            }
+        elif isinstance(metric, DemandWaitPercentileMetric):
+            base = demand_service_base(metric_id, metric)
+            if base is None:
+                continue
+            resolved[metric_id] = {
+                "type": "demand_wait_percentile",
+                **base,
+                "p": metric.p,
+                "weighting": metric.weighting,
+                "quantile_method": metric.quantile_method,
+            }
         else:  # pragma: no cover - exhaustiveness guard
             problems.append(f"metrics.{metric_id}: unsupported metric type")
 
@@ -447,6 +558,13 @@ def _build_observation_plan(author: AuthorScenario, resolved_metrics: dict[str, 
         "ledgers": [],
         "census": [],
     }
+    for port_id, port in sorted(author.ports.items()):
+        if port.demand is not None:
+            # Key added only when present so scenarios without demand keep
+            # their existing resolved hash (comparability).
+            plan.setdefault("demand", []).append(
+                {"demand": port.demand.id, "port": port_id, "allocation": port.demand.allocation}
+            )
     for metric_id, metric in resolved_metrics.items():
         if metric["type"] == "production_state":
             # Key added only when present so scenarios without machine-state

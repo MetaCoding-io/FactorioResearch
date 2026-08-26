@@ -136,6 +136,7 @@ function experiment.summary(config)
     ledgers = ledgers,
     census = census_state,
     machine_state = machine_state.summary(),
+    demand = ports.demand_summary(),
     protocol_events = s.validity.protocol_events,
     manual_carriage_seen = s.validity.manual_carriage_seen,
   }

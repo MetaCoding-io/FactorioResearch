@@ -79,6 +79,19 @@ def _metric_value(metric: dict) -> tuple[float | None, str]:
         if coverage is not None and coverage < 1:
             display += f" (cov {coverage * 100:.0f}%)"
         return value, display
+    if metric_type == "on_time_item_rate":
+        value = metric.get("value")
+        if value is None:
+            return None, "no data"
+        display = f"{value * 100:.1f}% on time"
+        if metric.get("unresolved_quantity"):
+            display += f" (censored {metric['unresolved_quantity']})"
+        return value, display
+    if metric_type == "demand_wait_percentile":
+        value = metric.get("value_seconds")
+        if value is None:
+            return None, ("censored" if metric.get("status") == "censored" else "no data")
+        return value, f"{value:.2f} s"
     return None, "—"
 
 

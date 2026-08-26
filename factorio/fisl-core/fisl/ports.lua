@@ -81,6 +81,24 @@ function ports.bind_all(config)
           -- admission the ledger would never see (observed on 2.0.77).
           runtime.supply.initial_quantity = port_config.supply.initial_quantity or 0
         end
+        if port_config.demand then
+          -- External customer demand (ADR 0003 §11, ADR 0008): FIFO cohort
+          -- ledger by creation boundary. `head` walks the array so no
+          -- shifting; fully-served cohorts behind head are inert history.
+          runtime.demand = {
+            id = port_config.demand.id,
+            active_phases = {},
+            schedule = schedules.new_constant(
+              port_config.demand.schedule.quantity,
+              port_config.demand.schedule.period_ticks),
+            cohorts = {},   -- array of {created_tick, original, remaining}
+            head = 1,
+            totals = { created = 0, fulfilled = 0, surplus = 0 },
+          }
+          for _, phase_id in ipairs(port_config.demand.active_phases or {}) do
+            runtime.demand.active_phases[phase_id] = true
+          end
+        end
         runtime.prev_post_settlement_count = chest_inventory(entity).get_item_count(runtime.item)
         s.ports[port_id] = runtime
       end
@@ -182,6 +200,44 @@ function ports.settle_interval(experiment_tick, phase_id)
             interval_start_tick = experiment_tick - 1, interval_end_tick = experiment_tick,
             phase = phase_id, method = "settlement_removal",
           })
+          if port.demand then
+            -- FIFO allocation to the oldest outstanding cohorts (ADR 0008
+            -- §4-§6): fulfillment is recognized at THIS settlement
+            -- boundary; one delivery may span several cohorts.
+            local demand = port.demand
+            local remaining_delivery = removed
+            while remaining_delivery > 0 do
+              local cohort = demand.cohorts[demand.head]
+              if cohort == nil then break end
+              if cohort.remaining == 0 then
+                demand.head = demand.head + 1
+              else
+                local take = math.min(cohort.remaining, remaining_delivery)
+                cohort.remaining = cohort.remaining - take
+                remaining_delivery = remaining_delivery - take
+                demand.totals.fulfilled = demand.totals.fulfilled + take
+                telemetry.emit({
+                  type = "demand_allocation", demand = demand.id, port = port_id,
+                  created_tick = cohort.created_tick,
+                  fulfillment_tick = experiment_tick,
+                  wait_ticks = experiment_tick - cohort.created_tick,
+                  quantity = take,
+                })
+                if cohort.remaining == 0 then demand.head = demand.head + 1 end
+              end
+            end
+            if remaining_delivery > 0 then
+              -- No outstanding demand: surplus. It never credits future
+              -- cohorts (ADR 0008 §17).
+              demand.totals.surplus = demand.totals.surplus + remaining_delivery
+              telemetry.emit({
+                type = "surplus_delivery", demand = demand.id, port = port_id,
+                quantity = remaining_delivery,
+                interval_start_tick = experiment_tick - 1,
+                interval_end_tick = experiment_tick,
+              })
+            end
+          end
         end
       end
       -- Contamination check (ADR 0003 §18): any other item in the endpoint.
@@ -205,6 +261,22 @@ end
 function ports.prepare_interval(experiment_tick, phase_id)
   local s = state.get()
   for port_id, port in pairs(s.ports) do
+    local demand = port.demand
+    if demand and demand.active_phases[phase_id] == true then
+      -- Demand created at boundary T is outstanding for [T, T+1) onward
+      -- (ADR 0008 §3/§6); one boundary's quantity is one cohort.
+      local quantity = schedules.advance(demand.schedule)
+      if quantity > 0 then
+        demand.cohorts[#demand.cohorts + 1] = {
+          created_tick = experiment_tick, original = quantity, remaining = quantity,
+        }
+        demand.totals.created = demand.totals.created + quantity
+        telemetry.emit({
+          type = "demand_created", demand = demand.id, port = port_id,
+          quantity = quantity, experiment_tick = experiment_tick,
+        })
+      end
+    end
     local supply = port.supply
     if supply then
       local active = supply.active_phases[phase_id] == true
@@ -258,6 +330,28 @@ function ports.prepare_interval(experiment_tick, phase_id)
       end
     end
   end
+end
+
+--- Summary cross-check contribution: exact demand ledger totals per
+--- demand process (Python recomputes service metrics from the records).
+function ports.demand_summary()
+  local s = state.get()
+  local out = nil
+  for port_id, port in pairs(s.ports) do
+    if port.demand then
+      out = out or {}
+      local demand = port.demand
+      out[demand.id] = {
+        port = port_id,
+        created = demand.totals.created,
+        fulfilled = demand.totals.fulfilled,
+        surplus = demand.totals.surplus,
+        backlog = demand.totals.created - demand.totals.fulfilled,
+        cohort_count = #demand.cohorts,
+      }
+    end
+  end
+  return out
 end
 
 function ports.count_protocol_event(kind)

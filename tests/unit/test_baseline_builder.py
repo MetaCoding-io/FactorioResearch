@@ -22,6 +22,7 @@ SCENARIO_DIRS = {
     "fp-02-the-constraint": "fp02-the-constraint",
     "fp-03-littles-law": "fp03-littles-law",
     "fp-04-starvation-blocking": "fp04-starvation-blocking",
+    "fp-05-push-and-pull": "fp05-push-and-pull",
 }
 
 # The conserved transformation chain; each lab's machine list is a prefix.

@@ -137,12 +137,24 @@ class ScheduledSupply(_Strict):
     external_buffer: ExternalBuffer = Field(default_factory=ExternalBuffer)
 
 
+class SinkDemand(_Strict):
+    """External customer demand attached to a sink (ADR 0003 §11, ADR 0008):
+    a FIFO backlog of demand cohorts keyed by creation boundary."""
+
+    id: str = Field(pattern=r"^[a-z0-9_][a-z0-9_\-]*$")
+    shortage_policy: Literal["backlog"] = "backlog"
+    allocation: Literal["fifo"] = "fifo"
+    schedule: ConstantSchedule
+    active_phases: list[str] | None = None
+
+
 class Port(_Strict):
     system: str
     direction: Literal["source", "sink"]
     binding: PortBinding
     material: PortMaterial
     supply: ReplenishSupply | ScheduledSupply | None = None
+    demand: SinkDemand | None = None
 
     @model_validator(mode="after")
     def _direction_rules(self) -> "Port":
@@ -150,6 +162,8 @@ class Port(_Strict):
             raise ValueError("source port requires a supply declaration")
         if self.direction == "sink" and self.supply is not None:
             raise ValueError("sink port cannot declare supply")
+        if self.direction == "source" and self.demand is not None:
+            raise ValueError("source port cannot declare demand")
         return self
 
 
@@ -287,6 +301,40 @@ class StateFractionMetric(_Strict):
     window: PhaseWindow
 
 
+class ObservationHorizon(_Strict):
+    through_phase: str
+
+
+class OnTimeItemRateMetric(_Strict):
+    """Quantity-based customer service (ADR 0008): fraction of demanded
+    quantity from cohorts created in the cohort window that was fulfilled
+    within max_wait. The observation horizon is separate from the cohort
+    window (§9); the compiler enforces the direct deadline property
+    `observation_horizon_end >= latest selected cohort deadline` so no
+    reported cohort is censored (§10)."""
+
+    type: Literal["on_time_item_rate"]
+    demand: str
+    cohort_window: PhaseWindow
+    max_wait: str | int
+    observation_horizon: ObservationHorizon
+
+
+class DemandWaitPercentileMetric(_Strict):
+    """Quantity-weighted nearest-rank percentile of demand wait
+    (ADR 0008 §22 + ADR 0010 §17-§18). Every selected demanded unit must be
+    fulfilled within the observation horizon for the percentile to be
+    complete — unresolved waits are censored, never guessed."""
+
+    type: Literal["demand_wait_percentile"]
+    demand: str
+    cohort_window: PhaseWindow
+    observation_horizon: ObservationHorizon
+    p: float = Field(gt=0.0, lt=1.0)
+    weighting: Literal["demanded_quantity"] = "demanded_quantity"
+    quantile_method: Literal["weighted_nearest_rank"] = "weighted_nearest_rank"
+
+
 Metric = (
     WipMetric
     | CurrentValueMetric
@@ -295,6 +343,8 @@ Metric = (
     | CycleTimeMetric
     | ProductionStateMetric
     | StateFractionMetric
+    | OnTimeItemRateMetric
+    | DemandWaitPercentileMetric
 )
 
 
