@@ -12,6 +12,7 @@ The immediate target is **deterministic Factory Physics**. Future work may add c
 
 ## Using FISL
 
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — **living plan/status**: what's done (with evidence), the current phase, and issue links.
 - [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md) — **living operator's guide**: setup, `fisl validate/build-baseline/run/report`, connecting the graphical client, run artifacts, troubleshooting. Kept current with every workflow change.
 
 ## Start here for implementation

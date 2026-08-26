@@ -147,5 +147,20 @@ def report(run_dir: Path = typer.Argument(..., help="runs/<run_id> directory")) 
     render_report(json.loads(summary_path.read_text()), console)
 
 
+@app.command()
+def compare(
+    run_dirs: list[Path] = typer.Argument(..., help="Two or more runs/<run_id> directories"),
+) -> None:
+    """Compare completed runs side by side with compatibility/validity checks
+    and per-metric deltas — never a combined score (FR-CTRL-008)."""
+    from fisl.report.compare import CompareError, render_comparison
+
+    try:
+        render_comparison(run_dirs, console)
+    except CompareError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1)
+
+
 if __name__ == "__main__":
     app()

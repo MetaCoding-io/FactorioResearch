@@ -17,6 +17,7 @@ Documentation map — which document answers what:
 | What is v1 supposed to contain eventually? | `docs/FISL_V1_PRD.md` |
 | Which Factorio assumptions are empirically proven? | `docs/RUNTIME_VALIDATION.md` |
 | What are the course labs? | `docs/FACTORY_PHYSICS_LABS_V1.md` |
+| Where are we / what's next? | `docs/ROADMAP.md` |
 
 ---
 
@@ -134,6 +135,16 @@ The run ends when the last phase completes (panel shows results) or aborts
 way, artifacts are collected into `runs/<run_id>/` and a `summary.json` is
 computed. Retry = run the command again: new run id, same experiment
 identity.
+
+### `fisl compare runs/<id-a> runs/<id-b> [...]`
+
+Side-by-side debrief of two or more completed runs — the heart of the
+"try a different strategy" loop. It checks comparability first (same
+resolved scenario hash = same experiment; same reproducibility fingerprint
+= same controlled condition), surfaces each run's validity problems, and
+shows every shared metric with per-metric deltas for a pair. Deliberately
+**no combined score**: metrics stay a vector (ADR 0012). Incompatible runs
+are still displayed, loudly flagged.
 
 ### `fisl report runs/<run_id>`
 
