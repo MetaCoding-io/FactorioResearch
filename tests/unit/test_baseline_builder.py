@@ -24,6 +24,7 @@ SCENARIO_DIRS = {
     "fp-04-starvation-blocking": "fp04-starvation-blocking",
     "fp-05-push-and-pull": "fp05-push-and-pull",
     "fp-06-system-optimization": "fp06-system-optimization",
+    "fp-sandbox": "fp-sandbox",
 }
 
 # The conserved transformation chain; each lab's machine list is a prefix.
@@ -135,6 +136,27 @@ def test_lab4_toolbox_supports_both_reference_solutions():
     assert toolbox.get("wooden-chest", 0) >= 1        # solution A buffer
     assert toolbox.get("fast-inserter", 0) >= 2       # solution A splice
     assert toolbox.get("assembling-machine-3", 0) >= 1  # solution B upgrade
+
+
+def test_sandbox_toolbox_supports_every_drill():
+    toolbox = LAYOUTS["fp-sandbox"].toolbox_items
+    assert toolbox.get("transport-belt", 0) >= 4          # d1 place, d2 rotate
+    assert toolbox.get("wooden-chest", 0) >= 1            # d3 splice
+    assert toolbox.get("fast-inserter", 0) >= 2           # d3 splice
+    assert toolbox.get("assembling-machine-2", 0) >= 1    # d4 swap
+    assert toolbox.get("constant-combinator", 0) >= 1     # d6 pair
+    assert toolbox.get("decider-combinator", 0) >= 1      # d5/d6
+
+
+def test_sandbox_drill_check_belt_constant_matches_layout():
+    # check.lua hardcodes the baseline belt count (it runs inside Factorio
+    # with no access to the layout); keep it in lockstep with the builder.
+    check = (
+        REPO / "scenarios/factory-physics" / SCENARIO_DIRS["fp-sandbox"] / "drills/check.lua"
+    ).read_text()
+    baseline_belts = LAYOUTS["fp-sandbox"].expected_counts["transport-belt"]
+    assert f">= {baseline_belts + 4}" in check
+    assert f"starts with {baseline_belts}" in check
 
 
 def test_commands_are_transmission_safe(layout):

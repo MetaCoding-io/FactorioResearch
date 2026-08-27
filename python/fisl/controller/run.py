@@ -205,6 +205,24 @@ def execute_run(
             time.sleep(1.0)
         console.print(f"Lifecycle: {lifecycle}")
         manifest["status"] = lifecycle.lower()
+
+        # Drill check (operator-training scenarios): read-only world
+        # inspection after COMPLETED, while the server is still up. Grades
+        # practice, never measurement — a failure degrades to a warning.
+        if lifecycle == "COMPLETED" and not headless:
+            from fisl.controller.drills import DrillError, run_drill_check
+
+            try:
+                drill_summary = run_drill_check(scenario_dir, protocol.rcon, run_dir)
+            except DrillError as exc:
+                drill_summary = {"error": str(exc)}
+                console.print(f"[yellow]Drill check failed:[/yellow] {exc}")
+            if drill_summary:
+                manifest["drills"] = drill_summary
+                if "total" in drill_summary:
+                    console.print(
+                        f"Drills verified: {drill_summary['passed']}/{drill_summary['total']}"
+                    )
     except (ProcessError, ProtocolError) as exc:
         manifest["status"] = "failed"
         manifest["failure"] = str(exc)

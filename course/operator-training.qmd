@@ -1,0 +1,75 @@
+# The Practice Range {.unnumbered}
+
+**Scenario:** `fp-sandbox` · self-paced, then a 1-minute inspection pass
+
+Six manipulations cover every build the seven labs will ask of your
+hands. This scenario exists so you rehearse them where nothing is at
+stake: Lab 0's little one-machine world, a toolbox stocked with every
+part you'll need, and a report at the end that tells you — honestly, the
+FISL way — which drills the world actually shows.
+
+Skip this chapter freely if you build in Factorio already. The drills
+take a newcomer perhaps twenty minutes; Lab 3 is more fun when the chest
+splice isn't your first.
+
+## How a practice session works
+
+```sh
+fisl run scenarios/factory-physics/fp-sandbox
+```
+
+Connect your client as usual. Everything happens on the **READY floor**
+— unmeasured, unhurried, and reset by the next `fisl run`. Build the
+drills below at your own pace. When you're done, press **Start
+Experiment**: the one-minute pass that follows is your inspection — when
+it ends, the controller reads the world and grades the drills, and
+`fisl report runs/<run_id>` shows a **Drill card** ("5/6 verified") next
+to a real, tiny measurement of the line you may have just rebuilt.
+
+Run it as many times as you like. Aborting costs nothing.
+
+## The six drills
+
+Every control named here is in the *Before the First Lab* table.
+
+1. **`d1_place_belts` — lay a belt.** Take transport belts from the
+   toolbox chest and place a short run of at least four tiles anywhere in
+   the zone (south of the line is open ground).
+2. **`d2_rotate_belt` — turn it.** At least one of your belts should face
+   north or south (**R** rotates the item in your hand before placing —
+   or the placed belt under your cursor). The original line runs east;
+   the check looks for any belt that doesn't.
+3. **`d3_chest_splice` — buffer the flow.** The move Labs 4 and 6 call
+   "splice a chest into the belt": remove one belt tile (yours or the
+   line's), place a wooden chest in the gap, and set an inserter on each
+   side — one feeding the chest, one taking from it, arrows pointing
+   along the flow.
+4. **`d4_machine_swap` — upgrade a machine.** Place an
+   assembling-machine-2 (swap it for the line's machine, or place it
+   beside the line) and set its recipe to *machine workpiece*. This is
+   Lab 4's solution B and Lab 6's winning move, rehearsed.
+5. **`d5_enable_condition` — gate an inserter.** Drag a red or green wire
+   (**Alt+R** / **Alt+G**) from any chest or belt to any inserter, open
+   the inserter, and set an enable condition (for example: rough
+   workpiece < 2). This is the pull gate of Lab 3, rehearsed. Remember
+   the 9-tile wire reach.
+6. **`d6_combinator_pair` — wire two combinators.** Place a constant
+   combinator and a decider combinator and wire them together. Set any
+   signal on the constant and any condition on the decider — the check
+   only asks that they share a network. (Wire the decider's output to a
+   lamp if you want to see it *do* something.) Lab 5's admission clock is
+   this pair, grown up.
+
+## Reading your first report
+
+The Drill card is the last section of the report, and it is deliberately
+*not* a measurement: drills grade practice and touch no metric. Above it
+you'll find the real thing — average WIP, throughput, the machine's
+productive fraction — measured over your one-minute pass with the same
+honesty rules every lab uses. If you swapped the machine in drill 4, look
+at the per-machine table: the old machine's eligibility ends where the
+new one's begins. You've already seen dynamic membership work, three labs
+before it's taught.
+
+A drill marked *not yet* names what the check looked for and didn't
+find. Fix it and run again — the range resets, your hands remember.

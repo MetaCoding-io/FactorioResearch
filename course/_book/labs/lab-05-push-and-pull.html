@@ -154,6 +154,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../operator-training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Practice Range</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../labs/lab-00-measuring-the-factory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lab 0 — Measuring the Factory</span></span></a>
   </div>
@@ -294,6 +300,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><strong>Scenario:</strong> <code>fp-05-push-and-pull</code> · runs of ~13 minutes each</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hands you’ll need
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Combinators — the deepest game skill the course uses. Practice Range drill <code>d6_combinator_pair</code> (and <code>d5_enable_condition</code> for the gate it drives).</p>
+</div>
+</div>
 <p>Every lab so far had a silent customer: the sink took whatever arrived, whenever it arrived. This lab gives the customer a voice — a deterministic demand of <strong>12 workpieces/min</strong> with a declared patience of <strong>30 seconds</strong> — and one number that speaks for them: the fraction of demanded work served within that patience, the <strong>on-time item rate</strong>. The factory is Lab 3’s line, capacity 15/min. It <em>can</em> serve this customer. The question is what else your control policy does while serving them — and what happens when a policy stops serving them.</p>
 <section id="what-95-service-means-here-exactly" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="what-95-service-means-here-exactly"><span class="header-section-number">11.1</span> What “95% service” means here, exactly</h2>
@@ -369,7 +388,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="11.5" class="anchored" data-anchor-id="what-the-simulation-assumed-away"><span class="header-section-number">11.5</span> What the simulation assumed away</h2>
 <p>Demand here is a metronome. Real demand fluctuates — and the moment it does, the buffer question from Lab 4 and the service question from this lab collide: safety stock and safety capacity exist to protect <em>service</em> against <em>variability</em>. That collision is the variability course. What carries over unchanged: service is a constraint you state explicitly — with a tolerance, a cohort population, and an observation horizon — or it is a vibe.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -378,7 +397,7 @@ Instructor notes
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
 <li>Reference runs (2026-08-26): baseline <code>01M0Z68MAR07HYK6ADFF8MTTVV</code>, A <code>01M0Z6B1JESS0T4Q0N9WPHDPYG</code>, B <code>01M0Z6DF3N10M8DMR7ZDZNMS5E</code>; dataset regenerates with <code>fisl solutions scenarios/factory-physics/fp05-push-and-pull   --run --json course/data/lab-05-comparison.json</code>. Solution B’s combinator clock hit exactly 10.00/min on the first execution of the 2.0 combinator control-behavior APIs. A’s WIP (19.16) is bit-identical to fp03’s pulled run — same gate, same world, now with a customer watching.</li>

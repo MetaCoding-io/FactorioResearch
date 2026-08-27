@@ -125,6 +125,7 @@ every lab.
 - **Labs 5–6**: combinators and enable conditions — the deepest game
   skill the course uses, introduced by the lab chapters when needed.
 
-If you're nervous about the hands: connect to any lab, don't press
-Start, and practice on the READY floor. It costs nothing and resets
-completely on the next run.
+If you're nervous about the hands: the next chapter, *The Practice
+Range*, is a dedicated sandbox with six graded drills covering every
+manipulation above — and any lab's READY floor also works as free
+practice space that resets completely on the next run.

@@ -332,8 +332,34 @@ LAB6 = LabLayout(
     save_name="fp06-baseline",
 )
 
+LABSANDBOX = LabLayout(
+    # Operator training (on-ramp phase 2): Lab 0's one-machine world with a
+    # toolbox stocked for every drill — belts, chests, an upgrade machine,
+    # and combinators. The drills themselves are graded post-run by
+    # scenarios/factory-physics/fp-sandbox/drills/check.lua, whose baseline
+    # belt count must match this layout (unit-tested).
+    scenario_id="fp-sandbox",
+    source_pos=LAB0.source_pos,
+    sink_pos=LAB0.sink_pos,
+    machines=list(LAB0.machines),
+    substation_xs=LAB0.substation_xs,
+    toolbox_items={
+        "transport-belt": 50,
+        "fast-inserter": 8,
+        "wooden-chest": 4,
+        "assembling-machine-2": 2,
+        "constant-combinator": 2,
+        "decider-combinator": 2,
+        "small-lamp": 2,
+        "small-electric-pole": 10,
+    },
+    expected_counts=dict(LAB0.expected_counts),
+    save_name="fp-sandbox-baseline",
+)
+
 LAYOUTS: dict[str, LabLayout] = {
-    layout.scenario_id: layout for layout in (LAB0, LAB1, LAB2, LAB3, LAB4, LAB5, LAB6)
+    layout.scenario_id: layout
+    for layout in (LAB0, LAB1, LAB2, LAB3, LAB4, LAB5, LAB6, LABSANDBOX)
 }
 
 

@@ -58,14 +58,25 @@ class Solution:
         }
 
 
-def _to_single_line(name: str, source: str) -> str:
+def to_single_line(
+    name: str,
+    source: str,
+    required_token: str = STEP_OK,
+    error: type[Exception] = None,  # type: ignore[assignment]
+) -> str:
+    """Collapse a .lua file to one transmission-safe /silent-command line.
+
+    Shared by solutions and drill checks — the transport constraints are
+    identical; only the required output token differs.
+    """
+    err = error or SolutionError
     lines = []
     for line in source.splitlines():
         stripped = line.strip()
         if stripped.startswith("--"):
             continue  # full-line comment: safe to drop
         if "--" in stripped:
-            raise SolutionError(
+            raise err(
                 f"{name}: inline '--' is not allowed — the step is transmitted as one "
                 "line, so anything after an inline comment would swallow the rest"
             )
@@ -73,15 +84,18 @@ def _to_single_line(name: str, source: str) -> str:
             lines.append(stripped)
     command = " ".join(lines)
     if not command:
-        raise SolutionError(f"{name}: step is empty after comment stripping")
-    if STEP_OK not in command:
-        raise SolutionError(f"{name}: step must end by printing '{STEP_OK}' via rcon.print")
+        raise err(f"{name}: step is empty after comment stripping")
+    if required_token not in command:
+        raise err(f"{name}: step must print {required_token!r} via rcon.print")
     if len(command) > MAX_COMMAND_CHARS:
-        raise SolutionError(
+        raise err(
             f"{name}: step is {len(command)} chars (> {MAX_COMMAND_CHARS}); split it "
             "into multiple numbered .lua files"
         )
     return command
+
+
+_to_single_line = to_single_line  # existing callers/tests
 
 
 def load_solution(directory: Path) -> Solution:

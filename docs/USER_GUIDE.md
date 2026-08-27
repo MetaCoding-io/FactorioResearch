@@ -96,7 +96,8 @@ Factorio server. The layout is selected by the scenario id in
 `scenario.yaml` (registered labs: `fp-00-measuring-the-factory`,
 `fp-01-flow-and-capacity`, `fp-02-the-constraint`, `fp-03-littles-law`,
 `fp-04-starvation-blocking`, `fp-05-push-and-pull`,
-`fp-06-system-optimization`). What it actually does, in order:
+`fp-06-system-optimization`, and the operator-training sandbox
+`fp-sandbox`). What it actually does, in order:
 
 1. creates a fresh deterministic map (fixed seed, no water/trees/enemies);
 2. launches a temporary headless server with the FISL mods;
@@ -202,6 +203,18 @@ after their shots — they are not data runs.
 Human-readable results: every metric with its method, window, exact
 numerator/denominator, and validity (coverage complete? census clean?).
 The same information lives in `runs/<run_id>/summary.json` as JSON.
+
+**Drill checks** (operator-training scenarios): if the scenario carries
+`drills/check.lua`, an interactive run that COMPLETES executes it over
+RCON while the server is still up — a read-only world inspection graded
+into `runs/<run_id>/drills.json` and rendered by `fisl report` as a
+Drill card. Drills grade practice, not measurement: they never touch
+metrics, validity, or any hash, a failing check degrades to a manifest
+warning, and headless runs skip them entirely (they grade a human's
+hands). The check script obeys the same transmission rules as solution
+steps (single line, no inline `--`, ≤ 3500 chars) and must print one
+JSON document `{"drills": [{"id", "passed", "detail"}…]}` via
+`rcon.print(helpers.table_to_json(...))`.
 
 Scenarios with a *scheduled* external supply into a finite buffer (fp06)
 can declare a **`supply_loss`** metric: the fraction of the supplier's

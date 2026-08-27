@@ -2,6 +2,12 @@
 
 **Scenario:** `fp-06-system-optimization` · runs of ~18 minutes each
 
+::: {.callout-tip}
+## Hands you'll need
+Everything from Labs 3–5; if it's been a while, the Practice Range's six
+drills are a five-minute refresher.
+:::
+
 Every previous lab isolated one idea and handed you one dial. The capstone
 takes the dials away. The factory is squeezed from both ends at once — a
 supplier who won't slow down and a customer who won't wait — and the

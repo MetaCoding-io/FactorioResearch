@@ -2,6 +2,13 @@
 
 **Scenario:** `fp-05-push-and-pull` · runs of ~13 minutes each
 
+::: {.callout-tip}
+## Hands you'll need
+Combinators — the deepest game skill the course uses. Practice Range
+drill `d6_combinator_pair` (and `d5_enable_condition` for the gate it
+drives).
+:::
+
 Every lab so far had a silent customer: the sink took whatever arrived,
 whenever it arrived. This lab gives the customer a voice — a deterministic
 demand of **12 workpieces/min** with a declared patience of **30 seconds**

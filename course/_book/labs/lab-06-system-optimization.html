@@ -154,6 +154,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../operator-training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Practice Range</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../labs/lab-00-measuring-the-factory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lab 0 — Measuring the Factory</span></span></a>
   </div>
@@ -295,6 +301,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><strong>Scenario:</strong> <code>fp-06-system-optimization</code> · runs of ~18 minutes each</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hands you’ll need
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Everything from Labs 3–5; if it’s been a while, the Practice Range’s six drills are a five-minute refresher.</p>
+</div>
+</div>
 <p>Every previous lab isolated one idea and handed you one dial. The capstone takes the dials away. The factory is squeezed from both ends at once — a supplier who won’t slow down and a customer who won’t wait — and the toolbox contains every remedy this course has taught: faster machines, buffer chests, circuit components. Most combinations of them fail. The lab is over when you can say <em>why</em> the ones that fail, fail — before running them.</p>
 <section id="the-system" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="the-system"><span class="header-section-number">13.1</span> The system</h2>
@@ -340,7 +359,7 @@ Preference:    minimize average WIP</code></pre>
 <h2 data-number="13.6" class="anchored" data-anchor-id="what-the-whole-course-assumed-away"><span class="header-section-number">13.6</span> What the whole course assumed away</h2>
 <p>Determinism, to the end. Every rate in this factory is a constant, so every diagnosis is an arithmetic identity and every fix either works or doesn’t. Real systems add variability — and with it, buffers earn keep, utilization near 100% becomes dangerous rather than merely pointless, and “how much capacity is enough” becomes a distribution question. The variability course starts exactly where this lab’s 40/min homework leaves off: when the clean answer stops existing, what do you buy insurance with — inventory, capacity, or time?</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -349,7 +368,7 @@ Instructor notes
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
 <li>Reference interventions: <code>a-buffer-the-inflow</code> (expect: supply loss 0, service still failing, WIP growing all run — INFEASIBLE) and <code>b-upgrade-constraint</code> (expect: both requirements PASS, TH 37.5/min, the customer’s p95 wait collapsing to seconds). Cite measured numbers after the first <code>fisl solutions … --run</code> against this scenario version.</li>

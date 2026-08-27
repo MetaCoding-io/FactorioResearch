@@ -55,14 +55,15 @@ In dependency order (later items consume earlier ones):
 **Approved course-expansion plan (in order):**
 
 1. **N00b on-ramp** (three phases, approved 2026-08-27): ① *Before the
-   First Lab* front-matter chapter — setup quickstart, the ~dozen
-   controls, plant-floor translation table, per-lab hands ladder
-   (**done**); ② `fp-sandbox` "Operator Training" scenario — neutralized
-   world + toolbox + drill checklist (place/rotate/splice/swap +
-   circuit-wire drills), instrumented by the existing dynamic
-   entity-set machinery so the learner's first report grades their
-   drills; ③ just-in-time "hands you'll need" callouts in Labs 3–5
-   referencing the sandbox drills (depends on ② for drill numbering).
+   First Lab* front-matter chapter (**done**); ② `fp-sandbox` "Operator
+   Training" — LAB0 world + stocked toolbox, six drills graded post-run
+   by a read-only `drills/check.lua` over RCON (new controller drills
+   module; Drill card in `fisl report`; drills deliberately outside the
+   metrics pipeline) + *The Practice Range* chapter (**built — needs
+   first `fisl build-baseline scenarios/factory-physics/fp-sandbox` and
+   a human drill session to validate the six predicates on real
+   2.0.77**); ③ "hands you'll need" callouts in Labs 3–6 referencing
+   drill ids (**done**).
 2. **Scenario Author's Guide**: `docs/AUTHORING_GUIDE.md` reference
    (schema walk, metrics catalog with validity semantics, objectives,
    visibility, hash discipline, layout registration, solutions,

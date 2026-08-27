@@ -154,6 +154,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../operator-training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Practice Range</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../labs/lab-00-measuring-the-factory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lab 0 — Measuring the Factory</span></span></a>
   </div>
@@ -294,6 +300,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><strong>Scenario:</strong> <code>fp-04-starvation-blocking</code> · runs of ~12 minutes each</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hands you’ll need
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The chest splice and the machine swap — Practice Range drills <code>d3_chest_splice</code> and <code>d4_machine_swap</code>.</p>
+</div>
+</div>
 <p>In Lab 3 every machine had the same story: one bottleneck at the head of the line, one queue in front of it. This lab’s line is quieter and stranger: three machines of <em>different</em> speeds, and the slow one is hidden in the middle. You will diagnose which machine constrains the system without being told — using only what the machines’ behavior betrays — and then discover that the two obvious fixes are not the same fix at all.</p>
 <section id="the-system" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="the-system"><span class="header-section-number">9.1</span> The system</h2>
@@ -446,7 +465,7 @@ Figure&nbsp;9.1: The debrief: baseline vs buffer vs constraint upgrade. This fig
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -455,7 +474,7 @@ Instructor notes
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
 <li>Reference interventions are committed as <code>scenarios/factory-physics/fp04-starvation-blocking/solutions/</code> (<code>a-buffer-before-constraint</code>, <code>b-upgrade-constraint</code>); the full lab dataset — baseline plus both solutions, compared — regenerates with <code>fisl solutions scenarios/factory-physics/fp04-starvation-blocking --run   --json course/data/lab-04-comparison.json</code>. Reference runs (2026-08-26): baseline <code>01M0YHYH9TAVJP0SK6F60XX8W9</code> (TH 30.00/min, avg WIP 57.54, CT 115.08 s — the rate arithmetic hit exactly), buffer <code>01M0YJ0RNJCQZ7ZRSXVC75J1VR</code>, upgrade <code>01M0YJ304T2T1GQ8R2AFEPS62J</code> (37.50/min, again exact). Pooled fractions (productive/starved/blocked): baseline 82.6/11.3/6.1, buffer 89.2/10.8/0.0, upgrade 78.1/21.9/0.0. Rerun the command after any scenario or baseline change and re-check the numbers cited in this chapter.</li>

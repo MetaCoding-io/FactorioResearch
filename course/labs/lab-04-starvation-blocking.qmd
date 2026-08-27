@@ -2,6 +2,12 @@
 
 **Scenario:** `fp-04-starvation-blocking` · runs of ~12 minutes each
 
+::: {.callout-tip}
+## Hands you'll need
+The chest splice and the machine swap — Practice Range drills
+`d3_chest_splice` and `d4_machine_swap`.
+:::
+
 In Lab 3 every machine had the same story: one bottleneck at the head of
 the line, one queue in front of it. This lab's line is quieter and
 stranger: three machines of *different* speeds, and the slow one is hidden

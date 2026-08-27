@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Interlude — The Customer’s Clock – Factory Physics Through Factorio</title>
+<title>The Practice Range – Factory Physics Through Factorio</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +20,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../labs/lab-05-push-and-pull.html" rel="next">
-<link href="../labs/lab-04-starvation-blocking.html" rel="prev">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-2e4c97a43803ed481078bdef9528fe0e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./labs/lab-00-measuring-the-factory.html" rel="next">
+<link href="./before-the-first-lab.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-2e4c97a43803ed481078bdef9528fe0e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -81,7 +115,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../interludes/customers-clock.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interlude — The Customer’s Clock</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./operator-training.html">The Practice Range</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -96,7 +130,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="../">Factory Physics Through Factorio</a> 
+      <a href="./">Factory Physics Through Factorio</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -108,97 +142,97 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../before-the-first-lab.html" class="sidebar-item-text sidebar-link">
+  <a href="./before-the-first-lab.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Before the First Lab</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../operator-training.html" class="sidebar-item-text sidebar-link">
+  <a href="./operator-training.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">The Practice Range</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-00-measuring-the-factory.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-00-measuring-the-factory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lab 0 — Measuring the Factory</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/rules-of-evidence.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/rules-of-evidence.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Interlude — The Rules of Evidence</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-01-flow-and-capacity.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-01-flow-and-capacity.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lab 1 — Flow and Capacity</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/capacity.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/capacity.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interlude — Capacity and the Weakest Link</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-02-the-constraint.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-02-the-constraint.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lab 2 — The Constraint</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/accounting-of-flow.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/accounting-of-flow.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interlude — The Accounting of Flow</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-03-littles-law.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-03-littles-law.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab 3 — WIP and Little’s Law</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/states-of-a-machine.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/states-of-a-machine.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Interlude — The States of a Machine</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-04-starvation-blocking.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-04-starvation-blocking.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lab 4 — Starvation and Blocking</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/customers-clock.html" class="sidebar-item-text sidebar-link active">
+  <a href="./interludes/customers-clock.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interlude — The Customer’s Clock</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-05-push-and-pull.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-05-push-and-pull.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Lab 5 — Push and Pull</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/objectives-without-a-score.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/objectives-without-a-score.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interlude — Objectives Without a Score</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-06-system-optimization.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-06-system-optimization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Lab 6 — System Optimization</span></span></a>
   </div>
 </li>
@@ -213,13 +247,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../appendices/notation.html" class="sidebar-item-text sidebar-link">
+  <a href="./appendices/notation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Notation and Definitions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../appendices/readings-map.html" class="sidebar-item-text sidebar-link">
+  <a href="./appendices/readings-map.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Readings Map</span></span></a>
   </div>
 </li>
@@ -235,12 +269,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#demand-is-a-flow-with-a-deadline-attached" id="toc-demand-is-a-flow-with-a-deadline-attached" class="nav-link active" data-scroll-target="#demand-is-a-flow-with-a-deadline-attached"><span class="header-section-number">10.1</span> Demand is a flow with a deadline attached</a></li>
-  <li><a href="#the-service-metrics" id="toc-the-service-metrics" class="nav-link" data-scroll-target="#the-service-metrics"><span class="header-section-number">10.2</span> The service metrics</a></li>
-  <li><a href="#censoring-the-deadline-you-didnt-see" id="toc-censoring-the-deadline-you-didnt-see" class="nav-link" data-scroll-target="#censoring-the-deadline-you-didnt-see"><span class="header-section-number">10.3</span> Censoring: the deadline you didn’t see</a></li>
-  <li><a href="#service-capacity-and-the-cost-of-a-cap" id="toc-service-capacity-and-the-cost-of-a-cap" class="nav-link" data-scroll-target="#service-capacity-and-the-cost-of-a-cap"><span class="header-section-number">10.4</span> Service, capacity, and the cost of a cap</a></li>
-  <li><a href="#claims-to-carry-into-lab-5" id="toc-claims-to-carry-into-lab-5" class="nav-link" data-scroll-target="#claims-to-carry-into-lab-5"><span class="header-section-number">10.5</span> Claims to carry into Lab 5</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">10.6</span> Further reading</a></li>
+  <li><a href="#how-a-practice-session-works" id="toc-how-a-practice-session-works" class="nav-link active" data-scroll-target="#how-a-practice-session-works">How a practice session works</a></li>
+  <li><a href="#the-six-drills" id="toc-the-six-drills" class="nav-link" data-scroll-target="#the-six-drills">The six drills</a></li>
+  <li><a href="#reading-your-first-report" id="toc-reading-your-first-report" class="nav-link" data-scroll-target="#reading-your-first-report">Reading your first report</a></li>
   </ul>
 </nav>
     </div>
@@ -249,7 +280,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interlude — The Customer’s Clock</span></h1>
+<h1 class="title">The Practice Range</h1>
 </div>
 
 
@@ -266,58 +297,31 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><strong>Read after Lab 4, before Lab 5</strong> · no Factorio required · ~25 minutes</p>
-<p>Every sink so far has been infinitely patient: it absorbed whatever arrived, whenever it arrived, and throughput was the whole story. Lab 5 replaces it with a <strong>customer</strong> — demand that arrives on its own schedule and stops being satisfiable 30 seconds later. This interlude builds the measurement kit for that world, and it ends at the hardest honesty problem in the course: what to report about a deadline you never got to see.</p>
-<section id="demand-is-a-flow-with-a-deadline-attached" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="demand-is-a-flow-with-a-deadline-attached"><span class="header-section-number">10.1</span> Demand is a flow with a deadline attached</h2>
-<p>The customer in Lab 5 demands 12 workpieces per minute, continuously. Each unit of demand is created at a moment, joins a <strong>backlog</strong> if it cannot be served immediately, and is filled strictly first-in-first-out. Its <strong>wait</strong> is the time from creation to fulfillment, and the scenario declares a maximum tolerable wait — the deadline.</p>
-<p>Two rules keep the accounting honest:</p>
-<ul>
-<li><strong>FIFO, enforced.</strong> The oldest unserved demand is always served first, so waits are well-defined and no analysis can quietly cherry-pick which customer got which item.</li>
-<li><strong>Surplus is not a bank.</strong> Producing ahead of demand does not pre-credit customers who haven’t asked yet; a delivery with no open demand behind it is recorded as surplus, full stop. (Real contracts work this way too: shipping early doesn’t excuse shipping late next month.)</li>
-</ul>
+<p><strong>Scenario:</strong> <code>fp-sandbox</code> · self-paced, then a 1-minute inspection pass</p>
+<p>Six manipulations cover every build the seven labs will ask of your hands. This scenario exists so you rehearse them where nothing is at stake: Lab 0’s little one-machine world, a toolbox stocked with every part you’ll need, and a report at the end that tells you — honestly, the FISL way — which drills the world actually shows.</p>
+<p>Skip this chapter freely if you build in Factorio already. The drills take a newcomer perhaps twenty minutes; Lab 3 is more fun when the chest splice isn’t your first.</p>
+<section id="how-a-practice-session-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-a-practice-session-works">How a practice session works</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fisl</span> run scenarios/factory-physics/fp-sandbox</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Connect your client as usual. Everything happens on the <strong>READY floor</strong> — unmeasured, unhurried, and reset by the next <code>fisl run</code>. Build the drills below at your own pace. When you’re done, press <strong>Start Experiment</strong>: the one-minute pass that follows is your inspection — when it ends, the controller reads the world and grades the drills, and <code>fisl report runs/&lt;run_id&gt;</code> shows a <strong>Drill card</strong> (“5/6 verified”) next to a real, tiny measurement of the line you may have just rebuilt.</p>
+<p>Run it as many times as you like. Aborting costs nothing.</p>
 </section>
-<section id="the-service-metrics" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="the-service-metrics"><span class="header-section-number">10.2</span> The service metrics</h2>
-<p><strong>On-time item rate</strong>: of all demanded items in the window, the fraction fulfilled within their deadline. It is item-weighted — a cohort of ten counts ten times a cohort of one — and it is a <em>service</em> number, not a production number. That distinction has teeth: a line can run at full throughput and still fail every deadline, if the timing is wrong.</p>
-<p><strong>Wait percentiles</strong> (Lab 5 uses p95): the wait that 95% of demanded items beat. Averages flatter service systems — one customer served instantly and one who waited a minute average to “30 s”, which describes neither. The tail is where customers live.</p>
-</section>
-<section id="censoring-the-deadline-you-didnt-see" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="censoring-the-deadline-you-didnt-see"><span class="header-section-number">10.3</span> Censoring: the deadline you didn’t see</h2>
-<p>The run ends. Some demand near the end was created, its deadline still in the future when observation stopped. What is it?</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../images/interludes/censoring.svg" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption>Three fates for a unit of demand against an observation horizon. Only the first two are verdicts; the third is an honest refusal to issue one.</figcaption>
-</figure>
-</div>
-<ul>
-<li>Fulfilled within the deadline → <strong>on time</strong>. Final.</li>
-<li>Deadline observed passing unfulfilled → <strong>late</strong>. Final — note this needs no run-end: the verdict lands the instant the deadline passes, and later fulfillment cannot repair it.</li>
-<li>Deadline beyond the horizon → <strong>unresolved</strong>. Not on time, not late — <em>unknown</em>, and reported as exactly that.</li>
-</ul>
-<p>The temptation is to fold unresolved units into whichever bucket flatters the story (“not late yet” → on time). FISL’s rules instead: the on-time rate’s window and horizon are declared so that reported cohorts have observable deadlines (Lab 5’s scenario adds a <code>service_tail</code> phase for precisely this), and the wait percentile is <strong>strictly censored</strong> — if any unit needed for the percentile is unfulfilled, the metric refuses to print a number at all. You will see <code>censored</code> in a real report in Lab 5, and it will be the most honest cell in the table.</p>
-</section>
-<section id="service-capacity-and-the-cost-of-a-cap" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="service-capacity-and-the-cost-of-a-cap"><span class="header-section-number">10.4</span> Service, capacity, and the cost of a cap</h2>
-<p>The line’s capacity is 15/min; the customer wants 12/min. That 25% margin means 100% on-time service is <em>achievable</em> — and, remarkably, achievable at wildly different WIP levels, which is the entire drama of Lab 5: push and a well-tuned pull deliver identical service; only the inventory differs.</p>
-<p>But admission control has a cliff. Cap the line’s intake <em>below</em> demand — say at 10/min against 12 — and backlog grows at 2/min, forever. Waits grow with the backlog; once the queue is longer than what the cap can clear within the patience window, <strong>every subsequent unit is late</strong>. The measured on-time rate then mostly reflects how early in the run the queue outgrew the deadline — keep running and it decays toward zero. One number to internalize: an over-tight cap doesn’t degrade service proportionally (10/12 ≈ 83%); it collapses it, because lateness compounds through the queue.</p>
-</section>
-<section id="claims-to-carry-into-lab-5" class="level2" data-number="10.5">
-<h2 data-number="10.5" class="anchored" data-anchor-id="claims-to-carry-into-lab-5"><span class="header-section-number">10.5</span> Claims to carry into Lab 5</h2>
+<section id="the-six-drills" class="level2">
+<h2 class="anchored" data-anchor-id="the-six-drills">The six drills</h2>
+<p>Every control named here is in the <em>Before the First Lab</em> table.</p>
 <ol type="1">
-<li>The baseline (push) will serve 100% on time. So will a correctly tuned pull — with the <em>same</em> p95 wait — while carrying a fraction of the WIP. Service metrics alone cannot distinguish them; the ledger can.</li>
-<li>The deliberately over-tight reference solution admits 10/min against 12/min demand. Predict: on-time far below 83%, decaying with run length, and a p95 that prints <code>censored</code> rather than a number.</li>
-<li>Little’s Law works on the backlog too: the customer’s average wait relates backlog and demand rate exactly as WIP relates to throughput and cycle time. One law, second appearance.</li>
+<li><strong><code>d1_place_belts</code> — lay a belt.</strong> Take transport belts from the toolbox chest and place a short run of at least four tiles anywhere in the zone (south of the line is open ground).</li>
+<li><strong><code>d2_rotate_belt</code> — turn it.</strong> At least one of your belts should face north or south (<strong>R</strong> rotates the item in your hand before placing — or the placed belt under your cursor). The original line runs east; the check looks for any belt that doesn’t.</li>
+<li><strong><code>d3_chest_splice</code> — buffer the flow.</strong> The move Labs 4 and 6 call “splice a chest into the belt”: remove one belt tile (yours or the line’s), place a wooden chest in the gap, and set an inserter on each side — one feeding the chest, one taking from it, arrows pointing along the flow.</li>
+<li><strong><code>d4_machine_swap</code> — upgrade a machine.</strong> Place an assembling-machine-2 (swap it for the line’s machine, or place it beside the line) and set its recipe to <em>machine workpiece</em>. This is Lab 4’s solution B and Lab 6’s winning move, rehearsed.</li>
+<li><strong><code>d5_enable_condition</code> — gate an inserter.</strong> Drag a red or green wire (<strong>Alt+R</strong> / <strong>Alt+G</strong>) from any chest or belt to any inserter, open the inserter, and set an enable condition (for example: rough workpiece &lt; 2). This is the pull gate of Lab 3, rehearsed. Remember the 9-tile wire reach.</li>
+<li><strong><code>d6_combinator_pair</code> — wire two combinators.</strong> Place a constant combinator and a decider combinator and wire them together. Set any signal on the constant and any condition on the decider — the check only asks that they share a network. (Wire the decider’s output to a lamp if you want to see it <em>do</em> something.) Lab 5’s admission clock is this pair, grown up.</li>
 </ol>
 </section>
-<section id="further-reading" class="level2" data-number="10.6">
-<h2 data-number="10.6" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">10.6</span> Further reading</h2>
-<ul>
-<li>Hopp &amp; Spearman, <em>Factory Physics</em> (3rd ed.), ch.&nbsp;10 “Push and Pull Production Systems” — the control side of what Lab 5 measures; ch.&nbsp;3 and 4 for where push (MRP) and pull (JIT) actually came from.</li>
-<li>Little &amp; Graves, “Little’s Law” (in <em>Building Intuition</em>, 2008) — §on applications includes exactly this waiting-line reading.</li>
-<li>The demand-cohort and censoring contract is FISL’s ADR 0008.</li>
-</ul>
+<section id="reading-your-first-report" class="level2">
+<h2 class="anchored" data-anchor-id="reading-your-first-report">Reading your first report</h2>
+<p>The Drill card is the last section of the report, and it is deliberately <em>not</em> a measurement: drills grade practice and touch no metric. Above it you’ll find the real thing — average WIP, throughput, the machine’s productive fraction — measured over your one-minute pass with the same honesty rules every lab uses. If you swapped the machine in drill 4, look at the per-machine table: the old machine’s eligibility ends where the new one’s begins. You’ve already seen dynamic membership work, three labs before it’s taught.</p>
+<p>A drill marked <em>not yet</em> names what the check looked for and didn’t find. Fix it and run again — the range resets, your hands remember.</p>
 
 
 </section>
@@ -742,13 +746,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../labs/lab-04-starvation-blocking.html" class="pagination-link" aria-label="Lab 4 — Starvation and Blocking">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lab 4 — Starvation and Blocking</span></span>
+      <a href="./before-the-first-lab.html" class="pagination-link" aria-label="Before the First Lab">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Before the First Lab</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../labs/lab-05-push-and-pull.html" class="pagination-link" aria-label="Lab 5 — Push and Pull">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Lab 5 — Push and Pull</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./labs/lab-00-measuring-the-factory.html" class="pagination-link" aria-label="Lab 0 — Measuring the Factory">
+        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lab 0 — Measuring the Factory</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

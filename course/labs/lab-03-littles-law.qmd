@@ -2,6 +2,13 @@
 
 **Scenario:** `fp-03-littles-law` · two runs of ~12 minutes each
 
+::: {.callout-tip}
+## Hands you'll need
+First lab that builds: placing entities from the toolbox, and — for the
+pull gate — a circuit wire with an enable condition. Practice Range
+drills `d5_enable_condition` (and `d1`/`d2` if belts are new to you).
+:::
+
 You will operate a small workpiece line twice: first exactly as you find it,
 then after making one modification. Between the two runs, three numbers —
 inventory, output rate, and flow time — will rearrange themselves in a way

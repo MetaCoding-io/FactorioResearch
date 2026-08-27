@@ -8,6 +8,7 @@ book:
   chapters:
     - index.qmd
     - before-the-first-lab.qmd
+    - operator-training.qmd
     - labs/lab-00-measuring-the-factory.qmd
     - interludes/rules-of-evidence.qmd
     - labs/lab-01-flow-and-capacity.qmd

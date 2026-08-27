@@ -147,13 +147,16 @@ def build_baseline_command(
 @app.command()
 def report(run_dir: Path = typer.Argument(..., help="runs/<run_id> directory")) -> None:
     """Display final metrics with method/window/coverage metadata (FR-CTRL-007)."""
-    from fisl.report.run_report import render_report
+    from fisl.report.run_report import render_drills, render_report
 
     summary_path = run_dir / "summary.json"
     if not summary_path.exists():
         console.print(f"[red]No summary.json in {run_dir}[/red]")
         raise typer.Exit(code=1)
     render_report(json.loads(summary_path.read_text()), console)
+    drills_path = run_dir / "drills.json"
+    if drills_path.exists():
+        render_drills(json.loads(drills_path.read_text()), console)
 
 
 @app.command()

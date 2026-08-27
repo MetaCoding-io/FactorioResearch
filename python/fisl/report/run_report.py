@@ -243,3 +243,22 @@ def _validity_text(metric: dict) -> str:
         else:
             parts.append(f"[red]census discrepancy x{len(census['discrepancy_intervals'])}[/red]")
     return ", ".join(parts)
+
+
+def render_drills(drills: dict, console: Console) -> None:
+    """Drill card (operator-training scenarios). Grades practice, not
+    measurement — rendered apart from the metrics and validity."""
+    entries = drills.get("drills", [])
+    if not entries:
+        return
+    passed = sum(1 for d in entries if d.get("passed"))
+    console.print(f"\n[bold]Drills[/bold]  {passed}/{len(entries)} verified")
+    table = Table(show_header=True)
+    table.add_column("Drill")
+    table.add_column("Verified")
+    table.add_column("Detail")
+    for entry in entries:
+        mark = "[green]yes[/green]" if entry.get("passed") else "[yellow]not yet[/yellow]"
+        table.add_row(str(entry.get("id")), mark, str(entry.get("detail", "")))
+    console.print(table)
+    console.print("Drills grade practice; they are not measurements and touch no metric.")
