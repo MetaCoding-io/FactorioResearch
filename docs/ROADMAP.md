@@ -50,7 +50,7 @@ In dependency order (later items consume earlier ones):
 | 3 | Dynamic entity sets (ADR 0016, RV-012) — **done** (RV-012 confirmed on real 2.0.77; full integration suite 16/16) | [#8](https://github.com/MetaCoding-io/FactorioResearch/issues/8) | mid-run redesign; pooled denominators |
 | 4 | Demand/service cohorts + on-time item rate (ADR 0008) — **done** (fixtures 2/2 on real 2.0.77; fp05 baseline verified; three-run reference dataset committed — push/pull-tuned identical 100% on-time & 3.02 s p95 at 2.7× WIP difference; over-tight pull 22.5% on-time with censored p95, exactly the backlog arithmetic) | [#9](https://github.com/MetaCoding-io/FactorioResearch/issues/9) | Lab 5 push/pull |
 | 5 | Objectives + full visibility enforcement (ADR 0011/0012) — **done** (requirement/preference objectives, PASS/FAIL/UNDETERMINED with conjunction, report + compare feasibility framing, allowlist-driven post-run GUI, objective-rule disclosure; fp05 now declares the canonical service requirement + WIP preference, which **changes its resolved hash — regenerate**: `fisl build-baseline scenarios/factory-physics/fp05-push-and-pull` then `fisl solutions … --run --json --svg`) | [#10](https://github.com/MetaCoding-io/FactorioResearch/issues/10) | Labs 5/6 evaluation |
-| 6 | Lab content: builder generalization, Labs 0–6, RV partial fixtures, per-lab reference solutions + course chapters — **in progress: all seven labs authored and measured through Lab 5; Lab 6 (capstone) authored; all six theory interludes + notation/readings appendices authored (the lab-course-book structure — see `CONCEPT_COVERAGE.md`)** (fp06 scenario: scheduled supply 36/min into a finite 100+10 warehouse + 33/min demand vs the 30/min constraint; new `supply_loss` metric + telemetry; buffer-vs-upgrade reference solutions where the buffer run is INFEASIBLE by the declared objectives; chapter + LAB6 layout registered. Remaining: **regenerate fp05** (objectives changed its hash): `fisl build-baseline scenarios/factory-physics/fp05-push-and-pull` then re-run its solutions dataset; **build fp06**: `fisl build-baseline scenarios/factory-physics/fp06-system-optimization` then `fisl solutions scenarios/factory-physics/fp06-system-optimization --run --json course/data/lab-06-comparison.json --svg …`, cite measured numbers in the Lab 6 chapter + solution READMEs; screenshots (`fisl snap`); RV-004 underground/splitter fixtures; external-learner gate) | [#11](https://github.com/MetaCoding-io/FactorioResearch/issues/11) | the rest of the course |
+| 6 | Lab content: builder generalization, Labs 0–6, RV partial fixtures, per-lab reference solutions + course chapters — **in progress: all seven labs authored and measured through Lab 5; Lab 6 (capstone) authored; all six theory interludes + notation/readings appendices authored (the lab-course-book structure — see `CONCEPT_COVERAGE.md`)** (fp06 scenario: scheduled supply 36/min into a finite 100+10 warehouse + 33/min demand vs the 30/min constraint; new `supply_loss` metric + telemetry; buffer-vs-upgrade reference solutions where the buffer run is INFEASIBLE by the declared objectives; chapter + LAB6 layout registered. **fp05 regenerated and fp06 built + measured on real 2.0.77** — Lab 6's reference dataset committed and every chapter number measured: baseline INFEASIBLE on both requirements (33.3% on time, 6.1% loss — the 15-min window catching the post-masking loss exactly per the warehouse arithmetic), buffer INFEASIBLE on service alone (WIP 102.4), upgrade feasible (100% on time, p95 1.47 s, WIP 33.57). Remaining: screenshots (`fisl snap`); RV-004 underground/splitter fixtures; external-learner gate) | [#11](https://github.com/MetaCoding-io/FactorioResearch/issues/11) | the rest of the course |
 
 **Approved course-expansion plan (in order):**
 
@@ -59,10 +59,11 @@ In dependency order (later items consume earlier ones):
    Training" — LAB0 world + stocked toolbox, six drills graded post-run
    by a read-only `drills/check.lua` over RCON (new controller drills
    module; Drill card in `fisl report`; drills deliberately outside the
-   metrics pipeline) + *The Practice Range* chapter (**built — needs
-   first `fisl build-baseline scenarios/factory-physics/fp-sandbox` and
-   a human drill session to validate the six predicates on real
-   2.0.77**); ③ "hands you'll need" callouts in Labs 3–6 referencing
+   metrics pipeline) + *The Practice Range* chapter (**baseline built
+   and verified on real 2.0.77; drill pipeline validated end-to-end — a
+   no-build session correctly graded 0/6. Remaining: one session that
+   actually performs the drills, validating the six predicates' positive
+   direction**); ③ "hands you'll need" callouts in Labs 3–6 referencing
    drill ids (**done**).
 2. **Scenario Author's Guide** — **done**: `docs/AUTHORING_GUIDE.md`
    (workflow, physics-design judgment incl. the fp06 transient case

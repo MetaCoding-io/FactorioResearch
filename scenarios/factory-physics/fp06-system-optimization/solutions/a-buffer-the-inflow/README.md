@@ -14,6 +14,12 @@ and everything rescued from the supplier's scrap heap now accumulates in
 the chest, so WIP grows for the entire run. `fisl compare` marks this run
 **INFEASIBLE**: its (large!) WIP value is displayed but does not compete.
 
+**Measured** (reference dataset): supply loss 6.1% → **0.0%**, intake
+30.60 → 37.47/min — and on-time 33.1% vs the baseline's 33.3%
+(statistically the same customer misery), throughput still 30.00/min,
+average WIP 57.04 → **102.41** with 167 on the floor at the bell, p95
+wait still censored.
+
 The capstone lesson in one run: fixing the symptom you can see, at the
 place you can see it, moved material from one loss column to an inventory
 column and left the customer exactly as unserved as before.

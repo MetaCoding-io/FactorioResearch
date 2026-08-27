@@ -332,15 +332,67 @@ Preference:    minimize average WIP</code></pre>
 </section>
 <section id="run-1-watch-it-fail-twice" class="level2" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="run-1-watch-it-fail-twice"><span class="header-section-number">13.3</span> Run 1 — watch it fail twice</h2>
-<p>Run the baseline untouched and watch both requirements fail on one screen: the on-time rate sinking as backlog accumulates, and — later than you’d expect — the supply-loss row waking up. Note <em>when</em> each failure becomes visible. The service failure shows within minutes; the supply failure hides for most of the run behind refilling buffers, then arrives all at once and permanently. A ten-minute audit of this factory would have reported one problem; the system has two. Walk the line mid-run and collect the full diagnosis kit from earlier labs: which machine never rests (Lab 2), who is blocked and who is starved (Lab 4), where the queue sits (Lab 3), what the customer sees (Lab 5).</p>
+<p>Run the baseline untouched and watch both requirements fail on one screen: the on-time rate sinking as backlog accumulates (it ends the window at <strong>33.3%</strong> against the 95% requirement), and — later than you’d expect — the supply-loss row waking up, finishing at <strong>6.1%</strong> against the 2% cap. Note <em>when</em> each failure becomes visible. The service failure shows within minutes; the supply failure hides for roughly ten minutes behind refilling buffers, then arrives all at once and permanently — the measured 6.1% is ~33 units lost at ~6/min over the window’s last stretch, exactly the warehouse arithmetic. A ten-minute audit of this factory would have reported one problem; the system has two. One more honest cell: the baseline’s p95 customer wait prints <strong>censored</strong> — enough demand was simply never served that the tail wait has no measurable value. Walk the line mid-run and collect the full diagnosis kit from earlier labs: which machine never rests (Lab 2, throughput pinned at 30/min), who is blocked and who is starved (Lab 4: 5.5% blocked above the constraint, 11.3% starved below), where the queue sits (Lab 3, average WIP 57), what the customer sees (Lab 5).</p>
 </section>
 <section id="run-2-spend-your-effort" class="level2" data-number="13.4">
 <h2 data-number="13.4" class="anchored" data-anchor-id="run-2-spend-your-effort"><span class="header-section-number">13.4</span> Run 2 — spend your effort</h2>
 <p>Two committed reference runs bracket the space; your own combinations are the real assignment.</p>
 <ul>
-<li><strong>A — buffer the inflow</strong> (the seductive partial fix): splice a chest into the belt upstream of the constraint. Supply loss stops — intake now keeps up with the supplier — and the service failure <em>doesn’t move</em>, while WIP grows all run. One requirement green, one red: <strong>INFEASIBLE</strong>. You moved the loss from the supplier’s scrap heap into your own inventory account.</li>
-<li><strong>B — relieve the constraint</strong>: swap the middle machine for the 45/min model. The line’s pace moves to 37.5/min — above the supplier’s 36 <em>and</em> the customer’s 33 — and <strong>both requirements pass with one action</strong>, because both symptoms shared one cause. WIP settles moderate; this is the feasible run the preference actually ranks.</li>
+<li><strong>A — buffer the inflow</strong> (the seductive partial fix): splice a chest into the belt upstream of the constraint. Supply loss stops — measured <strong>0.0%</strong>, intake jumps to 37.47/min — and the service failure <em>doesn’t move</em>: 33.1% on time, indistinguishable from the baseline’s 33.3%, while average WIP nearly doubles to 102.4 (167 at the bell). One requirement green, one red: <strong>INFEASIBLE</strong>. You moved the loss from the supplier’s scrap heap into your own inventory account, at full carrying cost.</li>
+<li><strong>B — relieve the constraint</strong>: swap the middle machine for the 45/min model. The line’s pace moves to 37.5/min — above the supplier’s 36 <em>and</em> the customer’s 33 — and <strong>both requirements pass with one action</strong>, because both symptoms shared one cause: 100% on time, p95 wait 1.47 s, zero loss, throughput 37.53/min. Average WIP settles at <strong>33.57</strong> — lower than the untouched baseline’s, and the preference value the feasible set is ranked by.</li>
 </ul>
+<p>The measured reference table:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>run</th>
+<th>TH</th>
+<th>avg WIP</th>
+<th>on-time</th>
+<th>p95 wait</th>
+<th>supply loss</th>
+<th>verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>baseline</td>
+<td>30.00/min</td>
+<td>57.04</td>
+<td>33.3%</td>
+<td>censored</td>
+<td>6.1%</td>
+<td>INFEASIBLE (both)</td>
+</tr>
+<tr class="even">
+<td>A — buffer</td>
+<td>30.00/min</td>
+<td>102.41</td>
+<td>33.1%</td>
+<td>censored</td>
+<td>0.0%</td>
+<td>INFEASIBLE (service)</td>
+</tr>
+<tr class="odd">
+<td>B — upgrade</td>
+<td>37.53/min</td>
+<td><strong>33.57</strong></td>
+<td>100.0%</td>
+<td>1.47 s</td>
+<td>0.0%</td>
+<td><strong>feasible</strong></td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fisl</span> solutions scenarios/factory-physics/fp06-system-optimization <span class="at">--run</span> <span class="dt">\</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--json</span> course/data/lab-06-comparison.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then go beyond the references: add B’s upgrade <em>and</em> Lab 3’s pull gate — how low can average WIP go while both requirements hold? That number, and your explanation of what limits it, is the capstone deliverable.</p>
@@ -371,9 +423,9 @@ Instructor notes
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
-<li>Reference interventions: <code>a-buffer-the-inflow</code> (expect: supply loss 0, service still failing, WIP growing all run — INFEASIBLE) and <code>b-upgrade-constraint</code> (expect: both requirements PASS, TH 37.5/min, the customer’s p95 wait collapsing to seconds). Cite measured numbers after the first <code>fisl solutions … --run</code> against this scenario version.</li>
-<li>Baseline mechanics (learned the hard way — a 10-minute window measured only 0.8% loss): the cold-start belt fill plus machine buffers drain the warehouse during warmup, so the measured window opens with tens of units of free warehouse space. The 6/min structural surplus spends ~12 minutes (from supply start) refilling that space before overflow begins; thereafter essentially the full 6/min is lost. Over the 15 min window expect roughly 5–7% of scheduled supply lost — comfortably failing the 2% requirement — with TH pinned at 30/min and on-time at or below ~50%. Verify against the first run of this scenario version before quoting exact numbers.</li>
-<li>The masking effect is now part of the lesson (see Run 1 and the debrief): transient buffer space hides a structural deficit; short audits report health.</li>
+<li>All numbers in this chapter are measured (reference dataset in <code>course/data/lab-06-comparison.json</code>): baseline INFEASIBLE on both requirements (33.3% on time, 6.1% loss, TH 30.00/min, WIP 57.04, p95 censored); <code>a-buffer-the-inflow</code> INFEASIBLE on service alone (33.1% on time, 0.0% loss, WIP 102.41 and climbing — final 167); <code>b-upgrade-constraint</code> feasible (100% on time, p95 1.47 s, 0.0% loss, TH 37.53/min, WIP 33.57 — the preference value).</li>
+<li>Baseline mechanics (learned the hard way — a 10-minute window measured only 0.8% loss): the cold-start belt fill plus machine buffers drain the warehouse during warmup, so the measured window opens with tens of units of free warehouse space. The 6/min structural surplus spends ~12 minutes (from supply start) refilling that space before overflow begins; thereafter essentially the full 6/min is lost. The measured 6.1% over 15 minutes is ~33 of 540 scheduled units — the last ~5½ minutes of the window losing at the full deficit rate, exactly the whiteboard arithmetic.</li>
+<li>The masking effect is part of the lesson (see Run 1 and the debrief): transient buffer space hides a structural deficit; short audits report health. The baseline’s censored p95 is a second teachable: with enough never-served demand, the tail wait honestly has no value.</li>
 <li>The in-game panel shows all three objective <em>rules</em> from READY onward (visibility discloses them); verdicts appear only in the post-run report — no provisional in-game pass/fail.</li>
 <li>The supply-loss denominator is the supplier’s <em>scheduled</em> quantity in the window (telemetry records both scheduled arrivals and overflow losses); the metric is a fraction with exact integers behind it.</li>
 </ul>

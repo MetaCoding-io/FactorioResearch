@@ -15,6 +15,12 @@ Raise the constraint past both external rates and:
 - WIP settles at a moderate level (the preference value that now actually
   competes, this being the feasible run).
 
+**Measured** (reference dataset): on-time 33.3% → **100.0%**, p95 wait
+censored → **1.47 s**, supply loss 6.1% → **0.0%**, throughput 30.00 →
+37.53/min, average WIP 57.04 → **33.57** — the feasible run the
+`minimize_wip` preference actually ranks, and lower-WIP than the failing
+baseline it replaced.
+
 Contrast with solution A, which spent effort at the most visible symptom
 and moved nothing the customer or the objective conjunction could see.
 Note what was *not* needed: no buffer, no pull gate, no combinators — in a
