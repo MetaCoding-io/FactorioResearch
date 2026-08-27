@@ -77,6 +77,10 @@ fraction. Questions to answer from the report, not from memory:
   throughput machinery (`boundary: entry` in `scenario.yaml`) — same
   settlement records, different port set. Cite that when someone asks
   whether input and output are measured "the same way".
-- Reference numbers: cite from `verification-summary.json` after the first
-  `fisl build-baseline scenarios/factory-physics/fp00-measuring-the-factory`.
+- Reference run `01M0Z5SZDS04X54CDCE5C2KJ8A` (committed verification
+  summary): throughput **15.00/min** — exactly the machine's 4 s rate;
+  average WIP **40.00**; admission rate **15.00/min**, equal to throughput
+  because the measured window starts after the input belt has filled — the
+  visible inflow>outflow disagreement lives in the warmup, which is
+  exactly the debrief point about windows.
 :::

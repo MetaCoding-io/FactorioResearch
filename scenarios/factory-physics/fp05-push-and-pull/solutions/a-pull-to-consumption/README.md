@@ -12,13 +12,16 @@ the push baseline — while the factory carries a fraction of the
 inventory. WIP control and service are not opposites while capacity covers
 demand; push's extra inventory was buying literally nothing here.
 
-Expected vs the push baseline:
+Measured (run `01M0Z6B1JESS0T4Q0N9WPHDPYG` vs push baseline
+`01M0Z68MAR07HYK6ADFF8MTTVV`):
 
-- on-time item rate: **unchanged** (capacity > demand either way)
-- p95 customer wait: **unchanged / similar**
-- average WIP and cycle time: **way down** (Lab 3's result, now with a
-  customer watching)
-- admission rate: down from "as fast as the inserter swings" to ~15/min
+- on-time item rate: **100.0%, unchanged**; p95 wait **3.02 s, identical**
+  to push — the customer cannot tell the difference
+- average WIP: **19.16 (−62.9%)**; cycle time **76.64 s (−62.9%)** —
+  bit-identical to fp03's pulled run (same gate, same world)
+- admission rate: **14.30/min** (the gate's staging allowance trims it
+  slightly below the bottleneck's 15/min; throughput still 15.00/min while
+  the warmup queue drains)
 
 Contrast with solution B before concluding pull is free: B pulls
 *too hard* and the customer pays for it.

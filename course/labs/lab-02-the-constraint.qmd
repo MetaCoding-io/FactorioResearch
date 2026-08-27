@@ -50,11 +50,19 @@ Predictions to lock in first: A moves throughput by ______; B moves it to
 ______ (careful: *not* the new machine's own rate — work out which machine
 paces the line afterward).
 
-What the runs show: A changes nothing the customer can see — the upgraded
-machine simply starves harder, and every system metric holds flat. B lifts
-throughput ~25%, to the *upstream* machine's 1.6 s rate: the constraint
-didn't vanish, it moved, and the improvement stopped exactly where the
-next constraint began.
+What the reference runs measured, against a baseline of **30.00/min,
+avg WIP 57.54, pooled productive/starved/blocked 82.6/11.3/6.1%**:
+
+- **A** changed nothing the customer can see: throughput **30.00/min
+  (+0.0%)**, WIP **−0.5%**. What *did* move: the upgraded machine starves
+  harder — pooled starved **+80.8%** (to 20.5%) and pooled productive
+  *fell* to **73.4%**. A real upgrade, faithfully measured, delivering
+  nothing.
+- **B** lifted throughput to **37.50/min (+25.0%)** — exactly the
+  *upstream* machine's 1.6 s rate, not the new machine's own 45/min: the
+  constraint didn't vanish, it moved, and the improvement stopped exactly
+  where the next constraint began. WIP fell **41.7%** as the
+  pre-constraint queue drained.
 
 ## Debrief
 
@@ -79,12 +87,16 @@ next constraint began.
   configuration: `learner_live` exposes only `current_wip`; the state
   fractions and per-machine table are post-run. The runtime still records
   everything — disclosure policy, not measurement policy.
-- Reference interventions: `a-upgrade-non-constraint` (asm-2 → asm-3
-  downstream; expect +0% TH) and `b-upgrade-constraint` (asm-1 → asm-2 in
-  the middle; expect ~+25% TH, capped by the upstream 1.6 s stage at
-  37.5/min). Cite measured numbers after the first
-  `fisl build-baseline scenarios/factory-physics/fp02-the-constraint` and
-  `fisl solutions … --run`.
+- Reference runs (2026-08-26): baseline `01M0Z61XH0VQ2JNKQRDP0426P4`,
+  A `01M0Z644ZYFBWHBFR8TCC5YVHN`, B `01M0Z66CM2ASSF6AJ270DEZQFT`; dataset
+  regenerates with `fisl solutions scenarios/factory-physics/fp02-the-constraint
+  --run --json course/data/lab-02-comparison.json`. The fp02 baseline
+  numbers are bit-identical to fp04's (57.54 / 30.00 / 82.6-11.3-6.1) —
+  same world, same seed, different scenario id: cross-scenario determinism
+  you can cite when someone doubts the reproducibility claims.
+- Bonus data point for the Lab 4 debrief: upgrading a *non-constraint*
+  lowered the pooled productive fraction (82.6% → 73.4%) while changing
+  nothing real — the "utilization" proxy misleads in both directions.
 - fp02 deliberately shares its physical layout with fp04 (both need
   fast → slow → fast); the labs differ in metrics, visibility, and what
   the learner is asked to do with the same world. Teaching order is

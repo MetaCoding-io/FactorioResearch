@@ -9,11 +9,13 @@ processes one workpiece per 2.0 s, so completion throughput stays at its
 rate. The upgraded machine finishes each workpiece faster and then waits
 longer — its starved fraction *rises*. Every other number is unchanged.
 
-Expected vs baseline (TH ~30/min):
+Measured (run `01M0Z644ZYFBWHBFR8TCC5YVHN` vs baseline
+`01M0Z61XH0VQ2JNKQRDP0426P4`, TH 30.00/min / avg WIP 57.54):
 
-- throughput: **unchanged**
-- upgraded machine: starved fraction **up** (faster appetite, same diet)
-- WIP, cycle time: **unchanged**
+- throughput: **30.00/min, +0.0%**
+- pooled starved fraction: **+80.8%** (11.3% -> 20.5%) — faster appetite,
+  same diet; pooled productive *fell* to 73.4%
+- WIP: **−0.5%** (unchanged); every customer-visible number flat
 
 This is the Theory-of-Constraints lesson in its purest measurable form:
 an improvement anywhere but the constraint is invisible to the customer.

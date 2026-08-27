@@ -6,8 +6,12 @@ combinator, one self-looped decider (a 6-second clock), and an enable
 window on the source inserter shorter than one inserter swing: exactly one
 admission per cycle, deterministic.
 
-**What it demonstrates:** the smallest WIP number of any run in this
-course — and a customer catastrophe.
+**What it demonstrates** (measured, run `01M0Z6DF3N10M8DMR7ZDZNMS5E`):
+the smallest WIP number of any run in this course — average WIP **7.33**,
+admission exactly **10.00/min** — and a customer catastrophe: on-time
+**22.5%**, p95 wait **censored**. The 22.5% is derivable: backlog grows at
+2/min while service runs at 10/min, so waits pass 30 s once backlog
+exceeds 5 — about 2.5 minutes into the 10-minute window.
 
 - backlog grows ~2/min for the whole measured phase and never recovers;
 - the on-time item rate collapses: every deadline missed is *fixed* — the

@@ -51,24 +51,38 @@ for (surplus is recorded separately and never credits future demand).
 
 - **A — pull to consumption**: Lab 3's gate, verbatim (wire, relay hop,
   `rough < 2` at the last belt before machine 1). Admission paces itself
-  to the bottleneck (15/min ≥ 12/min demand). Prediction: service
-  *unchanged*, WIP collapses. Pull is free here — capacity covers demand.
+  to the bottleneck (15/min ≥ 12/min demand). Measured: on-time
+  **100.0%** and p95 wait **3.02 s** — *identical* to push, to the
+  hundredth of a second — while average WIP fell **62.9%** (51.70 →
+  19.16) and cycle time with it. Pull is free here; capacity covers
+  demand, and push's extra inventory was buying nothing.
 - **B — the over-tight pull** (deliberately wrong): a combinator clock
-  admits one workpiece per 6 seconds — 10/min, *below* demand. WIP becomes
-  the smallest number in this course. And: backlog +2/min forever, on-time
-  rate craters, and the p95 wait comes back **censored** because some
-  demand was simply never served. Read that report slowly — it is what a
-  "lean" factory that forgot its customer looks like in honest
-  instrumentation.
+  admits one workpiece per 6 seconds — exactly **10.00/min** measured,
+  *below* the 12/min demand. Average WIP **7.33** — the smallest number in
+  this course. And: on-time rate **22.5%**, and the p95 wait comes back
+  **censored** because some demand was simply never served. The 22.5% is
+  arithmetic, not noise: backlog grows 2/min while service runs at 10/min,
+  so a cohort's wait exceeds 30 s once backlog passes 5 — about 2.5
+  minutes in. Only the first quarter of the measured demand was ever going
+  to make it. Read that report slowly — it is what a "lean" factory that
+  forgot its customer looks like in honest instrumentation.
 
 ```sh
 fisl solutions scenarios/factory-physics/fp05-push-and-pull --run \
     --json course/data/lab-05-comparison.json
 ```
 
-The three-run comparison is the lab: push (served, bloated), pull-tuned
-(served, lean), pull-over-tight (lean, failed). Two of these have nearly
-identical WIP charts and opposite customers.
+The measured three-run comparison is the lab:
+
+| | admission | avg WIP | on-time | p95 wait |
+|---|---|---|---|---|
+| push (baseline) | 15.00/min | 51.70 | 100.0% | 3.02 s |
+| A — pull-tuned | 14.30/min | 19.16 | 100.0% | 3.02 s |
+| B — over-tight | 10.00/min | **7.33** | **22.5%** | **censored** |
+
+Read column by column: B *wins* the WIP column decisively — and it is the
+only run that isn't a factory. Push and A have identical customers and a
+2.7× inventory difference. The whole lab is in that table.
 
 ## Debrief
 
@@ -98,15 +112,20 @@ is a vibe.
 ::: {.callout-note collapse="true"}
 ## Instructor notes
 
-- Reference interventions: `a-pull-to-consumption` (fp03's proven gate)
-  and `b-starve-the-customer` (combinator clock, ~10/min against 12/min
-  demand). Solution B is the first scripted use of 2.0 combinator control
-  behaviors — if its step fails loudly on a parameter name, that's the
-  fail-fast design working; fix and rerun.
-- Predictions to check on first execution: baseline & A on-time = 100%,
-  p95 wait well under 30 s, A's WIP ≈ fp03's pulled WIP; B on-time
-  roughly 40–70% (waits grow linearly), p95 censored, Lua backlog ≈ 20 at
-  run end. Cite measured numbers in this chapter afterward.
+- Reference runs (2026-08-26): baseline `01M0Z68MAR07HYK6ADFF8MTTVV`,
+  A `01M0Z6B1JESS0T4Q0N9WPHDPYG`, B `01M0Z6DF3N10M8DMR7ZDZNMS5E`; dataset
+  regenerates with `fisl solutions scenarios/factory-physics/fp05-push-and-pull
+  --run --json course/data/lab-05-comparison.json`. Solution B's combinator
+  clock hit exactly 10.00/min on the first execution of the 2.0 combinator
+  control-behavior APIs. A's WIP (19.16) is bit-identical to fp03's pulled
+  run — same gate, same world, now with a customer watching.
+- The 22.5% on-time in B is derivable in class: backlog grows at
+  (12−10)/min; a cohort waits > 30 s once backlog exceeds
+  10/min × 0.5 min = 5, which happens 2.5 min into the 10-minute window.
+- Pooled machine states tell the same story from the machine side:
+  baseline/A both 66.9% productive (the (100+50+50)/3 rate arithmetic of
+  this line), B down at 44.7% with starved 55.3% — the whole line idles
+  while the customer waits.
 - The `service_tail` phase (1 min, demand inactive) exists so the last
   measured cohort's 30 s deadline is observable — the compiler enforces
   that property and will reject a scenario that couldn't resolve its own

@@ -69,10 +69,13 @@ Three cross-checks worth doing by hand:
 - The three cross-checks are the lab. If time is short, drop the walking
   and keep the arithmetic — the report contains everything needed.
 - Rates: M1 = 2 s recipe / 1.25 speed = 1.6 s; M2 = 1 s / 0.5 = 2.0 s.
-  Steady-state predictions: TH 30/min; M1 productive 80% / blocked ~20%
-  (less a little machine-buffer slack); M2 productive ~100%.
-- Reference numbers: cite from `verification-summary.json` after the first
-  `fisl build-baseline scenarios/factory-physics/fp01-flow-and-capacity`.
+- Reference run `01M0Z5V6MH175RJ5927SZG1YHF` (committed verification
+  summary): throughput **30.00/min** — exactly the slower stage's rate;
+  admission **29.67/min**; average WIP **60.0**; pooled fractions
+  productive **90.0%** / blocked **9.3%** / starved **0.8%** — i.e. per
+  machine, M1 ≈ 80% productive with ≈ 19% blocked (the 1.6/2.0 rate ratio,
+  softened by its output buffer) and M2 ≈ 100% productive, pooled over
+  two machines. The capacity audit is rate arithmetic made visible.
 - No committed reference solutions: the lab's experiments (extra upstream
   inventory, rearranged belts) are cheap enough to do live, and the
   formal upgrade comparison is Lab 2's whole subject.
