@@ -596,11 +596,16 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
 
     verification = _verify_against_lua(data, metrics_out)
 
+    from fisl.metrics.objectives import evaluate_objectives
+
+    objective_results = evaluate_objectives(resolved, metrics_out)
+
     return {
         "run_id": run_config["run_id"],
         "resolved_scenario_hash": run_config["resolved_scenario_hash"],
         "scenario": resolved["scenario"],
         "metrics": metrics_out,
+        **({"objectives": objective_results} if objective_results else {}),
         "validity": validity,
         "lua_cross_verification": verification,
     }

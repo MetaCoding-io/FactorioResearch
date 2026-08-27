@@ -331,3 +331,75 @@ def test_source_port_cannot_declare_demand(raw):
     bad["ports"]["workpiece_source"]["demand"] = bad["ports"]["finished_goods"]["demand"]
     with pytest.raises(CompilationError):
         _compile_raw(bad)
+
+
+# --- objectives (ADR 0012, issue #10) ---------------------------------------
+
+def _with_objectives(raw_doc):
+    doc = _with_demand(raw_doc)
+    doc["objectives"] = {
+        "service_requirement": {"type": "requirement", "metric": "customer_service", "minimum": 0.95},
+        "throughput_band": {"type": "requirement", "metric": "measured_throughput",
+                            "range": {"minimum": "10/min", "maximum": "20/min"}},
+        "minimize_wip": {"type": "preference", "metric": "average_wip", "direction": "minimize"},
+    }
+    doc["visibility"]["learner_live"]["objectives"] = ["service_requirement"]
+    doc["visibility"]["learner_post_run"]["objectives"] = ["service_requirement", "minimize_wip"]
+    return doc
+
+
+def test_objectives_compile_with_units(raw):
+    resolved = _compile_raw(_with_objectives(raw))
+    objectives = resolved["objectives"]
+    assert objectives["service_requirement"] == {
+        "type": "requirement", "metric": "customer_service", "unit": "fraction", "minimum": 0.95,
+    }
+    band = objectives["throughput_band"]
+    assert band["unit"] == "per_minute"
+    assert band["minimum"] == pytest.approx(10.0) and band["maximum"] == pytest.approx(20.0)
+    assert objectives["minimize_wip"]["direction"] == "minimize"
+
+
+def test_objective_free_scenarios_have_no_objectives_key(author):
+    resolved = compile_author_scenario(author)
+    assert "objectives" not in resolved
+    assert resolved_hash(resolved) == FP03_COMMITTED_HASH
+
+
+def test_objective_unknown_metric_rejected(raw):
+    bad = _with_objectives(raw)
+    bad["objectives"]["minimize_wip"]["metric"] = "ghost_metric"
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("ghost_metric" in p for p in exc.value.problems)
+
+
+def test_objective_on_non_scalar_metric_rejected(raw):
+    bad = _with_objectives(raw)
+    bad["objectives"]["bad"] = {"type": "requirement", "metric": "line_wip", "minimum": 1}
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("no scalar objective semantics" in p for p in exc.value.problems)
+
+
+def test_fraction_threshold_out_of_range_rejected(raw):
+    bad = _with_objectives(raw)
+    bad["objectives"]["service_requirement"]["minimum"] = 95  # meant 0.95
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("within [0, 1]" in p for p in exc.value.problems)
+
+
+def test_requirement_needs_exactly_one_rule(raw):
+    bad = _with_objectives(raw)
+    bad["objectives"]["service_requirement"]["maximum"] = 1.0  # plus existing minimum
+    with pytest.raises(CompilationError):
+        _compile_raw(bad)
+
+
+def test_visibility_unknown_objective_rejected(raw):
+    bad = _with_objectives(raw)
+    bad["visibility"]["learner_live"]["objectives"] = ["ghost_objective"]
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(bad)
+    assert any("ghost_objective" in p for p in exc.value.problems)

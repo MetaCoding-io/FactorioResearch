@@ -10,14 +10,6 @@ local gui = {}
 
 local FRAME = "fisl_panel"
 
-local function live_metric_ids(config)
-  local visible = {}
-  for _, metric_id in ipairs(config.resolved.visibility.learner_live.metrics or {}) do
-    visible[#visible + 1] = metric_id
-  end
-  return visible
-end
-
 local function metric_display_value(config, metric_id)
   local s = state.get()
   local metric = config.resolved.metrics[metric_id]
@@ -31,6 +23,72 @@ local function metric_display_value(config, metric_id)
     return string.format("%d work units", ledger.wip(metric.flow))
   end
   return nil
+end
+
+--- Final value of a learner_post_run metric from the exact in-run
+--- accumulators, where one exists. Metrics the runtime cannot finalize
+--- (state fractions, service, percentiles) return nil — they belong to the
+--- authoritative post-run report, and the panel says so rather than
+--- showing a provisional stand-in (ADR 0011 §6).
+local function post_run_display_value(config, metric_id)
+  local s = state.get()
+  local metric = config.resolved.metrics[metric_id]
+  if metric == nil then return nil end
+  if metric.type == "current_value" or metric.type == "wip" then
+    return metric_display_value(config, metric_id)
+  end
+  local acc = s.accumulators[metric_id]
+  if metric.type == "aggregate" and acc and acc.type == "time_mean" and acc.ticks > 0 then
+    return string.format("%.2f work units", acc.area / acc.ticks)
+  end
+  if metric.type == "throughput" and acc then
+    local ticks = acc.window.end_tick - acc.window.start_tick
+    return string.format("%.2f/min", acc.completed * 3600.0 / ticks)
+  end
+  if metric.type == "cycle_time" then
+    local wip_acc = s.accumulators[metric.wip_metric]
+    local th_acc = s.accumulators[metric.throughput_metric]
+    if wip_acc and th_acc and th_acc.completed > 0 then
+      return string.format("%.2f s", wip_acc.area / th_acc.completed / 60.0)
+    end
+  end
+  return nil
+end
+
+local function format_objective_bound(unit, value)
+  if unit == "fraction" then return string.format("%.0f%%", value * 100) end
+  if unit == "per_minute" then return string.format("%.2f/min", value) end
+  if unit == "seconds" then return string.format("%.0f s", value) end
+  return string.format("%.2f", value)
+end
+
+--- Disclosed objective RULE captions (ADR 0011 §7: the target is its own
+--- disclosure; final status comes from the authoritative post-run report,
+--- never a provisional in-game verdict).
+local function objective_rule_caption(config, objective_id)
+  local objective = (config.resolved.objectives or {})[objective_id]
+  if objective == nil then return nil end
+  if objective.type == "requirement" then
+    local parts = {}
+    if objective.minimum ~= nil then
+      parts[#parts + 1] = ">= " .. format_objective_bound(objective.unit, objective.minimum)
+    end
+    if objective.maximum ~= nil then
+      parts[#parts + 1] = "<= " .. format_objective_bound(objective.unit, objective.maximum)
+    end
+    return string.format("Objective: keep %s %s", objective.metric, table.concat(parts, " and "))
+  end
+  return string.format("Objective: %s %s", objective.direction, objective.metric)
+end
+
+local function add_disclosed_objectives(config, audience, target_flow)
+  local audience_visibility = config.resolved.visibility[audience] or {}
+  for _, objective_id in ipairs(audience_visibility.objectives or {}) do
+    local caption = objective_rule_caption(config, objective_id)
+    if caption then
+      target_flow.add({ type = "label", caption = caption })
+    end
+  end
 end
 
 function gui.rebuild(player)
@@ -82,25 +140,38 @@ function gui.refresh(player)
 
   local metrics_flow = frame.metrics
   metrics_flow.clear()
-  if s.lifecycle == "RUNNING" then
-    for _, metric_id in ipairs(live_metric_ids(config)) do
+  if s.lifecycle == "READY" then
+    add_disclosed_objectives(config, "learner_live", metrics_flow)
+  elseif s.lifecycle == "RUNNING" then
+    add_disclosed_objectives(config, "learner_live", metrics_flow)
+    for _, metric_id in ipairs(config.resolved.visibility.learner_live.metrics or {}) do
       local value = metric_display_value(config, metric_id)
       if value then
         metrics_flow.add({ type = "label", caption = metric_id .. ": " .. value })
       end
     end
   elseif s.lifecycle == "COMPLETED" then
+    -- Post-run disclosure is allowlist-driven (ADR 0011 §3): only metrics
+    -- named in learner_post_run appear, and only those the runtime can
+    -- finalize exactly; everything else defers to the authoritative report.
     metrics_flow.add({
       type = "label",
-      caption = "Experiment complete. Post-run report: fisl report runs/" .. (s.run.run_id or "?"),
+      caption = "Experiment complete. Full report: fisl report runs/" .. (s.run.run_id or "?"),
     })
-    for flow_id in pairs(state.get().ledgers) do
-      local snapshot = ledger.snapshot(flow_id)
+    add_disclosed_objectives(config, "learner_post_run", metrics_flow)
+    local deferred = {}
+    for _, metric_id in ipairs(config.resolved.visibility.learner_post_run.metrics or {}) do
+      local value = post_run_display_value(config, metric_id)
+      if value then
+        metrics_flow.add({ type = "label", caption = metric_id .. ": " .. value })
+      else
+        deferred[#deferred + 1] = metric_id
+      end
+    end
+    if #deferred > 0 then
       metrics_flow.add({
         type = "label",
-        caption = string.format(
-          "%s: admitted %d, completed %d, final WIP %d",
-          flow_id, snapshot.admissions, snapshot.completions, snapshot.wip),
+        caption = "In the report: " .. table.concat(deferred, ", "),
       })
     end
   elseif s.lifecycle == "ABORTED" then

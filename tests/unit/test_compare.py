@@ -162,3 +162,32 @@ def test_state_fraction_rows_compare_and_production_state_skipped(tmp_path):
     assert starved_row["displays"][0] == "11.0% starved"
     assert "cov 98%" in starved_row["displays"][1]
     assert starved_row["delta_pcts_vs_first"][1] == pytest.approx(-81.8, abs=0.1)
+
+
+def test_infeasible_run_flagged_in_comparison(tmp_path):
+    from rich.console import Console as RichConsole
+
+    dirs = []
+    for name, service, status, overall in (("A", 1.0, "PASS", "PASS"), ("B", 0.225, "FAIL", "FAIL")):
+        run_dir = make_run(tmp_path, name, avg_wip=50.0 if name == "A" else 7.3,
+                           throughput=15.0, ct=100.0)
+        summary = json.loads((run_dir / "summary.json").read_text())
+        summary["objectives"] = {
+            "objectives": {
+                "service_requirement": {
+                    "type": "requirement", "metric": "customer_service",
+                    "unit": "fraction", "rule": {"minimum": 0.95},
+                    "value": service, "measurement_complete": True, "status": status,
+                },
+            },
+            "overall_requirement_status": overall,
+        }
+        (run_dir / "summary.json").write_text(json.dumps(summary))
+        dirs.append(run_dir)
+
+    recording = RichConsole(record=True, width=120)
+    render_comparison(dirs, recording)
+    text = recording.export_text()
+    assert "run B INFEASIBLE" in text
+    assert "service_requirement" in text
+    assert "22.5%" in text

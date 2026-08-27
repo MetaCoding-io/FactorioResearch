@@ -124,9 +124,59 @@ def render_report(summary: dict, console: Console) -> None:
 
     console.print(table)
 
+    if summary.get("objectives"):
+        _render_objectives(summary["objectives"], console)
+
     for metric_id, metric in summary.get("metrics", {}).items():
         if metric.get("type") == "production_state":
             _render_production_state(metric_id, metric, console)
+
+
+_STATUS_STYLE = {
+    "PASS": "[green]PASS[/green]",
+    "FAIL": "[red]FAIL[/red]",
+    "UNDETERMINED": "[yellow]UNDETERMINED[/yellow]",
+    "REPORTED": "[dim]reported[/dim]",
+}
+
+
+def _format_objective_value(value, unit: str) -> str:
+    if value is None:
+        return "no value"
+    if unit == "fraction":
+        return f"{value * 100:.1f}%"
+    if unit == "per_minute":
+        return f"{value:.2f}/min"
+    if unit == "seconds":
+        return f"{value:.2f} s"
+    return f"{value:.2f}"
+
+
+def _render_objectives(objective_results: dict, console: Console) -> None:
+    console.print("\n[bold]Objectives[/bold] (evaluation is separate from protocol validity)")
+    for objective_id, entry in objective_results.get("objectives", {}).items():
+        value_text = _format_objective_value(entry.get("value"), entry.get("unit", ""))
+        status = _STATUS_STYLE.get(entry.get("status"), entry.get("status", "?"))
+        if entry["type"] == "requirement":
+            rule = entry.get("rule", {})
+            parts = []
+            if "minimum" in rule:
+                parts.append(f">= {_format_objective_value(rule['minimum'], entry.get('unit', ''))}")
+            if "maximum" in rule:
+                parts.append(f"<= {_format_objective_value(rule['maximum'], entry.get('unit', ''))}")
+            rule_text = " and ".join(parts)
+            line = f"  {status}  {objective_id}: {entry['metric']} {rule_text} — measured {value_text}"
+            if entry.get("reason"):
+                line += f"  [yellow]({entry['reason']})[/yellow]"
+        else:
+            line = (
+                f"  {status}  {objective_id}: {entry['direction']} {entry['metric']} — "
+                f"{value_text} (comparison value; no standalone pass/fail)"
+            )
+        console.print(line)
+    overall = objective_results.get("overall_requirement_status")
+    if overall and overall != "no_requirements":
+        console.print(f"  Overall requirements: {_STATUS_STYLE.get(overall, overall)}")
 
 
 def _render_production_state(metric_id: str, metric: dict, console: Console) -> None:

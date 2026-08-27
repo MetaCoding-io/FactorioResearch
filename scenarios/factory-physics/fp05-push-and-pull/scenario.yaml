@@ -196,10 +196,24 @@ metrics:
     window:
       phase: measured
 
+objectives:
+  service_requirement:
+    type: requirement
+    metric: customer_service
+    minimum: 0.95
+
+  minimize_wip:
+    type: preference
+    metric: average_wip
+    direction: minimize
+
 visibility:
   learner_live:
     metrics:
       - current_wip
+    objectives:
+      - service_requirement
+      - minimize_wip
   learner_post_run:
     metrics:
       - average_wip
@@ -210,6 +224,9 @@ visibility:
       - p95_customer_wait
       - fraction_productive
       - fraction_starved
+    objectives:
+      - service_requirement
+      - minimize_wip
   instructor:
     metrics:
       - line_wip

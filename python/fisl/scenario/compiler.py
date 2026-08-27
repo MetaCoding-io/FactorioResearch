@@ -23,6 +23,7 @@ from fisl.scenario.author_models import (
     DemandWaitPercentileMetric,
     OnTimeItemRateMetric,
     ProductionStateMetric,
+    RequirementObjective,
     ScheduledSupply,
     StateFractionMetric,
     ThroughputMetric,
@@ -69,6 +70,7 @@ def compile_author_scenario(author: AuthorScenario) -> dict[str, Any]:
     resolved_ports = _resolve_ports(author, phase_by_id, problems)
     resolved_flows = _resolve_flows(author, problems)
     resolved_metrics = _resolve_metrics(author, phase_by_id, problems)
+    resolved_objectives = _resolve_objectives(author, problems)
     _check_visibility(author, problems)
 
     if problems:
@@ -121,6 +123,10 @@ def compile_author_scenario(author: AuthorScenario) -> dict[str, Any]:
         "ports": resolved_ports,
         "flows": resolved_flows,
         "metrics": resolved_metrics,
+        # Objectives are scenario semantics and participate in experiment
+        # identity (ADR 0012 §14); key present only when declared so
+        # objective-free scenarios keep their resolved hash.
+        **({"objectives": resolved_objectives} if resolved_objectives else {}),
         "visibility": author.visibility.model_dump(),
         "observation_plan": _build_observation_plan(author, resolved_metrics),
     }
@@ -538,17 +544,110 @@ def _resolve_metrics(
     return resolved
 
 
+# Canonical reporting unit per metric type, for objective threshold
+# compatibility (ADR 0012 §3): fractions in [0,1], rates per minute, times
+# in seconds, WIP time-means in work units.
+_OBJECTIVE_UNITS = {
+    "on_time_item_rate": "fraction",
+    "state_fraction": "fraction",
+    "throughput": "per_minute",
+    "aggregate": "work_units",
+    "cycle_time": "seconds",
+    "demand_wait_percentile": "seconds",
+}
+
+
+def _objective_threshold(unit: str, value, location: str, problems: list[str]) -> float | None:
+    """Normalize one requirement threshold into the metric's canonical unit."""
+    if isinstance(value, str):
+        if unit == "per_minute":
+            try:
+                rate = parse_rate(value)
+            except UnitError as exc:
+                problems.append(f"{location}: {exc}")
+                return None
+            return rate.quantity * 3600.0 / rate.period_ticks
+        if unit == "seconds":
+            try:
+                return parse_duration_ticks(value) / 60.0
+            except UnitError as exc:
+                problems.append(f"{location}: {exc}")
+                return None
+        problems.append(f"{location}: string thresholds are only valid for rate/time metrics")
+        return None
+    threshold = float(value)
+    if unit == "fraction" and not (0.0 <= threshold <= 1.0):
+        problems.append(f"{location}: fraction threshold must be within [0, 1], got {threshold}")
+        return None
+    return threshold
+
+
+def _resolve_objectives(author: AuthorScenario, problems: list[str]) -> dict[str, Any]:
+    resolved: dict[str, Any] = {}
+    for objective_id, objective in sorted(author.objectives.items()):
+        metric = author.metrics.get(objective.metric)
+        if metric is None:
+            problems.append(f"objectives.{objective_id}: unknown metric {objective.metric!r}")
+            continue
+        unit = _OBJECTIVE_UNITS.get(metric.type)
+        if unit is None:
+            problems.append(
+                f"objectives.{objective_id}: metric type {metric.type!r} has no scalar "
+                "objective semantics (evaluate an aggregate/rate metric instead)"
+            )
+            continue
+        if isinstance(objective, RequirementObjective):
+            comparison: dict[str, float] = {}
+            if objective.minimum is not None:
+                low = _objective_threshold(
+                    unit, objective.minimum, f"objectives.{objective_id}.minimum", problems)
+                if low is None:
+                    continue
+                comparison["minimum"] = low
+            elif objective.maximum is not None:
+                high = _objective_threshold(
+                    unit, objective.maximum, f"objectives.{objective_id}.maximum", problems)
+                if high is None:
+                    continue
+                comparison["maximum"] = high
+            else:
+                low = _objective_threshold(
+                    unit, objective.range.minimum, f"objectives.{objective_id}.range.minimum", problems)
+                high = _objective_threshold(
+                    unit, objective.range.maximum, f"objectives.{objective_id}.range.maximum", problems)
+                if low is None or high is None:
+                    continue
+                if not low < high:
+                    problems.append(
+                        f"objectives.{objective_id}.range: minimum {low} must be below maximum {high}"
+                    )
+                    continue
+                comparison = {"minimum": low, "maximum": high}
+            resolved[objective_id] = {
+                "type": "requirement",
+                "metric": objective.metric,
+                "unit": unit,
+                **comparison,
+            }
+        else:
+            resolved[objective_id] = {
+                "type": "preference",
+                "metric": objective.metric,
+                "unit": unit,
+                "direction": objective.direction,
+            }
+    return resolved
+
+
 def _check_visibility(author: AuthorScenario, problems: list[str]) -> None:
     for audience_name in ("learner_live", "learner_post_run", "instructor"):
         audience = getattr(author.visibility, audience_name)
         for metric_id in audience.metrics:
             if metric_id not in author.metrics:
                 problems.append(f"visibility.{audience_name}: unknown metric {metric_id!r}")
-        if audience.objectives:
-            problems.append(
-                f"visibility.{audience_name}: objectives are deferred by Issue #2 and "
-                "cannot be referenced yet"
-            )
+        for objective_id in audience.objectives:
+            if objective_id not in author.objectives:
+                problems.append(f"visibility.{audience_name}: unknown objective {objective_id!r}")
 
 
 def _build_observation_plan(author: AuthorScenario, resolved_metrics: dict[str, Any]) -> dict[str, Any]:

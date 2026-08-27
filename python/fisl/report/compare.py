@@ -95,6 +95,20 @@ def _metric_value(metric: dict) -> tuple[float | None, str]:
     return None, "—"
 
 
+def _objective_value_text(entry: dict) -> str:
+    value = entry.get("value")
+    if value is None:
+        return "no value"
+    unit = entry.get("unit")
+    if unit == "fraction":
+        return f"{value * 100:.1f}%"
+    if unit == "per_minute":
+        return f"{value:.2f}/min"
+    if unit == "seconds":
+        return f"{value:.2f} s"
+    return f"{value:.2f}"
+
+
 def _metric_validity(metric: dict) -> str:
     flags = []
     if metric.get("coverage_complete") is False:
@@ -165,6 +179,11 @@ def comparison_to_json(run_dirs: list[Path]) -> dict:
                 "lifecycle": run.summary.get("lifecycle"),
                 "scripted_intervention": run.manifest.get("scripted_intervention"),
                 "validity": run.summary.get("validity", {}),
+                **(
+                    {"objectives": run.summary["objectives"]}
+                    if run.summary.get("objectives")
+                    else {}
+                ),
             }
             for run in runs
         ],
@@ -222,6 +241,31 @@ def render_comparison(run_dirs: list[Path], console: Console) -> None:
             problems.append(f"manual carriage residual {validity['manual_carriage_residual']}")
         if problems:
             console.print(f"[yellow]run {letter} validity:[/yellow] {'; '.join(problems)}")
+
+    # Requirement feasibility (ADR 0012 §13): a run that fails a requirement
+    # is not a successful optimization of the exercise, however good its
+    # preference values look. Values stay visible either way.
+    for run, letter in zip(runs, "ABCDEFGH"):
+        objective_results = run.summary.get("objectives")
+        if not objective_results:
+            continue
+        overall = objective_results.get("overall_requirement_status")
+        if overall == "FAIL":
+            failed = [
+                f"{oid} ({entry['metric']} measured "
+                f"{_objective_value_text(entry)})"
+                for oid, entry in objective_results.get("objectives", {}).items()
+                if entry.get("status") == "FAIL"
+            ]
+            console.print(
+                f"[red]run {letter} INFEASIBLE[/red] — requirement failed: {'; '.join(failed)}. "
+                "Its preference values are shown but do not compete (ADR 0012 §13)."
+            )
+        elif overall == "UNDETERMINED":
+            console.print(
+                f"[yellow]run {letter} requirements UNDETERMINED[/yellow] — "
+                "incomplete measurement; feasibility unknown"
+            )
 
     table = Table(show_header=True)
     table.add_column("Metric")

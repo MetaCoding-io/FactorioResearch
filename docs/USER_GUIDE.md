@@ -161,6 +161,9 @@ resolved scenario hash = same experiment; same reproducibility fingerprint
 scripted-solution identity, and shows every shared metric with in-cell
 deltas relative to run A. Deliberately **no combined score**: metrics stay
 a vector (ADR 0012). Incompatible runs are still displayed, loudly flagged.
+Runs that fail a requirement objective are marked **INFEASIBLE** for the
+comparison: their preference values (that alluring low WIP) stay visible
+but do not compete (ADR 0012 §13).
 `--json <path>` also writes the full comparison as machine-readable JSON —
 the intended data feed for course chapters and analysis — and
 `--svg <path>` renders it as a crisp SVG figure for the book (regenerated
@@ -198,6 +201,15 @@ after their shots — they are not data runs.
 Human-readable results: every metric with its method, window, exact
 numerator/denominator, and validity (coverage complete? census clean?).
 The same information lives in `runs/<run_id>/summary.json` as JSON.
+
+Scenarios that declare **objectives** (ADR 0012 — fp05 onward) get an
+objectives section: each *requirement* shows PASS / FAIL / UNDETERMINED
+against its explicit rule (an incomplete or censored metric is
+UNDETERMINED, never silently a failure or a pass), each *preference* shows
+its comparison value with no standalone verdict, and the overall
+requirement status is their conjunction. Objective outcomes are printed
+separately from protocol validity — a run can pass every objective while
+flagged, and vice versa. There is deliberately no combined score.
 
 For scenarios that declare machine-state metrics (ADR 0007 — not fp03,
 whose identity is frozen; new Lab 2/4 scenarios will), the report adds a

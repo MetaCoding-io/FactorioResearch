@@ -348,6 +348,43 @@ Metric = (
 )
 
 
+class RequirementRange(_Strict):
+    minimum: float | str
+    maximum: float | str
+
+
+class RequirementObjective(_Strict):
+    """Pass/fail rule over one declared metric (ADR 0012 §3): exactly one of
+    minimum / maximum / range. Thresholds are in the metric's canonical
+    reporting unit (fractions for rates in [0,1], per-minute for throughput
+    — "55/min" strings allowed there, seconds for times)."""
+
+    type: Literal["requirement"]
+    metric: str
+    minimum: float | str | None = None
+    maximum: float | str | None = None
+    range: RequirementRange | None = None
+
+    @model_validator(mode="after")
+    def _exactly_one_rule(self) -> "RequirementObjective":
+        rules = [r for r in (self.minimum, self.maximum, self.range) if r is not None]
+        if len(rules) != 1:
+            raise ValueError("requirement needs exactly one of minimum, maximum, or range")
+        return self
+
+
+class PreferenceObjective(_Strict):
+    """Direction-only objective (ADR 0012 §4): produces a comparable value
+    for cross-run debrief; never a standalone pass/fail, never a weight."""
+
+    type: Literal["preference"]
+    metric: str
+    direction: Literal["minimize", "maximize"]
+
+
+Objective = RequirementObjective | PreferenceObjective
+
+
 class VisibilityAudience(_Strict):
     metrics: list[str] = Field(default_factory=list)
     objectives: list[str] = Field(default_factory=list)
@@ -371,6 +408,7 @@ class AuthorScenario(_Strict):
     ports: dict[str, Port] = Field(default_factory=dict)
     flows: dict[str, Flow] = Field(default_factory=dict)
     metrics: dict[str, Metric] = Field(default_factory=dict)
+    objectives: dict[str, Objective] = Field(default_factory=dict)
     visibility: Visibility = Field(default_factory=Visibility)
     # Explanatory course metadata; excluded from resolved scenario identity
     # (schema §17). Free-form on purpose.
