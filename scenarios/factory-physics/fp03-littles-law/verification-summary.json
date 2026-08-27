@@ -1,5 +1,5 @@
 {
-  "run_id": "01M0WY1ZYD062TJNZ9PQVJS6KE",
+  "run_id": "01M10GTKR13N2RCW3AYCPVFS65",
   "resolved_scenario_hash": "sha256:4fafdd4cb4607338b4888b8b6b535f4ebd1f39f0d52b0b726ccc7c71183938f4",
   "scenario": {
     "id": "fp-03-littles-law",
@@ -51,6 +51,7 @@
         "start_tick": 7200,
         "end_tick": 43200
       },
+      "boundary": "completion",
       "method": "completion_sink_delivery",
       "completed_quantity": 150,
       "window_ticks": 36000,
