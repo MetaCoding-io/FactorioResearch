@@ -1,0 +1,21 @@
+# fp07 solution w-24 — CONWIP cap at W < 24
+
+One gate, four cap levels (w-04/w-08/w-14/w-24): the sweep that traces
+the line's characteristic curves. This point sits above the knee.
+
+**First-order prediction:** TH pinned at 15/min, CT ~ w/rb ~ 96 s: ten units of inventory above W0 buying 40 s of waiting and nothing else. The measured point lands at or below
+the best-case bound — belt discreteness and inserter timing are real
+mechanisms, and the honest x-coordinate is the *measured* average WIP,
+not the nominal cap.
+
+**The mechanism** (all three steps checked and loud): two tap belts read
+admissions and completions as pulses, two arithmetic combinators sign
+them into `signal-W`, a self-looped decider accumulates the running
+difference — the conservation ledger, rebuilt in circuits — and a relay
+chain carries the sink's pulses home along the line's own belts. The
+report's census will agree with your wire.
+
+```sh
+fisl solutions scenarios/factory-physics/fp07-characteristic-curves --run \
+    --json course/data/lab-07-comparison.json
+```

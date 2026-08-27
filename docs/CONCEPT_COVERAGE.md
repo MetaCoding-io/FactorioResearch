@@ -37,7 +37,7 @@ non-goal · ⚠️ gap (decision needed).
 | Ch 4 — From the JIT Revolution to Lean | JIT, kanban, lean, waste | Pull-as-admission-control ✅ Lab 3 (pull gate) + Lab 5 (pull vs push under a customer). Kanban *card mechanics* vs CONWIP comparison → Course II (their difference only matters under variability). Lean's waste taxonomy → Course I interlude candidate (we already price queue-waste exactly via Little's Law). | ✅ partial, 🔜 II |
 | Ch 5 — What Went Wrong? | Why slogans failed; the case for laws over fads | This is the course's founding argument — `course/index.qmd` and the interlude program carry it. No lab needed. | ✅ (framing) |
 | Ch 6 — A Science of Manufacturing | Models vs reality, laws, objectives, "the essence is trade-offs" | ✅ Deeply: FISL's whole apparatus (declared boundaries, validity, ADR 0011 no-scalar-score, ADR 0012 objectives, Lab 6's INFEASIBLE framing) *is* this chapter operationalized. Named explicitly in the Rules of Evidence and Objectives interludes. | ✅ |
-| Ch 7 — Basic Factory Dynamics | TH, WIP, CT, Little's Law, r_b, T_0, W_0, best/worst/practical-worst-case curves | Core of Course I: Labs 0–4 + interlude "The Accounting of Flow" (derives Little's Law, defines r_b/T_0/W_0, states the best-case curves). **Practical worst case requires variability → Course II.** Gap worth closing in Course I: a WIP-sweep lab tracing TH(w)/CT(w) empirically (pull gate at w = 1, 2, 4, 8, …) — the data would draw H&S's signature curves from live runs. | ✅ / ⚠️ sweep lab / 🔜 II (PWC) |
+| Ch 7 — Basic Factory Dynamics | TH, WIP, CT, Little's Law, r_b, T_0, W_0, best/worst/practical-worst-case curves | Core of Course I: Labs 0–4 + interlude "The Accounting of Flow" (derives Little's Law, defines r_b/T_0/W_0, states the best-case curves) + **Lab 7** (the WIP sweep: a circuit-built CONWIP gate at w ∈ {4, 8, 14, 24} + uncapped traces TH(w)/CT(w) empirically and brackets W_0). **Practical worst case requires variability → Course II.** | ✅ / 🔜 II (PWC) |
 | Ch 8 — Variability Basics | CV, process/flow variability, Kingman (VUT), propagation, pooling | Course II core. Layer II scenario models (controlled stochastic craft times / supply jitter) are the planned apparatus. Not teachable in Course I by design — determinism is Course I's stated assumption. | 🔜 II |
 | Ch 9 — The Corrupting Influence of Variability | Buffering law (inventory/capacity/time), degradation laws, variability pays | Course II core. Hook already planted: Lab 6's 40/min homework ends on "what do you buy insurance with — inventory, capacity, or time?" verbatim setup for the buffering law. | 🔜 II |
 | Ch 10 — Push and Pull Production Systems | Push vs pull defined by WIP cap, CONWIP, robustness | Definition + behavior ✅ Labs 3/5 (admission control, WIP cap, over-tight throttle failure mode). CONWIP-vs-kanban-vs-MRP *robustness* comparison needs variability → Course II. | ✅ partial, 🔜 II |
@@ -76,9 +76,8 @@ learner-facing distillation of this file's forward direction.
 
 ## Open decisions (the ⚠️ rows)
 
-1. **WIP-sweep lab** (ch 7 curves): cheap to build — fp03's world, pull
-   gate thresholds swept, plot TH(w) and CT(w). Strong candidate for the
-   first post-v1 Course I addition.
+1. **WIP-sweep lab** (ch 7 curves) — **closed**: Lab 7 /
+   `fp07-characteristic-curves` (awaiting its first measured dataset).
 2. **EOQ/batching lab** (ch 2): deterministic, teachable, needs a
    changeover mechanic. Medium effort.
 3. **Quality/scrap** (ch 12): needs Layer II randomness; decide whether it

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; Lab 3 — WIP and Little’s Law – Factory Physics Through Factorio</title>
+<title>14&nbsp; Lab 7 — The Characteristic Curves – Factory Physics Through Factorio</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,8 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../interludes/states-of-a-machine.html" rel="next">
-<link href="../interludes/accounting-of-flow.html" rel="prev">
+<link href="../appendices/notation.html" rel="next">
+<link href="../labs/lab-06-system-optimization.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/lab-03-littles-law.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab 3 — WIP and Little’s Law</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/lab-07-characteristic-curves.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Lab 7 — The Characteristic Curves</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -196,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-03-littles-law.html" class="sidebar-item-text sidebar-link active">
+  <a href="../labs/lab-03-littles-law.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab 3 — WIP and Little’s Law</span></span></a>
   </div>
 </li>
@@ -238,7 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-07-characteristic-curves.html" class="sidebar-item-text sidebar-link">
+  <a href="../labs/lab-07-characteristic-curves.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Lab 7 — The Characteristic Curves</span></span></a>
   </div>
 </li>
@@ -275,12 +275,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#the-system" id="toc-the-system" class="nav-link active" data-scroll-target="#the-system"><span class="header-section-number">7.1</span> The system</a></li>
-  <li><a href="#run-1-observe" id="toc-run-1-observe" class="nav-link" data-scroll-target="#run-1-observe"><span class="header-section-number">7.2</span> Run 1 — observe</a></li>
-  <li><a href="#the-theory-you-just-watched" id="toc-the-theory-you-just-watched" class="nav-link" data-scroll-target="#the-theory-you-just-watched"><span class="header-section-number">7.3</span> The theory you just watched</a></li>
-  <li><a href="#run-2-intervene" id="toc-run-2-intervene" class="nav-link" data-scroll-target="#run-2-intervene"><span class="header-section-number">7.4</span> Run 2 — intervene</a></li>
-  <li><a href="#debrief" id="toc-debrief" class="nav-link" data-scroll-target="#debrief"><span class="header-section-number">7.5</span> Debrief</a></li>
-  <li><a href="#what-the-simulation-assumed-away" id="toc-what-the-simulation-assumed-away" class="nav-link" data-scroll-target="#what-the-simulation-assumed-away"><span class="header-section-number">7.6</span> What the simulation assumed away</a></li>
+  <li><a href="#the-instrument-a-ledger-made-of-wire" id="toc-the-instrument-a-ledger-made-of-wire" class="nav-link active" data-scroll-target="#the-instrument-a-ledger-made-of-wire"><span class="header-section-number">14.1</span> The instrument: a ledger made of wire</a></li>
+  <li><a href="#the-sweep" id="toc-the-sweep" class="nav-link" data-scroll-target="#the-sweep"><span class="header-section-number">14.2</span> The sweep</a></li>
+  <li><a href="#the-assignment" id="toc-the-assignment" class="nav-link" data-scroll-target="#the-assignment"><span class="header-section-number">14.3</span> The assignment</a></li>
+  <li><a href="#debrief" id="toc-debrief" class="nav-link" data-scroll-target="#debrief"><span class="header-section-number">14.4</span> Debrief</a></li>
   </ul>
 </nav>
     </div>
@@ -289,7 +287,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab 3 — WIP and Little’s Law</span></h1>
+<h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Lab 7 — The Characteristic Curves</span></h1>
 </div>
 
 
@@ -306,7 +304,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><strong>Scenario:</strong> <code>fp-03-littles-law</code> · two runs of ~12 minutes each</p>
+<p><strong>Scenario:</strong> <code>fp-07-characteristic-curves</code> · five runs of ~12 minutes (the sweep) · runnable any time after Lab 3</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -317,166 +315,93 @@ Hands you’ll need
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>First lab that builds: placing entities from the toolbox, and — for the pull gate — a circuit wire with an enable condition. Practice Range drills <code>d5_enable_condition</code> (and <code>d1</code>/<code>d2</code> if belts are new to you).</p>
+<p>Nothing, to run the reference sweep — the gates are scripted. To add your own points (the assignment), the full circuit kit: Practice Range drills <code>d5_enable_condition</code> and <code>d6_combinator_pair</code>.</p>
 </div>
 </div>
-<p>You will operate a small workpiece line twice: first exactly as you find it, then after making one modification. Between the two runs, three numbers — inventory, output rate, and flow time — will rearrange themselves in a way that is not a coincidence, and the law that binds them is the subject of this lab.</p>
-<section id="the-system" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="the-system"><span class="header-section-number">7.1</span> The system</h2>
-<p>A conveyor line runs west to east: a blue <strong>source</strong> chest where raw workpieces enter the system, three machines that transform them in stages (rough → machined → inspected → finished), and an orange <strong>sink</strong> chest where finished work leaves. The source and sink are laboratory equipment — indestructible, and the exact points where FISL counts material entering and leaving. A toolbox chest near your spawn holds spare belts, inserters, and machines; its contents are ordinary materials and are never counted in any measurement.</p>
-<p>Three quantities are measured, all against the same declared boundary:</p>
-<ul>
-<li><strong>WIP</strong> (work in process): workpieces that have entered at the source and not yet left at the sink — wherever they physically are: on belts, in machine buffers, mid-craft, even in your pockets.</li>
-<li><strong>Throughput (TH):</strong> finished workpieces leaving through the sink, per minute, over the measured window.</li>
-<li><strong>Cycle time (CT):</strong> how long a workpiece spends inside the system.</li>
-</ul>
-<p>During the run you can see only the current WIP. Everything else is withheld until the experiment ends — instrumentation that announces the answer would spoil the diagnosis.</p>
+<p>The Accounting of Flow interlude committed to two formulas and drew them as a picture: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">H</mi></mrow><mtext mathvariant="normal">best</mtext></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>w</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>w</mi><mi>/</mi><msub><mi>T</mi><mn>0</mn></msub><mo>,</mo><mspace width="0.167em"></mspace><msub><mi>r</mi><mi>b</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{TH}_{\text{best}}(w) = \min(w/T_0,\, r_b)</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">T</mi></mrow><mtext mathvariant="normal">best</mtext></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>w</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>max</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>0</mn></msub><mo>,</mo><mspace width="0.167em"></mspace><mi>w</mi><mi>/</mi><msub><mi>r</mi><mi>b</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{CT}_{\text{best}}(w) = \max(T_0,\, w/r_b)</annotation></semantics></math>, with the knee at the critical WIP <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mn>0</mn></msub><mo>=</mo><msub><mi>r</mi><mi>b</mi></msub><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">W_0 = r_b T_0</annotation></semantics></math>. Labs 3 through 6 visited single points on those curves. This lab buys the whole curve: the same line as Lab 3, a WIP cap you can set to any level, and one run per level. At the end you will have drawn the signature figure of <em>Factory Physics</em> from your own measured data — and found the knee.</p>
+<section id="the-instrument-a-ledger-made-of-wire" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="the-instrument-a-ledger-made-of-wire"><span class="header-section-number">14.1</span> The instrument: a ledger made of wire</h2>
+<p>Capping system WIP requires <em>knowing</em> system WIP, live, in-game. The gate does it the only honest way — the same way FISL does:</p>
+<ol type="1">
+<li>a <strong>tap belt</strong> just inside the source reads admissions as pulses;</li>
+<li>a tap belt just before the sink reads completions as pulses;</li>
+<li>two arithmetic combinators sign them (+1, −1) onto one signal <code>W</code>;</li>
+<li>a self-looped decider accumulates the difference — a memory cell whose running value <strong>is</strong> admissions − completions = WIP;</li>
+<li>the source inserter is enabled only while <code>W &lt; w</code>.</li>
+</ol>
+<p>You are rebuilding Lab 0’s conservation ledger out of combinators, and the run’s census will agree with your wire — the rare lab where the learner’s contraption and the laboratory’s instrument are the same object. (The completion pulses travel home along the line’s own belts as a relay chain, read-disabled, every hop checked: the 9-tile wire-reach lesson from Lab 3, institutionalized.) This CONWIP mechanism — a constant WIP cap enforced at admission — is the control policy Hopp &amp; Spearman’s ch.&nbsp;10 builds its case around; here it is five entities.</p>
 </section>
-<section id="run-1-observe" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="run-1-observe"><span class="header-section-number">7.2</span> Run 1 — observe</h2>
-<div id="fig-ready" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-ready-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../images/lab-03/fisl-panel-ready.jpg" class="img-fluid figure-img" style="width:60.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ready-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.1: The FISL panel in READY: the experiment waits for you to press Start.
-</figcaption>
-</figure>
-</div>
-<p>Start the experiment and <em>don’t change anything</em>. Spend the twelve minutes walking the line (hold <strong>Alt</strong> for the detail overlay):</p>
-<ul>
-<li>Follow the belt west from the middle. What state is the first belt segment in? Estimate how many workpieces are sitting on it.</li>
-<li>Watch each machine for thirty seconds. Which one is always busy? What are the other two doing most of the time?</li>
-<li>Watch the WIP number on the panel. Is it moving?</li>
-</ul>
-<p>Afterward, read your report (<code>fisl report runs/&lt;run-id&gt;</code>). A reference run of this exact scenario produced:</p>
+<section id="the-sweep" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="the-sweep"><span class="header-section-number">14.2</span> The sweep</h2>
+<p>Four reference gates plus the ungated baseline:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fisl</span> solutions scenarios/factory-physics/fp07-characteristic-curves <span class="at">--run</span> <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--json</span> course/data/lab-07-comparison.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Before running it, fill in this table from the interlude’s formulas — the line is Lab 3’s: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>b</mi></msub><mo>=</mo><mn>15</mn><mi>/</mi><mtext mathvariant="normal">min</mtext></mrow><annotation encoding="application/x-tex">r_b = 15/\text{min}</annotation></semantics></math> (the 4 s first machine), and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>0</mn></msub><mo>≈</mo><mn>56</mn></mrow><annotation encoding="application/x-tex">T_0 \approx 56</annotation></semantics></math> s if you count the belt ride (walk it and check):</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Metric</th>
-<th>Value</th>
+<th>run</th>
+<th>cap <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math></th>
+<th>predicted TH</th>
+<th>predicted CT</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>average WIP</td>
-<td>51.70 work units</td>
+<td>w-04</td>
+<td>4</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≈</mo><annotation encoding="application/x-tex">\approx</annotation></semantics></math> 4.3/min</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\approx T_0</annotation></semantics></math></td>
 </tr>
 <tr class="even">
-<td>throughput</td>
-<td>15.00 / min</td>
+<td>w-08</td>
+<td>8</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≈</mo><annotation encoding="application/x-tex">\approx</annotation></semantics></math> 8.6/min</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\approx T_0</annotation></semantics></math></td>
 </tr>
 <tr class="odd">
-<td>cycle time (derived)</td>
-<td>206.78 s</td>
+<td>w-14</td>
+<td>14 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><msub><mi>W</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\approx W_0</annotation></semantics></math></td>
+<td>approaching 15/min</td>
+<td>near <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math> — the knee</td>
+</tr>
+<tr class="even">
+<td>w-24</td>
+<td>24</td>
+<td>15/min</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≈</mo><annotation encoding="application/x-tex">\approx</annotation></semantics></math> 96 s</td>
+</tr>
+<tr class="odd">
+<td>baseline</td>
+<td>uncapped</td>
+<td>15/min</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≈</mo><annotation encoding="application/x-tex">\approx</annotation></semantics></math> 207 s (Lab 3’s number)</td>
 </tr>
 </tbody>
 </table>
-<p>Now a calculation you can do in your head: total <em>processing</em> time per workpiece — the time machines actually spend working on it — is about <strong>8 seconds</strong> (4 + 2 + 2). Yet each workpiece spent <strong>207 seconds</strong> inside the system. Where were the other 199 seconds?</p>
-<p>You walked past the answer: the packed input belt. Over 95% of each workpiece’s life was spent <em>waiting in a queue</em>, and nearly all of the system’s inventory was that queue.</p>
-<div id="fig-jam" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-jam-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../images/lab-03/run1-jammed-belt.jpg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jam-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.2: Run 1, mid-experiment: the input belt packed solid with waiting workpieces — this queue <em>is</em> the WIP number on the panel.
-</figcaption>
-</figure>
-</div>
-</section>
-<section id="the-theory-you-just-watched" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="the-theory-you-just-watched"><span class="header-section-number">7.3</span> The theory you just watched</h2>
-<p>Multiply throughput by cycle time, in consistent units:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.25</mn><mspace width="0.222em"></mspace><mtext mathvariant="normal">workpieces/s</mtext><mo>×</mo><mn>206.78</mn><mspace width="0.222em"></mspace><mtext mathvariant="normal">s</mtext><mo>=</mo><mn>51.70</mn><mspace width="0.222em"></mspace><mtext mathvariant="normal">workpieces</mtext></mrow><annotation encoding="application/x-tex">
-0.25\ \text{workpieces/s} \times 206.78\ \text{s} = 51.70\ \text{workpieces}
-</annotation></semantics></math></p>
-<p>That is your average WIP, exactly. This is <strong>Little’s Law</strong>:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">WIP</mtext><mo>=</mo><mtext mathvariant="normal">TH</mtext><mo>×</mo><mtext mathvariant="normal">CT</mtext></mrow><annotation encoding="application/x-tex">
-\text{WIP} = \text{TH} \times \text{CT}
-</annotation></semantics></math></p>
-<p>It holds for any stable flow system with a declared boundary — factories, hospitals, ticket queues, software teams — with no assumptions about what happens inside. It is an accounting identity of flow, and you have now measured all three of its terms simultaneously in a system you could walk around in.</p>
-<p>Read it as a constraint: the three quantities are not independent. If throughput is pinned by a bottleneck (yours is: the first machine can only do one workpiece per 4 s, i.e.&nbsp;15/min), then <strong>WIP and cycle time are the same decision</strong>. Carry 52 units of inventory and your flow time <em>must</em> be ~207 s. Want a 30-second flow time? Then you may hold at most <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.25</mn><mo>×</mo><mn>30</mn><mo>=</mo><mn>7.5</mn></mrow><annotation encoding="application/x-tex">0.25 \times 30 = 7.5</annotation></semantics></math> units of WIP — no clever routing can evade this.</p>
-</section>
-<section id="run-2-intervene" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="run-2-intervene"><span class="header-section-number">7.4</span> Run 2 — intervene</h2>
-<p>The queue exists because the source inserter admits work as fast as it can swing, while the bottleneck consumes one workpiece per 4 s. The fix is not a faster machine — it’s admitting work at the rate the system actually consumes it. Factorio’s circuit network lets you build exactly that.</p>
-<p>One question decides everything: <strong>where should the signal watch?</strong> The queue forms where work waits — immediately upstream of the bottleneck. A gate anywhere else only stops the queue growing past the gate; everything between the gate and the machine still packs solid.</p>
-<p>Start a new run, and <strong>before pressing Start</strong>:</p>
-<ol type="1">
-<li>Walk to the source inserter (beside the blue chest).</li>
-<li>Select the <strong>red wire</strong> tool from the shortcut strip (bottom right; enable it via the <code>…</code> menu if hidden).</li>
-<li>Click the inserter, then click a belt tile <strong>about halfway to the first machine</strong> — circuit wire only reaches 9 tiles, and the full span is 10, so the wire needs one relay hop. Then click the <strong>last belt tile before the first machine’s input inserter</strong>. Press <strong>Q</strong> to put the wire away. (If a click refuses to attach the wire, you’re stretching past its reach — pick a closer tile.)</li>
-<li>Open the <strong>last</strong> belt tile (the gate): enable <strong>Read belt contents</strong>, mode <strong>Hold</strong>. Open the halfway tile too and make sure <em>its</em> circuit options are all off — it only carries the wire.</li>
-<li>Open the source inserter: set <strong>Enable/disable</strong> with the condition <em>rough workpiece &lt; 2</em>. (Why 2 and not 1? The belt trip from the source takes ~5 s while the machine eats one workpiece per 4 s — a staging allowance of one extra piece covers the travel time so the bottleneck never starves. Try 1 later and watch what happens to throughput.)</li>
-</ol>
-<div id="fig-gate" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-gate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../images/lab-03/run2-pull-gate.jpg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.3: The pull gate: red wire from the source inserter to the last belt tile before machine 1.
-</figcaption>
-</figure>
-</div>
-<p>You have built a <em>pull signal</em>: a workpiece is admitted only while fewer than two are staged at the machine. Press Start and watch the same twelve minutes — the belt stays nearly empty, and the WIP number tells the story live.</p>
-<p>Then compare your two attempts:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fisl</span> compare runs/<span class="op">&lt;</span>run-1<span class="op">&gt;</span> runs/<span class="op">&lt;</span>run-2<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Predict before you look: what happened to throughput? To WIP? To cycle time? Check every prediction against the deltas — and check that Little’s Law still binds all three numbers in run 2.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-If your WIP only dropped ~20%…
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>…your gate is watching a tile near the <em>source</em>. Walk the line: everything downstream of your monitored tile is still packed. The signal must watch the point where the queue actually forms. This exact mistake was made by the first version of this lab’s own reference solution — it measured avg WIP 41.66 instead of 19.16. Diagnosing a control system by <em>walking the physical line</em> is itself the skill being taught here.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-If nothing changed <em>at all</em>…
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>…your wire never connected. An inserter with an enable condition but no circuit network <strong>ignores the condition completely</strong> — the run comes out identical to the baseline, down to the last decimal. The usual cause is wire reach: a red wire spans at most 9 tiles, and the direct inserter-to-gate span here is 10, so it needs the relay hop from step 3. Walk the wire and check both segments are actually drawn. This, too, was a mistake the reference solution made (version 2 wired the distance directly; the script reported success and changed nothing). A control system has two halves — the <em>decision</em> and the <em>actuation path</em> — and configuring the first does nothing without the second.</p>
-</div>
-</div>
-<p><strong>And why doesn’t WIP go to ~2?</strong> Walk the line in run 2 and count what’s left: one or two workpieces staged at the gate, a few <em>moving</em> on belts, one inside each machine. This line is ~90 tiles long — about 48 s of pure belt travel — so even a perfect pull system must carry <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">TH</mtext><mo>×</mo><mtext mathvariant="normal">transit</mtext><mo>≈</mo><mn>0.25</mn><mo>×</mo><mn>48</mn><mo>≈</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">\text{TH} \times \text{transit} \approx 0.25 \times 48 \approx 12</annotation></semantics></math> workpieces of in-transit inventory. <strong>Conveyors are inventory.</strong> The run-1 queue was waste; the run-2 residual is transportation. Little’s Law prices both identically.</p>
-</section>
-<section id="debrief" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="debrief"><span class="header-section-number">7.5</span> Debrief</h2>
+<p>Then plot the measured points: <strong>TH against measured average WIP</strong> and <strong>CT against measured average WIP</strong>. Two honesty rules make the plot meaningful:</p>
 <ul>
-<li>Throughput did not change. Why not? What <em>would</em> change it?</li>
-<li>Nearly all cycle time in run 1 was queueing. Is queue time always waste? What did the big queue <em>buy</em> the system, if anything, in this deterministic world? (Hold this question — it returns with force when variability enters the course.)</li>
-<li>The intervention limited admission, not capacity. Name a real system you know that controls flow time this way — and one that instead lets the queue grow.</li>
-<li>Your factory processed work in 8 s but delivered in 207 s. If a customer asked “why does my order take so long,” what is the honest answer?</li>
+<li>The x-coordinate is the <em>measured</em> average WIP, never the nominal cap — the gate’s timing slack and belt discreteness make them differ, and the report’s number is the true one.</li>
+<li>Expect measured points <strong>at or below</strong> the best-case TH curve (and at or above the CT curve). The formulas are bounds; belts and inserter swings are real mechanisms. The gap between your points and the bound is itself data — where does it come from?</li>
 </ul>
 </section>
-<section id="what-the-simulation-assumed-away" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="what-the-simulation-assumed-away"><span class="header-section-number">7.6</span> What the simulation assumed away</h2>
-<p>This world is deterministic: machines never fail, never vary, and the supply never fluctuates. In such a world a large input queue is <em>pure</em> waste — it buys nothing. Real systems hold inventory partly to absorb variability, and whether a buffer is waste or insurance is the central question of the variability course that follows. Do not conclude from this lab that all inventory is bad; conclude that inventory has a <em>price denominated in flow time</em>, and that the price is exact: CT = WIP / TH.</p>
-<div id="fig-compare" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-compare-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../data/lab-03-comparison.svg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-compare-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.4: The debrief: <code>fisl compare</code> of the push baseline vs the pull solution.
-</figcaption>
-</figure>
-</div>
+<section id="the-assignment" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="the-assignment"><span class="header-section-number">14.3</span> The assignment</h2>
+<p>The reference sweep leaves gaps — nothing between 14 and 24, nothing between 24 and the baseline’s ~52. Pick a cap we didn’t run, build your own gate (the toolbox holds a full counter kit; the solution scripts are readable blueprints), and add your point to the plot. Two questions to answer with your additions:</p>
+<ol type="1">
+<li><strong>Where exactly is the knee?</strong> Bracket <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math> from measurement alone, then compare with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>b</mi></msub><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">r_b T_0</annotation></semantics></math> computed from a stopwatch walk of the empty line. Lab 3’s pull run (WIP 19.16 at full throughput) already told you the knee is at or below 19 — sharpen it.</li>
+<li><strong>What does the flat region cost?</strong> Every point right of the knee has the same throughput; read the CT column as the price tag of the inventory. Little’s Law says the flat region’s CT must be exactly <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mi>/</mi><msub><mi>r</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">w/r_b</annotation></semantics></math> — check it.</li>
+</ol>
+</section>
+<section id="debrief" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="debrief"><span class="header-section-number">14.4</span> Debrief</h2>
+<ul>
+<li>The machine-state fractions tell the low-WIP story: at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">w = 4</annotation></semantics></math>, which machines are starved and how much? The constraint’s idle time left of the knee is the <em>only</em> throughput cost in this whole deterministic world — name the mechanism.</li>
+<li>Your gate held WIP constant; Lab 3’s gate held one buffer constant. Both landed on the flat region. What does CONWIP’s <em>system-level</em> cap give you that the local gate didn’t? (Hint: what happens to each if a middle machine slows down for a minute?)</li>
+<li>The curves you drew are the deterministic <strong>best case</strong>. Hopp &amp; Spearman’s ch.&nbsp;7 draws two more on the same axes: the worst case and the practical worst case. Both need variability to mean anything — which is precisely where this course’s sequel begins. Your knee at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math> is the last thing determinism can teach: with variability, operating <em>at</em> the knee starves the bottleneck whenever anything wobbles, and the whole art becomes how far right of it to sit.</li>
+</ul>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -485,15 +410,12 @@ Instructor notes
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
-<li>The reference intervention is committed as <code>scenarios/factory-physics/fp03-littles-law/solutions/a-pull-signal/</code> and the whole lab dataset regenerates with one deterministic command: <code>fisl solutions scenarios/factory-physics/fp03-littles-law --run --json   course/data/lab-03-comparison.json</code> — rerun it after any scenario or baseline change and re-check the numbers cited in this chapter.</li>
-<li>Baseline reference numbers come from the committed verification run <code>01M10GTKR13N2RCW3AYCPVFS65</code> (2026-08-27 baseline revision). Measured pull-solution result (run <code>01M10GZ303RBTWMF2PWA02CD3P</code>, solution v3): TH unchanged at 15.00/min, avg WIP 19.16 (−62.9%), CT 76.64 s — right on the transit floor predicted in the solution README. Every number in this chapter has now reproduced identically across two independently built baselines and multiple machines (the original verified run was <code>01M0XP8VJ78KXRC8DB6BATBW39</code>; a human-played run matched it bit-for-bit).</li>
-<li>The ~20% “gate near the source” failure in the callout is real: it was version 1 of the reference solution (run <code>01M0Y063ACYSD8JWRF78EJAWTF</code>). Learners who make it are in good company; send them to walk the line.</li>
-<li>The “nothing changed at all” failure is also real: version 2 of the reference solution wired the 10-tile span directly, past the 9-tile circuit wire reach — <code>connect_to()</code> returns false without raising, and run <code>01M0Y31VW4X12TBZN8S0HQA4T0</code> was bit-identical to baseline. Send those learners to walk the <em>wire</em>.</li>
-<li>Common learner friction: selecting the red wire tool (walk them to the shortcut <code>…</code> menu), and pressing F near belts (vacuums workpieces into the inventory — harmless to the ledger, but confusing).</li>
-<li>Screenshot capture: run windowed (<code>--window-size 1680x950</code>), hold <strong>Alt</strong> for the info overlay, zoom to frame the line; plain OS screenshots into <code>course/images/lab-03/</code> with the filenames listed in that folder’s README, then uncomment the figure blocks in this chapter.</li>
+<li>Reference dataset pending the first <code>fisl build-baseline   scenarios/factory-physics/fp07-characteristic-curves</code> + <code>fisl solutions … --run</code> (five runs, ~60 min wall time). Cite measured numbers here and in the sweep table afterward; predictions above are first-order (the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>0</mn></msub><mo>≈</mo><mn>56</mn></mrow><annotation encoding="application/x-tex">T_0 \approx 56</annotation></semantics></math> s figure is processing 8 s + ~48 s belt transit from Lab 3’s chapter — verify against the w-04 run’s CT, which should measure <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math> directly).</li>
+<li>The gate’s cap has ~1 unit of slack (the inserter’s swing vs.&nbsp;the pulse round-trip), so measured average WIP at cap <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math> lands slightly under <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math> — another reason the x-axis is the measured number.</li>
+<li>The census cross-check doubles as the meta-lesson: the learner’s combinator ledger and FISL’s conservation ledger count the same quantity; if a learner’s own gate misbehaves, comparing their <code>W</code> signal against the panel’s live WIP is the debugging exercise.</li>
 </ul>
 </div>
 </div>
@@ -922,13 +844,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../interludes/accounting-of-flow.html" class="pagination-link" aria-label="Interlude — The Accounting of Flow">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interlude — The Accounting of Flow</span></span>
+      <a href="../labs/lab-06-system-optimization.html" class="pagination-link" aria-label="Lab 6 — System Optimization">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Lab 6 — System Optimization</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../interludes/states-of-a-machine.html" class="pagination-link" aria-label="Interlude — The States of a Machine">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Interlude — The States of a Machine</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../appendices/notation.html" class="pagination-link" aria-label="Notation and Definitions">
+        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Notation and Definitions</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

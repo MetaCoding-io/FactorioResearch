@@ -97,8 +97,8 @@ Factorio server. The layout is selected by the scenario id in
 `scenario.yaml` (registered labs: `fp-00-measuring-the-factory`,
 `fp-01-flow-and-capacity`, `fp-02-the-constraint`, `fp-03-littles-law`,
 `fp-04-starvation-blocking`, `fp-05-push-and-pull`,
-`fp-06-system-optimization`, and the operator-training sandbox
-`fp-sandbox`). What it actually does, in order:
+`fp-06-system-optimization`, `fp-07-characteristic-curves`, and the
+operator-training sandbox `fp-sandbox`). What it actually does, in order:
 
 1. creates a fresh deterministic map (fixed seed, no water/trees/enemies);
 2. launches a temporary headless server with the FISL mods;
@@ -268,7 +268,11 @@ starves the customer), and **Lab 6** (the capstone: a scheduled supplier at
 line from both ends; a new `supply_loss` metric counts deliveries lost at
 the full warehouse, and the scenario's declared objectives — on-time ≥ 95%
 AND supply loss ≤ 2%, minimize-WIP preference — make `fisl compare` mark
-partial fixes INFEASIBLE). Between labs, six **theory interludes**
+partial fixes INFEASIBLE), plus **Lab 7** (the encore, runnable any time
+after Lab 3: a scripted CONWIP gate — a circuit-built conservation
+ledger capping system WIP — swept over four levels to trace the TH(w)
+and CT(w) characteristic curves empirically and locate the critical WIP
+knee). Between labs, six **theory interludes**
 (`course/interludes/`) develop the formal ideas the previous labs earned
 — measurement discipline, capacity arithmetic, Little's Law, machine
 states, service and censoring, objectives — each ending in numbered

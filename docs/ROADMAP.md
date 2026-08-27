@@ -73,8 +73,16 @@ In dependency order (later items consume earlier ones):
    checklist); `FISL_V1_SCHEMA.md` gained the missing §13.11
    `supply_loss`.
 3. **Course II (variability)** and **Course III (organizational)** as
-   scoped in `CONCEPT_COVERAGE.md`, plus its four open gap decisions
-   (WIP-sweep lab, EOQ/batching, quality/scrap, scheduling).
+   scoped in `CONCEPT_COVERAGE.md`, plus its open gap decisions.
+   Gap #1 (WIP-sweep) **closed**: Lab 7 / `fp07-characteristic-curves` —
+   a circuit-built CONWIP gate (pulse counters + memory cell + belt relay
+   chain, i.e. the conservation ledger rebuilt in circuits) swept at
+   w ∈ {4, 8, 14, 24} + uncapped baseline to trace TH(w)/CT(w) and
+   bracket W0 = rb·T0 ≈ 14. Authored end to end (scenario, LAB7 layout,
+   four scripted gates, chapter); **needs its first
+   `fisl build-baseline` + `fisl solutions … --run` (~5 × 12 min) to
+   cite measured numbers**. Remaining gaps: EOQ/batching, quality/scrap,
+   scheduling — decisions live in `CONCEPT_COVERAGE.md` §Open decisions.
 
 **Gate carried over from the design review:** before polishing Labs 5–6
 machinery, one learner who is not the maintainer runs Lab 3 end-to-end and

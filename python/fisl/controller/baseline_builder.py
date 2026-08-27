@@ -357,9 +357,32 @@ LABSANDBOX = LabLayout(
     save_name="fp-sandbox-baseline",
 )
 
+LAB7 = LabLayout(
+    # The characteristic-curves sweep: Lab 3's exact line, with a toolbox
+    # stocked for learners to build their own CONWIP counters (the
+    # reference solutions build theirs from script).
+    scenario_id="fp-07-characteristic-curves",
+    source_pos=LAB3.source_pos,
+    sink_pos=LAB3.sink_pos,
+    machines=list(LAB3.machines),
+    substation_xs=LAB3.substation_xs,
+    toolbox_items={
+        "transport-belt": 50,
+        "fast-inserter": 8,
+        "wooden-chest": 4,
+        "arithmetic-combinator": 3,
+        "decider-combinator": 2,
+        "constant-combinator": 1,
+        "small-lamp": 2,
+        "small-electric-pole": 10,
+    },
+    expected_counts=dict(LAB3.expected_counts),
+    save_name="fp07-baseline",
+)
+
 LAYOUTS: dict[str, LabLayout] = {
     layout.scenario_id: layout
-    for layout in (LAB0, LAB1, LAB2, LAB3, LAB4, LAB5, LAB6, LABSANDBOX)
+    for layout in (LAB0, LAB1, LAB2, LAB3, LAB4, LAB5, LAB6, LAB7, LABSANDBOX)
 }
 
 

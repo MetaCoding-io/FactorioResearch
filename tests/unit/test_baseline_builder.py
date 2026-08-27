@@ -24,6 +24,7 @@ SCENARIO_DIRS = {
     "fp-04-starvation-blocking": "fp04-starvation-blocking",
     "fp-05-push-and-pull": "fp05-push-and-pull",
     "fp-06-system-optimization": "fp06-system-optimization",
+    "fp-07-characteristic-curves": "fp07-characteristic-curves",
     "fp-sandbox": "fp-sandbox",
 }
 
@@ -157,6 +158,24 @@ def test_sandbox_drill_check_belt_constant_matches_layout():
     baseline_belts = LAYOUTS["fp-sandbox"].expected_counts["transport-belt"]
     assert f">= {baseline_belts + 4}" in check
     assert f"starts with {baseline_belts}" in check
+
+
+def test_lab7_sweep_solutions_cover_the_declared_caps():
+    # One gate, four caps: each solution dir carries the same three steps
+    # with only the gate constant differing; the caps bracket the
+    # predicted critical WIP (W0 = rb*T0 = 0.25/s * ~56 s = 14).
+    base = REPO / "scenarios/factory-physics/fp07-characteristic-curves/solutions"
+    for cap in (4, 8, 14, 24):
+        gate = (base / f"w-{cap:02d}" / "03-gate.lua").read_text()
+        assert f"constant = {cap} " in gate + " "
+    counters = (base / "w-04" / "01-counters.lua").read_text()
+    assert counters == (base / "w-24" / "01-counters.lua").read_text()
+
+
+def test_lab7_toolbox_supports_a_learner_built_counter():
+    toolbox = LAYOUTS["fp-07-characteristic-curves"].toolbox_items
+    assert toolbox.get("arithmetic-combinator", 0) >= 2   # +1 and -1 pulse shapers
+    assert toolbox.get("decider-combinator", 0) >= 1      # the memory cell
 
 
 def test_commands_are_transmission_safe(layout):

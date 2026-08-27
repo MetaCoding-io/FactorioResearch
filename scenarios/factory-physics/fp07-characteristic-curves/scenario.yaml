@@ -1,0 +1,205 @@
+spec: fisl/v1
+
+scenario:
+  id: fp-07-characteristic-curves
+  version: 0.1.0
+  title: The Characteristic Curves
+  description: >-
+    Lab 3's line, swept. A CONWIP gate — a circuit-built conservation
+    ledger driving the source inserter — caps system WIP at a chosen
+    level w; running the sweep traces the line's TH(w) and CT(w)
+    characteristic curves empirically, locates the critical WIP
+    W0 = rb * T0, and shows what inventory above it buys (nothing but
+    waiting). The reference solutions are one gate at four cap levels;
+    the assignment is to add your own points to the curve.
+
+factorio:
+  version:
+    minimum: 2.0.77
+    maximum_exclusive: 2.1.0
+  baseline_save: baseline.zip
+  required_mods:
+    fisl-core: compatible
+    fisl-factory-physics: compatible
+
+experiment:
+  seed: 1
+  time:
+    game_speed:
+      policy: fixed
+      value: 1.0
+    pause_policy: prohibited
+  phases:
+    - id: warmup
+      duration: 2m
+    - id: measured
+      duration: 10m
+
+zones:
+  factory_floor:
+    surface: nauvis
+    area:
+      left_top: [-48, -24]
+      right_bottom: [48, 24]
+
+systems:
+  factory:
+    primary_zone: factory_floor
+    boundary_integrity:
+      entity_containment: flag
+
+entity_sets:
+  line_machines:
+    zone: factory_floor
+    types:
+      - assembling-machine
+    exclude_roles:
+      - fisl_apparatus
+    membership: dynamic
+
+ports:
+  workpiece_source:
+    system: factory
+    direction: source
+    binding:
+      surface: nauvis
+      position: [-44.5, 0.5]
+      prototype: fisl-source-port
+    material:
+      item: fisl-rough-workpiece
+    supply:
+      mode: replenish
+      target: 100
+
+  finished_goods:
+    system: factory
+    direction: sink
+    binding:
+      surface: nauvis
+      position: [44.5, 0.5]
+      prototype: fisl-sink-port
+    material:
+      item: fisl-finished-workpiece
+
+flows:
+  workpiece_flow:
+    system: factory
+    unit: workpiece
+    basis:
+      type: conserved_work_unit
+      materials:
+        fisl-rough-workpiece: 1
+        fisl-machined-workpiece: 1
+        fisl-inspected-workpiece: 1
+        fisl-finished-workpiece: 1
+    entry_ports:
+      - workpiece_source
+    completion_ports:
+      - finished_goods
+
+metrics:
+  line_wip:
+    type: wip
+    flow: workpiece_flow
+    method: conservation_ledger
+    validation:
+      physical_census:
+        required: true
+        every: 60t
+        discrepancy_tolerance: 0
+        include_player_inventory: true
+
+  current_wip:
+    type: current_value
+    source: line_wip
+
+  average_wip:
+    type: aggregate
+    source: line_wip
+    aggregation: time_mean
+    window:
+      phase: measured
+
+  admission_rate:
+    type: throughput
+    flow: workpiece_flow
+    boundary: entry
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  measured_throughput:
+    type: throughput
+    flow: workpiece_flow
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  loaded_cycle_time:
+    type: cycle_time
+    flow: workpiece_flow
+    method: little_law_derived
+    wip_metric: average_wip
+    throughput_metric: measured_throughput
+    interpretation:
+      profile: stable_flow
+
+  machine_state:
+    type: production_state
+    entities: line_machines
+    adapter: crafting_machine
+
+  fraction_productive:
+    type: state_fraction
+    source: machine_state
+    state: productive
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+  fraction_starved:
+    type: state_fraction
+    source: machine_state
+    state: starved
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+visibility:
+  learner_live:
+    metrics:
+      - current_wip
+  learner_post_run:
+    metrics:
+      - average_wip
+      - admission_rate
+      - measured_throughput
+      - loaded_cycle_time
+      - fraction_productive
+      - fraction_starved
+  instructor:
+    metrics:
+      - line_wip
+      - machine_state
+    diagnostics:
+      - coverage
+      - census
+      - protocol_violations
+
+learning:
+  concepts:
+    - the WIP-throughput and WIP-cycle-time characteristic curves
+    - critical WIP (W0 = rb * T0) as an operating knee
+    - CONWIP as a mechanism, built from the conservation ledger itself
+  represents_directly:
+    - a systemwide WIP cap enforced by a circuit-built admissions ledger
+    - the deterministic best-case curves of Basic Factory Dynamics
+  remains_absent:
+    - variability (the practical-worst-case curve needs it; Course II)
+    - any penalty for running at low WIP other than lost throughput
+  not_warranted:
+    - reading the deterministic knee as a safe operating point for real
+      systems — with variability, running exactly at W0 starves the
+      bottleneck whenever anything wobbles

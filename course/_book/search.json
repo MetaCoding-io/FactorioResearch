@@ -910,6 +910,56 @@
     ]
   },
   {
+    "objectID": "labs/lab-07-characteristic-curves.html",
+    "href": "labs/lab-07-characteristic-curves.html",
+    "title": "14  Lab 7 — The Characteristic Curves",
+    "section": "",
+    "text": "14.1 The instrument: a ledger made of wire\nScenario: fp-07-characteristic-curves · five runs of ~12 minutes (the sweep) · runnable any time after Lab 3\nThe Accounting of Flow interlude committed to two formulas and drew them as a picture: THbest(w)=min(w/T0,rb)\\mathrm{TH}_{\\text{best}}(w) = \\min(w/T_0,\\, r_b) and CTbest(w)=max(T0,w/rb)\\mathrm{CT}_{\\text{best}}(w) = \\max(T_0,\\, w/r_b), with the knee at the critical WIP W0=rbT0W_0 = r_b T_0. Labs 3 through 6 visited single points on those curves. This lab buys the whole curve: the same line as Lab 3, a WIP cap you can set to any level, and one run per level. At the end you will have drawn the signature figure of Factory Physics from your own measured data — and found the knee.\nCapping system WIP requires knowing system WIP, live, in-game. The gate does it the only honest way — the same way FISL does:\nYou are rebuilding Lab 0’s conservation ledger out of combinators, and the run’s census will agree with your wire — the rare lab where the learner’s contraption and the laboratory’s instrument are the same object. (The completion pulses travel home along the line’s own belts as a relay chain, read-disabled, every hop checked: the 9-tile wire-reach lesson from Lab 3, institutionalized.) This CONWIP mechanism — a constant WIP cap enforced at admission — is the control policy Hopp & Spearman’s ch. 10 builds its case around; here it is five entities.",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Lab 7 — The Characteristic Curves</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-07-characteristic-curves.html#the-instrument-a-ledger-made-of-wire",
+    "href": "labs/lab-07-characteristic-curves.html#the-instrument-a-ledger-made-of-wire",
+    "title": "14  Lab 7 — The Characteristic Curves",
+    "section": "",
+    "text": "a tap belt just inside the source reads admissions as pulses;\na tap belt just before the sink reads completions as pulses;\ntwo arithmetic combinators sign them (+1, −1) onto one signal W;\na self-looped decider accumulates the difference — a memory cell whose running value is admissions − completions = WIP;\nthe source inserter is enabled only while W &lt; w.",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Lab 7 — The Characteristic Curves</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-07-characteristic-curves.html#the-sweep",
+    "href": "labs/lab-07-characteristic-curves.html#the-sweep",
+    "title": "14  Lab 7 — The Characteristic Curves",
+    "section": "14.2 The sweep",
+    "text": "14.2 The sweep\nFour reference gates plus the ungated baseline:\nfisl solutions scenarios/factory-physics/fp07-characteristic-curves --run \\\n    --json course/data/lab-07-comparison.json\nBefore running it, fill in this table from the interlude’s formulas — the line is Lab 3’s: rb=15/minr_b = 15/\\text{min} (the 4 s first machine), and T0≈56T_0 \\approx 56 s if you count the belt ride (walk it and check):\n\n\n\nrun\ncap ww\npredicted TH\npredicted CT\n\n\n\n\nw-04\n4\n≈\\approx 4.3/min\n≈T0\\approx T_0\n\n\nw-08\n8\n≈\\approx 8.6/min\n≈T0\\approx T_0\n\n\nw-14\n14 ≈W0\\approx W_0\napproaching 15/min\nnear T0T_0 — the knee\n\n\nw-24\n24\n15/min\n≈\\approx 96 s\n\n\nbaseline\nuncapped\n15/min\n≈\\approx 207 s (Lab 3’s number)\n\n\n\nThen plot the measured points: TH against measured average WIP and CT against measured average WIP. Two honesty rules make the plot meaningful:\n\nThe x-coordinate is the measured average WIP, never the nominal cap — the gate’s timing slack and belt discreteness make them differ, and the report’s number is the true one.\nExpect measured points at or below the best-case TH curve (and at or above the CT curve). The formulas are bounds; belts and inserter swings are real mechanisms. The gap between your points and the bound is itself data — where does it come from?",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Lab 7 — The Characteristic Curves</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-07-characteristic-curves.html#the-assignment",
+    "href": "labs/lab-07-characteristic-curves.html#the-assignment",
+    "title": "14  Lab 7 — The Characteristic Curves",
+    "section": "14.3 The assignment",
+    "text": "14.3 The assignment\nThe reference sweep leaves gaps — nothing between 14 and 24, nothing between 24 and the baseline’s ~52. Pick a cap we didn’t run, build your own gate (the toolbox holds a full counter kit; the solution scripts are readable blueprints), and add your point to the plot. Two questions to answer with your additions:\n\nWhere exactly is the knee? Bracket W0W_0 from measurement alone, then compare with rbT0r_b T_0 computed from a stopwatch walk of the empty line. Lab 3’s pull run (WIP 19.16 at full throughput) already told you the knee is at or below 19 — sharpen it.\nWhat does the flat region cost? Every point right of the knee has the same throughput; read the CT column as the price tag of the inventory. Little’s Law says the flat region’s CT must be exactly w/rbw/r_b — check it.",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Lab 7 — The Characteristic Curves</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-07-characteristic-curves.html#debrief",
+    "href": "labs/lab-07-characteristic-curves.html#debrief",
+    "title": "14  Lab 7 — The Characteristic Curves",
+    "section": "14.4 Debrief",
+    "text": "14.4 Debrief\n\nThe machine-state fractions tell the low-WIP story: at w=4w = 4, which machines are starved and how much? The constraint’s idle time left of the knee is the only throughput cost in this whole deterministic world — name the mechanism.\nYour gate held WIP constant; Lab 3’s gate held one buffer constant. Both landed on the flat region. What does CONWIP’s system-level cap give you that the local gate didn’t? (Hint: what happens to each if a middle machine slows down for a minute?)\nThe curves you drew are the deterministic best case. Hopp & Spearman’s ch. 7 draws two more on the same axes: the worst case and the practical worst case. Both need variability to mean anything — which is precisely where this course’s sequel begins. Your knee at W0W_0 is the last thing determinism can teach: with variability, operating at the knee starves the bottleneck whenever anything wobbles, and the whole art becomes how far right of it to sit.\n\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nReference dataset pending the first fisl build-baseline   scenarios/factory-physics/fp07-characteristic-curves + fisl solutions … --run (five runs, ~60 min wall time). Cite measured numbers here and in the sweep table afterward; predictions above are first-order (the T0≈56T_0 \\approx 56 s figure is processing 8 s + ~48 s belt transit from Lab 3’s chapter — verify against the w-04 run’s CT, which should measure T0T_0 directly).\nThe gate’s cap has ~1 unit of slack (the inserter’s swing vs. the pulse round-trip), so measured average WIP at cap ww lands slightly under ww — another reason the x-axis is the measured number.\nThe census cross-check doubles as the meta-lesson: the learner’s combinator ledger and FISL’s conservation ledger count the same quantity; if a learner’s own gate misbehaves, comparing their W signal against the panel’s live WIP is the debugging exercise.",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Lab 7 — The Characteristic Curves</span>"
+    ]
+  },
+  {
     "objectID": "appendices/notation.html",
     "href": "appendices/notation.html",
     "title": "Appendix A — Notation and Definitions",

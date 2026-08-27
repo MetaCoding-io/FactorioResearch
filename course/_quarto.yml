@@ -22,6 +22,7 @@ book:
     - labs/lab-05-push-and-pull.qmd
     - interludes/objectives-without-a-score.qmd
     - labs/lab-06-system-optimization.qmd
+    - labs/lab-07-characteristic-curves.qmd
   appendices:
     - appendices/notation.qmd
     - appendices/readings-map.qmd
