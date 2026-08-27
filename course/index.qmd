@@ -32,6 +32,13 @@ scenario are exactly comparable, and the deterministic simulation means a
 repeated run without intervention reproduces its numbers *exactly*. Your
 experiments are experiments in the scientific sense.
 
+Between labs, short **interludes** develop the theory the phenomena have
+earned: each one builds only on what earlier labs made you measure, and
+each ends with claims stated precisely enough to be wrong — which the
+next lab then tests. Theory here is never an announcement; it is a
+hypothesis you are about to check against a system you can walk around
+in.
+
 ## What this course assumes
 
 No Factorio experience is required — the labs teach the handful of controls

@@ -1,0 +1,180 @@
+# Interlude — The Accounting of Flow
+
+**Read after Lab 2, before Lab 3** · no Factorio required · ~30 minutes
+
+The labs so far handed you numbers one at a time: a boundary and a count
+(Lab 0), an installed capacity and a smaller achieved output (Lab 1), a
+constraint hiding in a line of unequal machines (Lab 2). This interlude
+does the one thing a lab cannot: it steps outside any particular factory
+and shows what must be true of *all* of them. It ends with claims stated
+precisely enough to be wrong — and Lab 3 is the experiment that tests
+them.
+
+## Stocks and flows
+
+Every quantity you have measured so far is one of two kinds, and keeping
+them apart is half of this subject.
+
+A **stock** (or *level*) is an amount present at an instant: workpieces on
+the belt right now, items in a chest, the WIP number on the FISL panel.
+Its unit is a pure count — work units.
+
+A **flow** (or *rate*) is an amount crossing a boundary per unit time:
+workpieces admitted per minute, finished goods leaving per minute. Its
+unit is a count *divided by time*.
+
+The two are related the way a bathtub's water level relates to its
+faucet and drain: the stock changes exactly as fast as inflow exceeds
+outflow. Nothing else changes a stock — not effort, not intention, not
+reorganization. If WIP rose over your measurement window, work entered
+faster than it left; there is no second explanation.
+
+You cannot add a stock to a flow, and a ratio of the two is a *time* —
+remember that; it is about to matter.
+
+## The boundary does the counting
+
+FISL forces you to declare a boundary before any measurement: the blue
+source port is where material enters, the orange sink port is where it
+leaves, and the measurement window is a half-open interval of simulation
+ticks — a tick belongs to the window that starts on it, never to two
+windows at once. These are not bureaucratic details. They are what makes
+the following bookkeeping exact.
+
+Over a window, count two running totals: $A(t)$, admissions through the
+source since the window opened, and $D(t)$, completions through the sink.
+Then at every instant
+
+$$
+\mathrm{WIP}(t) \;=\; \mathrm{WIP}(0) + A(t) - D(t),
+$$
+
+because a workpiece inside the boundary is precisely one that has been
+admitted and not yet completed — wherever it physically is: on a belt, in
+a machine buffer, mid-craft, in your pockets. This is a conservation law,
+and it is the entire content of FISL's WIP ledger. It holds with no
+assumptions about what the machines are doing.
+
+## From conservation to Little's Law
+
+Now average the stock over the whole window of length $T$. A useful way
+to compute that average: each workpiece contributes exactly 1 to
+$\mathrm{WIP}(t)$ for every second it spends inside the boundary. So the
+accumulated quantity
+
+$$
+\int_0^T \mathrm{WIP}(t)\, dt \quad \text{(work-unit–seconds)}
+$$
+
+equals the *total time spent inside the system, summed over workpieces*.
+Divide both sides by $T$, and divide-and-multiply by the number of
+completions $N$:
+
+$$
+\overline{\mathrm{WIP}}
+= \frac{1}{T}\int_0^T \mathrm{WIP}\, dt
+= \underbrace{\frac{N}{T}}_{\text{throughput}} \times
+  \underbrace{\frac{1}{N}\int_0^T \mathrm{WIP}\, dt}_{\text{avg time inside per completion}}
+$$
+
+$$
+\boxed{\;\overline{\mathrm{WIP}} = \mathrm{TH} \times \mathrm{CT}\;}
+$$
+
+Average inventory equals throughput times average time inside the
+boundary. This is **Little's Law**. The derivation used only conservation
+and arithmetic: no assumption about how many machines, how fast, in what
+order, deterministic or random, FIFO or chaos. That is why it holds for
+factories, hospitals, ticket queues, and software teams alike — anything
+with a boundary you are willing to declare.
+
+Check the units: a flow (units/s) times a time (s) is a stock (units).
+The three quantities occupy a triangle with only two degrees of freedom.
+
+Two honesty notes, because FISL will hold you to them:
+
+- The identity is exact when the window's edges are tidy — the system
+  starts and ends empty, or holds the same inventory at both edges. A
+  warmup phase before the measured window exists to buy you the second
+  condition. Boundary leftovers are why FISL reports validity beside
+  every number.
+- FISL's report computes **cycle time (derived)** *as* accumulated
+  WIP-area divided by completions — Little's Law used as a definition.
+  The law's empirical content is then a different claim: that this
+  derived time equals the time an *actual marked workpiece* spends
+  inside. You can test that with a stopwatch. In a deterministic steady
+  system, they must agree.
+
+## The vocabulary of a line
+
+Three parameters describe any single-product line, and the literature
+(see below) names them:
+
+- **Bottleneck rate** $r_b$: the capacity of the slowest station — the
+  ceiling on long-run throughput. You measured one in Lab 2: the middle
+  machine's 30/min was $r_b$ for that line, and no upgrade elsewhere
+  moved output.
+- **Raw process time** $T_0$: the time one workpiece needs to traverse
+  an otherwise *empty* system — all processing, no waiting behind other
+  work. Be careful what you include: if the belt from source to first
+  machine takes 40 s to ride, that is part of $T_0$, because an empty
+  system still makes the workpiece ride it. Conveyors are stations whose
+  process is *delay*.
+- **Critical WIP** $W_0 = r_b \times T_0$: Little's Law evaluated at the
+  best possible operating point — full throughput at minimum time. It is
+  the *least* inventory a line can hold while producing at capacity.
+  Below $W_0$, there is not enough work in the system to keep the
+  bottleneck fed; above it, the extra inventory buys nothing but waiting
+  — in a deterministic world.
+
+From these, the best any line can possibly do at a given WIP level $w$:
+
+$$
+\mathrm{TH}_{\text{best}}(w) = \min\!\left(\frac{w}{T_0},\; r_b\right)
+\qquad
+\mathrm{CT}_{\text{best}}(w) = \max\!\left(T_0,\; \frac{w}{r_b}\right)
+$$
+
+Read the second one aloud: once WIP exceeds $W_0$, every additional unit
+of inventory adds $1/r_b$ to every workpiece's flow time and adds
+*nothing* to output. Inventory above critical WIP is pure flow-time,
+purchased at full price.
+
+## Claims to carry into Lab 3
+
+Lab 3 puts you in a line whose source admits work as fast as it can.
+Before you run it, this interlude commits to the following, in writing:
+
+1. Multiply the report's throughput by its derived cycle time (consistent
+   units). It will equal average WIP — not approximately: to the last
+   decimal, because the derived CT makes this an identity. The
+   *stopwatch* test of claim 2 is where the physics lives.
+2. A single workpiece you visually track from source to sink will take
+   (to within a craft cycle) the derived CT the report prints.
+3. The uncontrolled line will hold far more than $W_0$ of inventory, and
+   its throughput will be no higher for it — output will sit at $r_b$
+   exactly.
+4. Any intervention that only *limits admission* will leave throughput
+   untouched and reduce WIP and CT together, in the ratio Little's Law
+   dictates — but no intervention of that kind can push WIP below
+   $\mathrm{TH} \times T_0$. Compute $T_0$ for the Lab 3 line yourself
+   (walk it; count belt tiles; a belt tile is a delay) and write your
+   predicted floor down before run 2.
+
+If any of these fails in your data, the theory as stated is wrong or the
+measurement's validity flags will tell you why. That is the deal this
+course offers: no number without a method, no law without an experiment.
+
+## Further reading
+
+- Hopp & Spearman, *Factory Physics* (3rd ed.), ch. 7 "Basic Factory
+  Dynamics" — $r_b$, $T_0$, $W_0$, and the best/worst-case performance
+  curves this interlude previewed (their practical-worst-case curve needs
+  variability, which this course meets later).
+- J. D. C. Little, "A Proof for the Queuing Formula $L = \lambda W$",
+  *Operations Research* 9(3), 1961 — the original proof; Little &
+  Graves, "Little's Law" (in *Building Intuition*, 2008) is the readable
+  retrospective.
+- The half-open windows and conservation ledger this interlude leaned on
+  are FISL's ADRs 0003 and 0005 — the apparatus was built so that the
+  bookkeeping above is exact rather than approximate.

@@ -12,6 +12,9 @@ Relationship to other planning documents:
 - `POST_REVIEW_REVISIONS.md` — the post-design-review sequencing addendum
   (its phase-1 gate is now complete; source-of-truth order still applies).
 - `RUNTIME_VALIDATION.md` — which Factorio assumptions are empirically proven.
+- `CONCEPT_COVERAGE.md` — the MECE audit of Hopp & Spearman's *Factory
+  Physics* against the course sequence (what's taught where, what's a
+  non-goal, what's an open gap).
 - **This file** — where we are, what's next, in what order, and why.
 
 ---
