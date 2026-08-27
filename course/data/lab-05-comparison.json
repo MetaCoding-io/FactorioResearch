@@ -1,0 +1,324 @@
+{
+  "scenario": {
+    "id": "fp-05-push-and-pull",
+    "version": "0.1.0",
+    "title": "Push and Pull"
+  },
+  "compatibility": {
+    "same_experiment_semantics": true,
+    "resolved_hashes": [
+      "sha256:c34b2e0782b9ea798633ee496490f81df44ca652444deafdb4ad155e095ee01e"
+    ],
+    "same_controlled_condition": true
+  },
+  "runs": [
+    {
+      "run_id": "01M0Z68MAR07HYK6ADFF8MTTVV",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": null,
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M0Z6B1JESS0T4Q0N9WPHDPYG",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "a-pull-to-consumption",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "solution.lua",
+            "sha256": "sha256:9b73c0a241280aec5baef014e6af26e2d4f608d4f4a9ed2c61d2d27b823aaa36"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M0Z6DF3N10M8DMR7ZDZNMS5E",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "b-starve-the-customer",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "solution.lua",
+            "sha256": "sha256:ef7d8b88470322d0b843f1555d55042cba43818e2c8e91642fb6901f51794fea"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "metric": "admission_rate",
+      "values": [
+        15.0,
+        14.3,
+        10.0
+      ],
+      "displays": [
+        "15.00/min",
+        "14.30/min",
+        "10.00/min"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -0.6999999999999993,
+        -5.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -4.666666666666662,
+        -33.33333333333333
+      ]
+    },
+    {
+      "metric": "average_wip",
+      "values": [
+        51.69583333333333,
+        19.15888888888889,
+        7.330555555555556
+      ],
+      "displays": [
+        "51.70 work units",
+        "19.16 work units",
+        "7.33 work units"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -32.536944444444444,
+        -44.36527777777778
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -62.93920098868918,
+        -85.8198328900352
+      ]
+    },
+    {
+      "metric": "customer_service",
+      "values": [
+        1.0,
+        1.0,
+        0.225
+      ],
+      "displays": [
+        "100.0% on time",
+        "100.0% on time",
+        "22.5% on time"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        -0.775
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        -77.5
+      ]
+    },
+    {
+      "metric": "fraction_productive",
+      "values": [
+        0.6694444444444444,
+        0.6694444444444444,
+        0.44722222222222224
+      ],
+      "displays": [
+        "66.9% productive",
+        "66.9% productive",
+        "44.7% productive"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        -0.22222222222222215
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        -33.19502074688796
+      ]
+    },
+    {
+      "metric": "fraction_starved",
+      "values": [
+        0.33055555555555555,
+        0.33055555555555555,
+        0.5527777777777778
+      ],
+      "displays": [
+        "33.1% starved",
+        "33.1% starved",
+        "55.3% starved"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        0.22222222222222227
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        67.22689075630254
+      ]
+    },
+    {
+      "metric": "line_wip",
+      "values": [
+        51.0,
+        13.0,
+        7.0
+      ],
+      "displays": [
+        "final 51",
+        "final 13",
+        "final 7"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -38.0,
+        -44.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -74.50980392156863,
+        -86.27450980392157
+      ]
+    },
+    {
+      "metric": "measured_throughput",
+      "values": [
+        15.0,
+        15.0,
+        10.0
+      ],
+      "displays": [
+        "15.00/min",
+        "15.00/min",
+        "10.00/min"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        -5.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        -33.33333333333333
+      ]
+    },
+    {
+      "metric": "p95_customer_wait",
+      "values": [
+        3.0166666666666666,
+        3.0166666666666666,
+        null
+      ],
+      "displays": [
+        "3.02 s",
+        "3.02 s",
+        "censored"
+      ],
+      "validities": [
+        "",
+        "",
+        "incomplete"
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        null
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        null
+      ]
+    },
+    {
+      "metric": "loaded_cycle_time",
+      "values": [
+        206.78333333333333,
+        76.63555555555556,
+        43.983333333333334
+      ],
+      "displays": [
+        "206.78 s",
+        "76.64 s",
+        "43.98 s"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -130.14777777777778,
+        -162.8
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -62.93920098868918,
+        -78.7297493350528
+      ]
+    }
+  ]
+}

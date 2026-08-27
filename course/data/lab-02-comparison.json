@@ -1,0 +1,240 @@
+{
+  "scenario": {
+    "id": "fp-02-the-constraint",
+    "version": "0.1.0",
+    "title": "The Constraint"
+  },
+  "compatibility": {
+    "same_experiment_semantics": true,
+    "resolved_hashes": [
+      "sha256:4e97c71d87016108442de9a7fa32d93304e3da53434eee94c48c75e78941243b"
+    ],
+    "same_controlled_condition": true
+  },
+  "runs": [
+    {
+      "run_id": "01M0Z61XH0VQ2JNKQRDP0426P4",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": null,
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M0Z644ZYFBWHBFR8TCC5YVHN",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "a-upgrade-non-constraint",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "solution.lua",
+            "sha256": "sha256:7085da6f1abbb6b5d9b9370aae05fe3ca51829e50409528f8ebe9c77f7b80a42"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M0Z66CM2ASSF6AJ270DEZQFT",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "b-upgrade-constraint",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "solution.lua",
+            "sha256": "sha256:1c09cc84c64cc38a07431850eebefa1e7739dfd2726244c6655c98d18eaa19ae"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "metric": "average_wip",
+      "values": [
+        57.54,
+        57.265,
+        33.572916666666664
+      ],
+      "displays": [
+        "57.54 work units",
+        "57.27 work units",
+        "33.57 work units"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -0.2749999999999986,
+        -23.967083333333335
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -0.47792839763642436,
+        -41.65290812188623
+      ]
+    },
+    {
+      "metric": "fraction_blocked",
+      "values": [
+        0.06060185185185185,
+        0.06060185185185185,
+        0.0
+      ],
+      "displays": [
+        "6.1% blocked",
+        "6.1% blocked",
+        "0.0% blocked"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        -0.06060185185185185
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        -100.0
+      ]
+    },
+    {
+      "metric": "fraction_productive",
+      "values": [
+        0.825949074074074,
+        0.7342824074074074,
+        0.8958333333333334
+      ],
+      "displays": [
+        "82.6% productive",
+        "73.4% productive",
+        "89.6% productive"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -0.09166666666666667,
+        0.06988425925925934
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -11.09834365628766,
+        8.461085731902143
+      ]
+    },
+    {
+      "metric": "fraction_starved",
+      "values": [
+        0.11344907407407408,
+        0.20511574074074074,
+        0.10416666666666667
+      ],
+      "displays": [
+        "11.3% starved",
+        "20.5% starved",
+        "10.4% starved"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.09166666666666666,
+        -0.009282407407407406
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        80.79983676800651,
+        -8.182003672719851
+      ]
+    },
+    {
+      "metric": "line_wip",
+      "values": [
+        58.0,
+        58.0,
+        34.0
+      ],
+      "displays": [
+        "final 58",
+        "final 58",
+        "final 34"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        -24.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        -41.37931034482759
+      ]
+    },
+    {
+      "metric": "measured_throughput",
+      "values": [
+        30.0,
+        30.0,
+        37.5
+      ],
+      "displays": [
+        "30.00/min",
+        "30.00/min",
+        "37.50/min"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.0,
+        7.5
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        0.0,
+        25.0
+      ]
+    }
+  ]
+}

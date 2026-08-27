@@ -1,0 +1,98 @@
+{
+  "run_id": "01M0Z5SZDS04X54CDCE5C2KJ8A",
+  "resolved_scenario_hash": "sha256:dd9537aeff48b36d5096b2c415109aa9989079ab5950bd21f50afff7396a8a23",
+  "scenario": {
+    "id": "fp-00-measuring-the-factory",
+    "version": "0.1.0",
+    "title": "Measuring the Factory"
+  },
+  "metrics": {
+    "admission_rate": {
+      "type": "throughput",
+      "flow": "workpiece_flow",
+      "window": {
+        "phase": "measured",
+        "start_tick": 3600,
+        "end_tick": 21600
+      },
+      "boundary": "entry",
+      "method": "entry_source_withdrawal",
+      "completed_quantity": 75,
+      "window_ticks": 18000,
+      "value_per_minute": 15.0,
+      "exact_per_minute": {
+        "numerator": 15,
+        "denominator": 1
+      },
+      "coverage_complete": true
+    },
+    "average_wip": {
+      "type": "aggregate",
+      "aggregation": "time_mean",
+      "source": "line_wip",
+      "window": {
+        "phase": "measured",
+        "start_tick": 3600,
+        "end_tick": 21600
+      },
+      "coverage_complete": true,
+      "census_validity": {
+        "census_checks_in_window": 300,
+        "discrepancy_intervals": [],
+        "valid": true
+      },
+      "value": 39.99583333333333,
+      "unit": "work units",
+      "exact": {
+        "numerator": 719925,
+        "denominator": 18000
+      },
+      "area_work_unit_ticks": 719925,
+      "window_ticks": 18000
+    },
+    "current_wip": {
+      "type": "current_value",
+      "source": "line_wip",
+      "note": "live display metric"
+    },
+    "line_wip": {
+      "type": "wip",
+      "method": "conservation_ledger",
+      "flow": "workpiece_flow",
+      "final_wip": 40,
+      "change_points": 215
+    },
+    "measured_throughput": {
+      "type": "throughput",
+      "flow": "workpiece_flow",
+      "window": {
+        "phase": "measured",
+        "start_tick": 3600,
+        "end_tick": 21600
+      },
+      "boundary": "completion",
+      "method": "completion_sink_delivery",
+      "completed_quantity": 75,
+      "window_ticks": 18000,
+      "value_per_minute": 15.0,
+      "exact_per_minute": {
+        "numerator": 15,
+        "denominator": 1
+      },
+      "coverage_complete": true
+    }
+  },
+  "validity": {
+    "completed": true,
+    "aborted": false,
+    "abort_reason": null,
+    "protocol_events": {},
+    "manual_carriage_residual": 0
+  },
+  "lua_cross_verification": {
+    "available": true,
+    "agrees": true,
+    "mismatches": []
+  },
+  "lifecycle": "COMPLETED"
+}
