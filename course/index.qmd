@@ -41,9 +41,13 @@ in.
 
 ## What this course assumes
 
-No Factorio experience is required — the labs teach the handful of controls
-you need. No mathematics beyond arithmetic is required to *do* the labs; the
-theory sections introduce each formal relationship as it is earned.
+No Factorio experience is required — but that promise is kept by the
+*Before the First Lab* chapter, not by wishful thinking: it teaches the
+handful of controls the course uses (there are about a dozen), the
+plant-floor reading of the game's objects, and the one-time setup. Start
+there if you've never played. No mathematics beyond arithmetic is
+required to *do* the labs; the interludes introduce each formal
+relationship as it is earned.
 
 ## What the simulation assumes away {.unnumbered}
 

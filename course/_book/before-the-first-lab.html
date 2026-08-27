@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Interlude — Capacity and the Weakest Link – Factory Physics Through Factorio</title>
+<title>Before the First Lab – Factory Physics Through Factorio</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +20,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../labs/lab-02-the-constraint.html" rel="next">
-<link href="../labs/lab-01-flow-and-capacity.html" rel="prev">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-2e4c97a43803ed481078bdef9528fe0e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./labs/lab-00-measuring-the-factory.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-2e4c97a43803ed481078bdef9528fe0e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -81,7 +115,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../interludes/capacity.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interlude — Capacity and the Weakest Link</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./before-the-first-lab.html">Before the First Lab</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -96,7 +130,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="../">Factory Physics Through Factorio</a> 
+      <a href="./">Factory Physics Through Factorio</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -108,91 +142,91 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../before-the-first-lab.html" class="sidebar-item-text sidebar-link">
+  <a href="./before-the-first-lab.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Before the First Lab</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-00-measuring-the-factory.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-00-measuring-the-factory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lab 0 — Measuring the Factory</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/rules-of-evidence.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/rules-of-evidence.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Interlude — The Rules of Evidence</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-01-flow-and-capacity.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-01-flow-and-capacity.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lab 1 — Flow and Capacity</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/capacity.html" class="sidebar-item-text sidebar-link active">
+  <a href="./interludes/capacity.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interlude — Capacity and the Weakest Link</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-02-the-constraint.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-02-the-constraint.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lab 2 — The Constraint</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/accounting-of-flow.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/accounting-of-flow.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interlude — The Accounting of Flow</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-03-littles-law.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-03-littles-law.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab 3 — WIP and Little’s Law</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/states-of-a-machine.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/states-of-a-machine.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Interlude — The States of a Machine</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-04-starvation-blocking.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-04-starvation-blocking.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lab 4 — Starvation and Blocking</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/customers-clock.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/customers-clock.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interlude — The Customer’s Clock</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-05-push-and-pull.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-05-push-and-pull.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Lab 5 — Push and Pull</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../interludes/objectives-without-a-score.html" class="sidebar-item-text sidebar-link">
+  <a href="./interludes/objectives-without-a-score.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interlude — Objectives Without a Score</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/lab-06-system-optimization.html" class="sidebar-item-text sidebar-link">
+  <a href="./labs/lab-06-system-optimization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Lab 6 — System Optimization</span></span></a>
   </div>
 </li>
@@ -207,13 +241,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../appendices/notation.html" class="sidebar-item-text sidebar-link">
+  <a href="./appendices/notation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Notation and Definitions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../appendices/readings-map.html" class="sidebar-item-text sidebar-link">
+  <a href="./appendices/readings-map.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Readings Map</span></span></a>
   </div>
 </li>
@@ -229,11 +263,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#capacity-is-arithmetic-not-aspiration" id="toc-capacity-is-arithmetic-not-aspiration" class="nav-link active" data-scroll-target="#capacity-is-arithmetic-not-aspiration"><span class="header-section-number">4.1</span> Capacity is arithmetic, not aspiration</a></li>
-  <li><a href="#the-weakest-link-sets-the-pace" id="toc-the-weakest-link-sets-the-pace" class="nav-link" data-scroll-target="#the-weakest-link-sets-the-pace"><span class="header-section-number">4.2</span> The weakest link sets the pace</a></li>
-  <li><a href="#utilization-needs-a-denominator" id="toc-utilization-needs-a-denominator" class="nav-link" data-scroll-target="#utilization-needs-a-denominator"><span class="header-section-number">4.3</span> “Utilization” needs a denominator</a></li>
-  <li><a href="#claims-to-carry-into-lab-2" id="toc-claims-to-carry-into-lab-2" class="nav-link" data-scroll-target="#claims-to-carry-into-lab-2"><span class="header-section-number">4.4</span> Claims to carry into Lab 2</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">4.5</span> Further reading</a></li>
+  <li><a href="#what-you-need" id="toc-what-you-need" class="nav-link active" data-scroll-target="#what-you-need">What you need</a></li>
+  <li><a href="#one-time-setup" id="toc-one-time-setup" class="nav-link" data-scroll-target="#one-time-setup">One-time setup</a></li>
+  <li><a href="#how-a-lab-session-works" id="toc-how-a-lab-session-works" class="nav-link" data-scroll-target="#how-a-lab-session-works">How a lab session works</a></li>
+  <li><a href="#the-controls-all-of-them" id="toc-the-controls-all-of-them" class="nav-link" data-scroll-target="#the-controls-all-of-them">The controls — all of them</a></li>
+  <li><a href="#reading-the-factory-floor" id="toc-reading-the-factory-floor" class="nav-link" data-scroll-target="#reading-the-factory-floor">Reading the factory floor</a></li>
+  <li><a href="#which-labs-need-which-hands" id="toc-which-labs-need-which-hands" class="nav-link" data-scroll-target="#which-labs-need-which-hands">Which labs need which hands</a></li>
   </ul>
 </nav>
     </div>
@@ -242,7 +277,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interlude — Capacity and the Weakest Link</span></h1>
+<h1 class="title">Before the First Lab</h1>
 </div>
 
 
@@ -259,57 +294,182 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><strong>Read after Lab 1, before Lab 2</strong> · no Factorio required · ~20 minutes</p>
-<p>Lab 1 showed you a gap: two machines whose catalog capacities were 37.5 and 30 workpieces per minute, and a line that delivered 30. Nothing was broken. Nothing was wasted, either, in any way you could fix by working harder. This interlude turns that gap into arithmetic you can do for any line — and into a prediction Lab 2 is built to test.</p>
-<section id="capacity-is-arithmetic-not-aspiration" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="capacity-is-arithmetic-not-aspiration"><span class="header-section-number">4.1</span> Capacity is arithmetic, not aspiration</h2>
-<p>A machine’s <strong>capacity</strong> is the rate it could sustain if material were always waiting and space always open. In this laboratory it is exact:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">craft time</mtext><mo>=</mo><mfrac><mtext mathvariant="normal">recipe seconds</mtext><mtext mathvariant="normal">machine speed</mtext></mfrac><mo>,</mo><mspace width="2.0em"></mspace><mtext mathvariant="normal">capacity</mtext><mo>=</mo><mfrac><mn>60</mn><mtext mathvariant="normal">craft time</mtext></mfrac><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> per minute.</mtext></mrow></mrow><annotation encoding="application/x-tex">
-\text{craft time} = \frac{\text{recipe seconds}}{\text{machine speed}},
-\qquad
-\text{capacity} = \frac{60}{\text{craft time}} \text{ per minute.}
-</annotation></semantics></math></p>
-<p>The three assembler tiers run at speeds 0.5, 0.75, and 1.25; the machining recipe takes 2 s of work, inspection and finishing 1 s each. Every capacity number in this course — 15, 30, 37.5, 45 — comes from this one division. Real factories need measurement campaigns to learn these numbers; here you can read them off the nameplate. What you <em>do</em> with them is the same in both worlds.</p>
-</section>
-<section id="the-weakest-link-sets-the-pace" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="the-weakest-link-sets-the-pace"><span class="header-section-number">4.2</span> The weakest link sets the pace</h2>
-<p>Put machines in series and their capacities do not add, average, or negotiate. In a deterministic line, sustained output is:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">line capacity</mtext><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">capacity</mtext><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mtext mathvariant="normal">capacity</mtext><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-\text{line capacity} = \min(\text{capacity}_1, \ldots, \text{capacity}_n)
-</annotation></semantics></math></p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../images/interludes/line-capacity.svg" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption>Installed capacity by stage for a fast → slow → fast line. The line delivers the minimum; every unit of capacity above the dashed line is installed but unusable — not through mismanagement, but by arithmetic.</figcaption>
-</figure>
-</div>
-<p>The stage achieving that minimum is the <strong>constraint</strong> (you will also hear <em>bottleneck</em>; the flow interlude will call its rate <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math>). Two consequences follow immediately, and both are routinely disbelieved by people meeting them in the wild:</p>
+<p>This chapter is for the reader who has never played Factorio — or never run FISL. It contains everything the course assumes about your hands and your machine, and nothing else. If you already play Factorio and have run <code>fisl run</code> once, skip straight to Lab 0.</p>
+<section id="what-you-need" class="level2">
+<h2 class="anchored" data-anchor-id="what-you-need">What you need</h2>
 <ul>
-<li><strong>Capacity added anywhere but the constraint adds nothing.</strong> Upgrade a 37.5/min stage to 45 and the min() does not move. The money is spent, the output is identical.</li>
-<li><strong>Installed capacity is not a promise.</strong> Lab 1’s line “wasted” 7.5/min of the first machine’s capability — permanently, structurally, and invisibly to anyone auditing the machines one at a time. Only the <em>system</em> number reveals it.</li>
+<li><strong>Factorio</strong>, the game (factorio.com or Steam, ~$35 — this course cannot be done with the free demo, and honesty obliges us to say that before you read three chapters). The course pins version <strong>2.0.77</strong>; any machine that runs the game comfortably is enough, no expansion required.</li>
+<li><strong>Python 3.11 or newer</strong> and a terminal you’re comfortable pasting commands into.</li>
+<li>About <strong>30 minutes</strong> for setup, once.</li>
 </ul>
+<p>Nothing else from Factorio’s world is required: no prior knowledge of its technology tree, no combat (our worlds have no enemies), no rocket. The course uses perhaps a dozen of the game’s hundreds of mechanics, and this chapter lists all of them.</p>
 </section>
-<section id="utilization-needs-a-denominator" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="utilization-needs-a-denominator"><span class="header-section-number">4.3</span> “Utilization” needs a denominator</h2>
-<p>The natural next question — <em>how busy is each machine?</em> — is a trap unless you ask it precisely. “Utilization” as a bare percentage smuggles in two choices: busy <em>doing what</em> (crafting? powered? merely occupied?) and busy <em>out of what</em> (the whole window? the time the machine existed?). FISL deliberately has no metric named “utilization”: when the course starts measuring busyness (Lab 4), every such number will name its numerator states and its denominator explicitly.</p>
-<p>For now, one honest preview from pure arithmetic: a non-constraint machine in a line running at rate <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math> can be doing useful work at most <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>/</mi><mtext mathvariant="normal">capacity</mtext></mrow><annotation encoding="application/x-tex">m/\text{capacity}</annotation></semantics></math> of the time. The <em>faster</em> a machine is relative to the constraint, the <em>lazier</em> it must look. Hold that thought; it will turn diagnosis upside down in Lab 4.</p>
+<section id="one-time-setup" class="level2">
+<h2 class="anchored" data-anchor-id="one-time-setup">One-time setup</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:MetaCoding-io/FactorioResearch.git</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> FactorioResearch</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> <span class="st">'.[dev]'</span>     <span class="co"># the quotes matter in zsh</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># tell fisl where Factorio lives (add to your shell profile):</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FACTORIO_BIN</span><span class="op">=</span>/path/to/factorio/bin/x64/factorio</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The FISL measurement mods never need manual installation — every run copies them into its own isolated workspace automatically.</p>
 </section>
-<section id="claims-to-carry-into-lab-2" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="claims-to-carry-into-lab-2"><span class="header-section-number">4.4</span> Claims to carry into Lab 2</h2>
-<p>Lab 2 is a three-stage line — 37.5, 30, and 45 workpieces per minute — with live diagnostics deliberately withheld. Commitments, in writing:</p>
+<section id="how-a-lab-session-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-a-lab-session-works">How a lab session works</h2>
+<p>Every lab follows the same operational rhythm:</p>
 <ol type="1">
-<li>Measured throughput will be <strong>30/min exactly</strong> — the minimum, nothing blended.</li>
-<li>The two reference interventions upgrade one machine each. The one that touches a non-constraint will change throughput by <strong>exactly nothing</strong>; the one that touches the constraint will move the line to the <em>new</em> minimum — compute it before running.</li>
-<li>You can name the constraint from catalog arithmetic before the run starts, and the withheld diagnostics cannot stop you: the machine whose capacity equals the measured line rate is the constraint.</li>
+<li>In a terminal: <code>fisl run scenarios/factory-physics/&lt;lab&gt;</code>. This compiles the experiment, starts a private Factorio server from the lab’s pristine baseline world, and prints a port number.</li>
+<li>Launch your Factorio client and connect to it (the User Guide’s client section has the exact command; the essential flags are <code>--mp-connect localhost:&lt;port&gt;</code> and <code>--mod-directory    runs/&lt;run_id&gt;/server/mods</code>).</li>
+<li>In-game you’ll spawn on the lab floor. The <strong>FISL panel</strong> (top left) shows READY. Walk around, look at everything, build if the lab calls for it — <strong>the experiment clock does not start until you press Start Experiment.</strong> The READY world is your practice range: nothing you do before Start is measured, and a fresh <code>fisl run</code> always begins from the same pristine world.</li>
+<li>Press <strong>Start Experiment</strong> and operate. Two rules are enforced, not suggested: there is no pause (the clock is simulation ticks), and disconnecting mid-run aborts the run — data preserved, run marked aborted. Aborting is cheap; just run again.</li>
+<li>When the final phase ends, the panel shows your results, and <code>fisl report runs/&lt;run_id&gt;</code> prints the full measurement record.</li>
 </ol>
-<p>If claim 2’s first half feels too strong — surely <em>some</em> improvement leaks through? — good. That intuition is exactly what the lab exists to correct, and in a deterministic world the correction is total.</p>
 </section>
-<section id="further-reading" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">4.5</span> Further reading</h2>
+<section id="the-controls-all-of-them" class="level2">
+<h2 class="anchored" data-anchor-id="the-controls-all-of-them">The controls — all of them</h2>
+<p>Factorio has hundreds of keybindings. The course uses these (defaults shown; Settings → Controls lists them all):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>You want to</th>
+<th>Do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>walk</td>
+<td><strong>W A S D</strong></td>
+</tr>
+<tr class="even">
+<td>open / close your inventory</td>
+<td><strong>E</strong> (also closes most windows)</td>
+</tr>
+<tr class="odd">
+<td>open a machine or chest</td>
+<td><strong>left-click</strong> it</td>
+</tr>
+<tr class="even">
+<td>take items from a chest</td>
+<td>click items in its window (shift-click moves a stack)</td>
+</tr>
+<tr class="odd">
+<td>place the item in your hand</td>
+<td><strong>left-click</strong> the ground</td>
+</tr>
+<tr class="even">
+<td>rotate the item in your hand (or a placed entity under the cursor)</td>
+<td><strong>R</strong></td>
+</tr>
+<tr class="odd">
+<td>empty your hand</td>
+<td><strong>Q</strong> (over an entity, <strong>Q</strong> instead copies it into your hand — handy)</td>
+</tr>
+<tr class="even">
+<td>remove an entity</td>
+<td><strong>hold right-click</strong> on it until it pops into your inventory</td>
+</tr>
+<tr class="odd">
+<td>set a machine’s recipe</td>
+<td>open it, pick the recipe from its panel</td>
+</tr>
+<tr class="even">
+<td>see what everything is doing</td>
+<td><strong>Alt</strong> — toggles the info overlay; the course’s figures assume it’s on</td>
+</tr>
+<tr class="odd">
+<td>drag a circuit wire</td>
+<td><strong>Alt+R</strong> (red) or <strong>Alt+G</strong> (green) puts the wire tool in your hand; click one entity, then the other</td>
+</tr>
+<tr class="even">
+<td>fullscreen</td>
+<td><strong>Alt+Enter</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Two mechanics deserve a sentence each, because labs from Lab 3 onward lean on them:</p>
 <ul>
-<li>Hopp &amp; Spearman, <em>Factory Physics</em> (3rd ed.), ch.&nbsp;7 “Basic Factory Dynamics” — bottleneck rate and line parameters; ch.&nbsp;18 “Capacity Management” for the decision-making layer this course only touches.</li>
-<li>E. M. Goldratt &amp; J. Cox, <em>The Goal</em> (1984) — the constraint idea as narrative; the five focusing steps are Lab 2’s debrief in novel form.</li>
+<li><strong>Inserters have a direction.</strong> An inserter grabs from the tile <em>behind</em> itself and drops <em>in front</em>; with the Alt overlay on, the arrow shows the drop direction. When a lab says “splice a chest into the belt,” that means: remove one belt tile, place the chest there, and place one inserter feeding the chest and one taking from it — arrows pointing along the original flow.</li>
+<li><strong>Wires have a reach</strong> (9 tiles). A wire that would stretch further simply doesn’t connect — the game won’t stop you from <em>trying</em>, and an unconnected control wire silently controls nothing. Check your connections visually. (This course’s own reference solutions got burned by exactly this; you will read that story in Lab 3.)</li>
 </ul>
+</section>
+<section id="reading-the-factory-floor" class="level2">
+<h2 class="anchored" data-anchor-id="reading-the-factory-floor">Reading the factory floor</h2>
+<p>The labs describe Factorio’s objects in plant-floor language. The dictionary, once:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>In the game</th>
+<th>In the course</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>transport belt</td>
+<td>conveyor</td>
+<td>moves material; <strong>holds inventory in transit</strong></td>
+</tr>
+<tr class="even">
+<td>fast inserter</td>
+<td>material handler</td>
+<td>moves items between neighbors; has direction</td>
+</tr>
+<tr class="odd">
+<td>assembling machine 1/2/3</td>
+<td>workstation (slow / medium / fast)</td>
+<td>transforms material by a recipe, at a fixed rate</td>
+</tr>
+<tr class="even">
+<td>wooden / steel chest</td>
+<td>buffer store</td>
+<td>holds inventory in place</td>
+</tr>
+<tr class="odd">
+<td>blue <strong>source port</strong></td>
+<td>receiving dock</td>
+<td>where material enters the system — the declared boundary</td>
+</tr>
+<tr class="even">
+<td>orange <strong>sink port</strong></td>
+<td>shipping dock</td>
+<td>where finished goods leave — the other boundary</td>
+</tr>
+<tr class="odd">
+<td>toolbox chest (near spawn)</td>
+<td>maintenance crib</td>
+<td>the parts you’re allowed to redesign with; never part of any measurement</td>
+</tr>
+<tr class="even">
+<td>constant / decider combinator</td>
+<td>controller (PLC)</td>
+<td>reads signals, applies a rule, drives equipment</td>
+</tr>
+<tr class="odd">
+<td>substation, solar panel</td>
+<td>power distribution</td>
+<td>keep everything energized; in these labs you can ignore them</td>
+</tr>
+</tbody>
+</table>
+<p>The two ports are FISL bench equipment: indestructible, not openable, not yours to move. They <em>are</em> the system boundary you’ll read about in every lab.</p>
+</section>
+<section id="which-labs-need-which-hands" class="level2">
+<h2 class="anchored" data-anchor-id="which-labs-need-which-hands">Which labs need which hands</h2>
+<ul>
+<li><strong>Labs 0–2</strong>: walking and watching. Genuinely none of the building skills — your first three labs are safe territory to learn the controls in.</li>
+<li><strong>Labs 3–4</strong>: placing and removing entities, the chest splice, a machine swap, and your first circuit wire.</li>
+<li><strong>Labs 5–6</strong>: combinators and enable conditions — the deepest game skill the course uses, introduced by the lab chapters when needed.</li>
+</ul>
+<p>If you’re nervous about the hands: connect to any lab, don’t press Start, and practice on the READY floor. It costs nothing and resets completely on the next run.</p>
 
 
 </section>
@@ -734,13 +894,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../labs/lab-01-flow-and-capacity.html" class="pagination-link" aria-label="Lab 1 — Flow and Capacity">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lab 1 — Flow and Capacity</span></span>
+      <a href="./index.html" class="pagination-link" aria-label="Welcome">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Welcome</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../labs/lab-02-the-constraint.html" class="pagination-link" aria-label="Lab 2 — The Constraint">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lab 2 — The Constraint</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./labs/lab-00-measuring-the-factory.html" class="pagination-link" aria-label="Lab 0 — Measuring the Factory">
+        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lab 0 — Measuring the Factory</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

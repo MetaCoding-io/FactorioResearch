@@ -1,0 +1,130 @@
+# Before the First Lab {.unnumbered}
+
+This chapter is for the reader who has never played Factorio — or never
+run FISL. It contains everything the course assumes about your hands and
+your machine, and nothing else. If you already play Factorio and have
+run `fisl run` once, skip straight to Lab 0.
+
+## What you need
+
+- **Factorio**, the game (factorio.com or Steam, ~$35 — this course
+  cannot be done with the free demo, and honesty obliges us to say that
+  before you read three chapters). The course pins version **2.0.77**;
+  any machine that runs the game comfortably is enough, no expansion
+  required.
+- **Python 3.11 or newer** and a terminal you're comfortable pasting
+  commands into.
+- About **30 minutes** for setup, once.
+
+Nothing else from Factorio's world is required: no prior knowledge of
+its technology tree, no combat (our worlds have no enemies), no rocket.
+The course uses perhaps a dozen of the game's hundreds of mechanics, and
+this chapter lists all of them.
+
+## One-time setup
+
+```sh
+git clone git@github.com:MetaCoding-io/FactorioResearch.git
+cd FactorioResearch
+pip install -e '.[dev]'     # the quotes matter in zsh
+
+# tell fisl where Factorio lives (add to your shell profile):
+export FACTORIO_BIN=/path/to/factorio/bin/x64/factorio
+```
+
+The FISL measurement mods never need manual installation — every run
+copies them into its own isolated workspace automatically.
+
+## How a lab session works
+
+Every lab follows the same operational rhythm:
+
+1. In a terminal: `fisl run scenarios/factory-physics/<lab>`. This
+   compiles the experiment, starts a private Factorio server from the
+   lab's pristine baseline world, and prints a port number.
+2. Launch your Factorio client and connect to it (the User Guide's
+   client section has the exact command; the essential flags are
+   `--mp-connect localhost:<port>` and `--mod-directory
+   runs/<run_id>/server/mods`).
+3. In-game you'll spawn on the lab floor. The **FISL panel** (top left)
+   shows READY. Walk around, look at everything, build if the lab calls
+   for it — **the experiment clock does not start until you press Start
+   Experiment.** The READY world is your practice range: nothing you do
+   before Start is measured, and a fresh `fisl run` always begins from
+   the same pristine world.
+4. Press **Start Experiment** and operate. Two rules are enforced, not
+   suggested: there is no pause (the clock is simulation ticks), and
+   disconnecting mid-run aborts the run — data preserved, run marked
+   aborted. Aborting is cheap; just run again.
+5. When the final phase ends, the panel shows your results, and
+   `fisl report runs/<run_id>` prints the full measurement record.
+
+## The controls — all of them
+
+Factorio has hundreds of keybindings. The course uses these (defaults
+shown; Settings → Controls lists them all):
+
+| You want to | Do |
+|---|---|
+| walk | **W A S D** |
+| open / close your inventory | **E** (also closes most windows) |
+| open a machine or chest | **left-click** it |
+| take items from a chest | click items in its window (shift-click moves a stack) |
+| place the item in your hand | **left-click** the ground |
+| rotate the item in your hand (or a placed entity under the cursor) | **R** |
+| empty your hand | **Q** (over an entity, **Q** instead copies it into your hand — handy) |
+| remove an entity | **hold right-click** on it until it pops into your inventory |
+| set a machine's recipe | open it, pick the recipe from its panel |
+| see what everything is doing | **Alt** — toggles the info overlay; the course's figures assume it's on |
+| drag a circuit wire | **Alt+R** (red) or **Alt+G** (green) puts the wire tool in your hand; click one entity, then the other |
+| fullscreen | **Alt+Enter** |
+
+Two mechanics deserve a sentence each, because labs from Lab 3 onward
+lean on them:
+
+- **Inserters have a direction.** An inserter grabs from the tile
+  *behind* itself and drops *in front*; with the Alt overlay on, the
+  arrow shows the drop direction. When a lab says "splice a chest into
+  the belt," that means: remove one belt tile, place the chest there,
+  and place one inserter feeding the chest and one taking from it —
+  arrows pointing along the original flow.
+- **Wires have a reach** (9 tiles). A wire that would stretch further
+  simply doesn't connect — the game won't stop you from *trying*, and an
+  unconnected control wire silently controls nothing. Check your
+  connections visually. (This course's own reference solutions got
+  burned by exactly this; you will read that story in Lab 3.)
+
+## Reading the factory floor
+
+The labs describe Factorio's objects in plant-floor language. The
+dictionary, once:
+
+| In the game | In the course | Role |
+|---|---|---|
+| transport belt | conveyor | moves material; **holds inventory in transit** |
+| fast inserter | material handler | moves items between neighbors; has direction |
+| assembling machine 1/2/3 | workstation (slow / medium / fast) | transforms material by a recipe, at a fixed rate |
+| wooden / steel chest | buffer store | holds inventory in place |
+| blue **source port** | receiving dock | where material enters the system — the declared boundary |
+| orange **sink port** | shipping dock | where finished goods leave — the other boundary |
+| toolbox chest (near spawn) | maintenance crib | the parts you're allowed to redesign with; never part of any measurement |
+| constant / decider combinator | controller (PLC) | reads signals, applies a rule, drives equipment |
+| substation, solar panel | power distribution | keep everything energized; in these labs you can ignore them |
+
+The two ports are FISL bench equipment: indestructible, not openable,
+not yours to move. They *are* the system boundary you'll read about in
+every lab.
+
+## Which labs need which hands
+
+- **Labs 0–2**: walking and watching. Genuinely none of the building
+  skills — your first three labs are safe territory to learn the
+  controls in.
+- **Labs 3–4**: placing and removing entities, the chest splice, a
+  machine swap, and your first circuit wire.
+- **Labs 5–6**: combinators and enable conditions — the deepest game
+  skill the course uses, introduced by the lab chapters when needed.
+
+If you're nervous about the hands: connect to any lab, don't press
+Start, and practice on the READY floor. It costs nothing and resets
+completely on the next run.

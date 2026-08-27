@@ -24,7 +24,7 @@
     "href": "index.html#what-this-course-assumes",
     "title": "Factory Physics Through Factorio",
     "section": "What this course assumes",
-    "text": "What this course assumes\nNo Factorio experience is required — the labs teach the handful of controls you need. No mathematics beyond arithmetic is required to do the labs; the theory sections introduce each formal relationship as it is earned.",
+    "text": "What this course assumes\nNo Factorio experience is required — but that promise is kept by the Before the First Lab chapter, not by wishful thinking: it teaches the handful of controls the course uses (there are about a dozen), the plant-floor reading of the game’s objects, and the one-time setup. Start there if you’ve never played. No mathematics beyond arithmetic is required to do the labs; the interludes introduce each formal relationship as it is earned.",
     "crumbs": [
       "Welcome"
     ]
@@ -37,6 +37,76 @@
     "text": "What the simulation assumes away\nFactorio’s machines execute perfectly, never fail, and hide nothing. Real factories — and real organizations — do none of these things. Each lab ends by stating explicitly what the simulation represented, what it omitted, and which conclusions are (and are not) warranted. Treat that discipline as part of the subject: knowing the limits of a model is what makes it usable.",
     "crumbs": [
       "Welcome"
+    ]
+  },
+  {
+    "objectID": "before-the-first-lab.html",
+    "href": "before-the-first-lab.html",
+    "title": "Before the First Lab",
+    "section": "",
+    "text": "What you need\nThis chapter is for the reader who has never played Factorio — or never run FISL. It contains everything the course assumes about your hands and your machine, and nothing else. If you already play Factorio and have run fisl run once, skip straight to Lab 0.\nNothing else from Factorio’s world is required: no prior knowledge of its technology tree, no combat (our worlds have no enemies), no rocket. The course uses perhaps a dozen of the game’s hundreds of mechanics, and this chapter lists all of them.",
+    "crumbs": [
+      "Before the First Lab"
+    ]
+  },
+  {
+    "objectID": "before-the-first-lab.html#what-you-need",
+    "href": "before-the-first-lab.html#what-you-need",
+    "title": "Before the First Lab",
+    "section": "",
+    "text": "Factorio, the game (factorio.com or Steam, ~$35 — this course cannot be done with the free demo, and honesty obliges us to say that before you read three chapters). The course pins version 2.0.77; any machine that runs the game comfortably is enough, no expansion required.\nPython 3.11 or newer and a terminal you’re comfortable pasting commands into.\nAbout 30 minutes for setup, once.",
+    "crumbs": [
+      "Before the First Lab"
+    ]
+  },
+  {
+    "objectID": "before-the-first-lab.html#one-time-setup",
+    "href": "before-the-first-lab.html#one-time-setup",
+    "title": "Before the First Lab",
+    "section": "One-time setup",
+    "text": "One-time setup\ngit clone git@github.com:MetaCoding-io/FactorioResearch.git\ncd FactorioResearch\npip install -e '.[dev]'     # the quotes matter in zsh\n\n# tell fisl where Factorio lives (add to your shell profile):\nexport FACTORIO_BIN=/path/to/factorio/bin/x64/factorio\nThe FISL measurement mods never need manual installation — every run copies them into its own isolated workspace automatically.",
+    "crumbs": [
+      "Before the First Lab"
+    ]
+  },
+  {
+    "objectID": "before-the-first-lab.html#how-a-lab-session-works",
+    "href": "before-the-first-lab.html#how-a-lab-session-works",
+    "title": "Before the First Lab",
+    "section": "How a lab session works",
+    "text": "How a lab session works\nEvery lab follows the same operational rhythm:\n\nIn a terminal: fisl run scenarios/factory-physics/&lt;lab&gt;. This compiles the experiment, starts a private Factorio server from the lab’s pristine baseline world, and prints a port number.\nLaunch your Factorio client and connect to it (the User Guide’s client section has the exact command; the essential flags are --mp-connect localhost:&lt;port&gt; and --mod-directory    runs/&lt;run_id&gt;/server/mods).\nIn-game you’ll spawn on the lab floor. The FISL panel (top left) shows READY. Walk around, look at everything, build if the lab calls for it — the experiment clock does not start until you press Start Experiment. The READY world is your practice range: nothing you do before Start is measured, and a fresh fisl run always begins from the same pristine world.\nPress Start Experiment and operate. Two rules are enforced, not suggested: there is no pause (the clock is simulation ticks), and disconnecting mid-run aborts the run — data preserved, run marked aborted. Aborting is cheap; just run again.\nWhen the final phase ends, the panel shows your results, and fisl report runs/&lt;run_id&gt; prints the full measurement record.",
+    "crumbs": [
+      "Before the First Lab"
+    ]
+  },
+  {
+    "objectID": "before-the-first-lab.html#the-controls-all-of-them",
+    "href": "before-the-first-lab.html#the-controls-all-of-them",
+    "title": "Before the First Lab",
+    "section": "The controls — all of them",
+    "text": "The controls — all of them\nFactorio has hundreds of keybindings. The course uses these (defaults shown; Settings → Controls lists them all):\n\n\n\n\n\n\n\nYou want to\nDo\n\n\n\n\nwalk\nW A S D\n\n\nopen / close your inventory\nE (also closes most windows)\n\n\nopen a machine or chest\nleft-click it\n\n\ntake items from a chest\nclick items in its window (shift-click moves a stack)\n\n\nplace the item in your hand\nleft-click the ground\n\n\nrotate the item in your hand (or a placed entity under the cursor)\nR\n\n\nempty your hand\nQ (over an entity, Q instead copies it into your hand — handy)\n\n\nremove an entity\nhold right-click on it until it pops into your inventory\n\n\nset a machine’s recipe\nopen it, pick the recipe from its panel\n\n\nsee what everything is doing\nAlt — toggles the info overlay; the course’s figures assume it’s on\n\n\ndrag a circuit wire\nAlt+R (red) or Alt+G (green) puts the wire tool in your hand; click one entity, then the other\n\n\nfullscreen\nAlt+Enter\n\n\n\nTwo mechanics deserve a sentence each, because labs from Lab 3 onward lean on them:\n\nInserters have a direction. An inserter grabs from the tile behind itself and drops in front; with the Alt overlay on, the arrow shows the drop direction. When a lab says “splice a chest into the belt,” that means: remove one belt tile, place the chest there, and place one inserter feeding the chest and one taking from it — arrows pointing along the original flow.\nWires have a reach (9 tiles). A wire that would stretch further simply doesn’t connect — the game won’t stop you from trying, and an unconnected control wire silently controls nothing. Check your connections visually. (This course’s own reference solutions got burned by exactly this; you will read that story in Lab 3.)",
+    "crumbs": [
+      "Before the First Lab"
+    ]
+  },
+  {
+    "objectID": "before-the-first-lab.html#reading-the-factory-floor",
+    "href": "before-the-first-lab.html#reading-the-factory-floor",
+    "title": "Before the First Lab",
+    "section": "Reading the factory floor",
+    "text": "Reading the factory floor\nThe labs describe Factorio’s objects in plant-floor language. The dictionary, once:\n\n\n\n\n\n\n\n\nIn the game\nIn the course\nRole\n\n\n\n\ntransport belt\nconveyor\nmoves material; holds inventory in transit\n\n\nfast inserter\nmaterial handler\nmoves items between neighbors; has direction\n\n\nassembling machine 1/2/3\nworkstation (slow / medium / fast)\ntransforms material by a recipe, at a fixed rate\n\n\nwooden / steel chest\nbuffer store\nholds inventory in place\n\n\nblue source port\nreceiving dock\nwhere material enters the system — the declared boundary\n\n\norange sink port\nshipping dock\nwhere finished goods leave — the other boundary\n\n\ntoolbox chest (near spawn)\nmaintenance crib\nthe parts you’re allowed to redesign with; never part of any measurement\n\n\nconstant / decider combinator\ncontroller (PLC)\nreads signals, applies a rule, drives equipment\n\n\nsubstation, solar panel\npower distribution\nkeep everything energized; in these labs you can ignore them\n\n\n\nThe two ports are FISL bench equipment: indestructible, not openable, not yours to move. They are the system boundary you’ll read about in every lab.",
+    "crumbs": [
+      "Before the First Lab"
+    ]
+  },
+  {
+    "objectID": "before-the-first-lab.html#which-labs-need-which-hands",
+    "href": "before-the-first-lab.html#which-labs-need-which-hands",
+    "title": "Before the First Lab",
+    "section": "Which labs need which hands",
+    "text": "Which labs need which hands\n\nLabs 0–2: walking and watching. Genuinely none of the building skills — your first three labs are safe territory to learn the controls in.\nLabs 3–4: placing and removing entities, the chest splice, a machine swap, and your first circuit wire.\nLabs 5–6: combinators and enable conditions — the deepest game skill the course uses, introduced by the lab chapters when needed.\n\nIf you’re nervous about the hands: connect to any lab, don’t press Start, and practice on the READY floor. It costs nothing and resets completely on the next run.",
+    "crumbs": [
+      "Before the First Lab"
     ]
   },
   {

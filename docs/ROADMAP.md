@@ -52,6 +52,25 @@ In dependency order (later items consume earlier ones):
 | 5 | Objectives + full visibility enforcement (ADR 0011/0012) — **done** (requirement/preference objectives, PASS/FAIL/UNDETERMINED with conjunction, report + compare feasibility framing, allowlist-driven post-run GUI, objective-rule disclosure; fp05 now declares the canonical service requirement + WIP preference, which **changes its resolved hash — regenerate**: `fisl build-baseline scenarios/factory-physics/fp05-push-and-pull` then `fisl solutions … --run --json --svg`) | [#10](https://github.com/MetaCoding-io/FactorioResearch/issues/10) | Labs 5/6 evaluation |
 | 6 | Lab content: builder generalization, Labs 0–6, RV partial fixtures, per-lab reference solutions + course chapters — **in progress: all seven labs authored and measured through Lab 5; Lab 6 (capstone) authored; all six theory interludes + notation/readings appendices authored (the lab-course-book structure — see `CONCEPT_COVERAGE.md`)** (fp06 scenario: scheduled supply 36/min into a finite 100+10 warehouse + 33/min demand vs the 30/min constraint; new `supply_loss` metric + telemetry; buffer-vs-upgrade reference solutions where the buffer run is INFEASIBLE by the declared objectives; chapter + LAB6 layout registered. Remaining: **regenerate fp05** (objectives changed its hash): `fisl build-baseline scenarios/factory-physics/fp05-push-and-pull` then re-run its solutions dataset; **build fp06**: `fisl build-baseline scenarios/factory-physics/fp06-system-optimization` then `fisl solutions scenarios/factory-physics/fp06-system-optimization --run --json course/data/lab-06-comparison.json --svg …`, cite measured numbers in the Lab 6 chapter + solution READMEs; screenshots (`fisl snap`); RV-004 underground/splitter fixtures; external-learner gate) | [#11](https://github.com/MetaCoding-io/FactorioResearch/issues/11) | the rest of the course |
 
+**Approved course-expansion plan (in order):**
+
+1. **N00b on-ramp** (three phases, approved 2026-08-27): ① *Before the
+   First Lab* front-matter chapter — setup quickstart, the ~dozen
+   controls, plant-floor translation table, per-lab hands ladder
+   (**done**); ② `fp-sandbox` "Operator Training" scenario — neutralized
+   world + toolbox + drill checklist (place/rotate/splice/swap +
+   circuit-wire drills), instrumented by the existing dynamic
+   entity-set machinery so the learner's first report grades their
+   drills; ③ just-in-time "hands you'll need" callouts in Labs 3–5
+   referencing the sandbox drills (depends on ② for drill numbering).
+2. **Scenario Author's Guide**: `docs/AUTHORING_GUIDE.md` reference
+   (schema walk, metrics catalog with validity semantics, objectives,
+   visibility, hash discipline, layout registration, solutions,
+   verification workflow) + a worked "scenario from scratch" example.
+3. **Course II (variability)** and **Course III (organizational)** as
+   scoped in `CONCEPT_COVERAGE.md`, plus its four open gap decisions
+   (WIP-sweep lab, EOQ/batching, quality/scrap, scheduling).
+
 **Gate carried over from the design review:** before polishing Labs 5–6
 machinery, one learner who is not the maintainer runs Lab 3 end-to-end and
 their friction gets folded back in (tracked in [#11](https://github.com/MetaCoding-io/FactorioResearch/issues/11)).
