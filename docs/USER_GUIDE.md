@@ -14,6 +14,7 @@ Documentation map — which document answers what:
 | How do I run/build/play/debug FISL? | **this guide** |
 | Why does FISL measure things the way it does? | `docs/adr/` (ADRs 0001–0018) |
 | What is the scenario file format? | `docs/FISL_V1_SCHEMA.md` |
+| How do I design and author a scenario? | `docs/AUTHORING_GUIDE.md` |
 | What is v1 supposed to contain eventually? | `docs/FISL_V1_PRD.md` |
 | Which Factorio assumptions are empirically proven? | `docs/RUNTIME_VALIDATION.md` |
 | What are the course labs? | `docs/FACTORY_PHYSICS_LABS_V1.md` |

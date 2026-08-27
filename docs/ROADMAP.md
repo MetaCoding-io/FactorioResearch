@@ -64,10 +64,13 @@ In dependency order (later items consume earlier ones):
    a human drill session to validate the six predicates on real
    2.0.77**); ③ "hands you'll need" callouts in Labs 3–6 referencing
    drill ids (**done**).
-2. **Scenario Author's Guide**: `docs/AUTHORING_GUIDE.md` reference
-   (schema walk, metrics catalog with validity semantics, objectives,
-   visibility, hash discipline, layout registration, solutions,
-   verification workflow) + a worked "scenario from scratch" example.
+2. **Scenario Author's Guide** — **done**: `docs/AUTHORING_GUIDE.md`
+   (workflow, physics-design judgment incl. the fp06 transient case
+   study, per-section guidance, metrics catalog with compiler
+   guardrails, objective unit rules, hash discipline, layout
+   registration, solution/drill doctrine, worked example, pre-flight
+   checklist); `FISL_V1_SCHEMA.md` gained the missing §13.11
+   `supply_loss`.
 3. **Course II (variability)** and **Course III (organizational)** as
    scoped in `CONCEPT_COVERAGE.md`, plus its four open gap decisions
    (WIP-sweep lab, EOQ/batching, quality/scrap, scheduling).

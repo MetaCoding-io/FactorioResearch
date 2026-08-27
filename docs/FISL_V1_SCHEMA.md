@@ -955,6 +955,27 @@ loaded_cycle_time:
 
 Probe/cohort method variants use fields required by ADR 0009.
 
+### 13.11 `supply_loss`
+
+Fraction (with exact quantities) of a source port's *scheduled* inbound
+supply lost at its finite external buffer within a window:
+
+```yaml
+supply_loss:
+  type: supply_loss
+  port: workpiece_source
+  window:
+    phase: measured
+```
+
+Compile-time requirements: the named port must declare `supply.mode:
+scheduled` **and** a finite `external_buffer.capacity` — with replenish
+supply there is no scheduled quantity to lose against, and with an
+unbounded buffer loss is impossible; both are rejected rather than
+reported as a permanent 0%. Numerator and denominator come from the
+runtime's `source_supply_scheduled` / `source_supply_lost` telemetry as
+exact integers.
+
 ---
 
 ## 14. Windows
