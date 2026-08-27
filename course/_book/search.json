@@ -1,0 +1,868 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Factory Physics Through Factorio",
+    "section": "",
+    "text": "Welcome\nThis is the course text for Factory Physics Through Factorio: a sequence of laboratory experiments in which you operate, measure, and redesign real (simulated) production systems, and meet the formal theory only after you have experienced the phenomenon it explains.\nThe laboratory is FISL — the Factorio Industrial Systems Laboratory. Factorio provides the physics of production: machines, belts, buffers, recipes, power. FISL provides the experimental apparatus around it: controlled material supply, declared system boundaries, an exact experiment clock, and measurement whose every number carries its method, window, and validity.\nThe governing idea:",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#how-the-labs-work",
+    "href": "index.html#how-the-labs-work",
+    "title": "Factory Physics Through Factorio",
+    "section": "How the labs work",
+    "text": "How the labs work\nEach lab follows the same protocol:\n\nEncounter a deliberately constructed production system.\nRun a controlled, timed experiment while it operates (or while you modify it).\nRead the report — reproducible measurements, not impressions.\nMeet the theory that names what you observed.\nIntervene and re-run, then compare attempts side by side.\n\nEvery run you perform produces an auditable record; two runs of the same scenario are exactly comparable, and the deterministic simulation means a repeated run without intervention reproduces its numbers exactly. Your experiments are experiments in the scientific sense.\nBetween labs, short interludes develop the theory the phenomena have earned: each one builds only on what earlier labs made you measure, and each ends with claims stated precisely enough to be wrong — which the next lab then tests. Theory here is never an announcement; it is a hypothesis you are about to check against a system you can walk around in.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#what-this-course-assumes",
+    "href": "index.html#what-this-course-assumes",
+    "title": "Factory Physics Through Factorio",
+    "section": "What this course assumes",
+    "text": "What this course assumes\nNo Factorio experience is required — the labs teach the handful of controls you need. No mathematics beyond arithmetic is required to do the labs; the theory sections introduce each formal relationship as it is earned.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#what-the-simulation-assumes-away",
+    "href": "index.html#what-the-simulation-assumes-away",
+    "title": "Factory Physics Through Factorio",
+    "section": "What the simulation assumes away",
+    "text": "What the simulation assumes away\nFactorio’s machines execute perfectly, never fail, and hide nothing. Real factories — and real organizations — do none of these things. Each lab ends by stating explicitly what the simulation represented, what it omitted, and which conclusions are (and are not) warranted. Treat that discipline as part of the subject: knowing the limits of a model is what makes it usable.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "labs/lab-00-measuring-the-factory.html",
+    "href": "labs/lab-00-measuring-the-factory.html",
+    "title": "1  Lab 0 — Measuring the Factory",
+    "section": "",
+    "text": "1.1 The system\nScenario: fp-00-measuring-the-factory · one run of ~6 minutes\nBefore anything can be improved it has to be measured, and before anything can be measured someone has to make three decisions that sound like formalities and are not: where the system ends, what unit is counted, and over what window. This lab is one machine, two chests, and those three decisions made explicit.\nA blue source chest, a short belt, one machine (rough → machined workpiece, one every 4 s), another belt, an orange sink chest. The white rectangle you can walk around is the declared boundary: FISL counts a workpiece as inside the system from the tick it leaves the source until the tick it arrives at the sink — on a belt, in the machine’s hopper, mid-craft, or in your pockets. The ports are the only doors, and the experiment watches both.\nFour numbers, all deriving from those decisions:",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Lab 0 — Measuring the Factory</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-00-measuring-the-factory.html#the-system",
+    "href": "labs/lab-00-measuring-the-factory.html#the-system",
+    "title": "1  Lab 0 — Measuring the Factory",
+    "section": "",
+    "text": "current WIP — a stock: how many workpieces are inside right now;\naverage WIP — the same stock averaged tick-by-tick over the measured window;\nadmission rate — a flow: workpieces entering per minute, counted at the source;\nthroughput — a flow: workpieces leaving per minute, counted at the sink.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Lab 0 — Measuring the Factory</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-00-measuring-the-factory.html#run-it-and-watch-two-numbers-disagree",
+    "href": "labs/lab-00-measuring-the-factory.html#run-it-and-watch-two-numbers-disagree",
+    "title": "1  Lab 0 — Measuring the Factory",
+    "section": "1.2 Run it, and watch two numbers disagree",
+    "text": "1.2 Run it, and watch two numbers disagree\nStart the experiment and watch the panel’s WIP number while you walk the line. For the first stretch it climbs: the source inserter feeds the belt much faster than the machine consumes, so the input belt fills. Once the belt is packed, WIP flattens — the system is full.\nThat climb is the whole lesson in miniature. While WIP is rising, work is entering faster than it is leaving — the admission rate and the throughput are different numbers. They must be: the difference between inflow and outflow is the change in stock. That’s not an insight about factories; it’s accounting. But it means neither rate alone describes “how fast the factory runs” until you say which boundary you measured at.\nAfter the run, fisl report runs/&lt;run-id&gt; shows all four numbers, each with its window [start, end) in ticks, its method, and its exact fraction. Questions to answer from the report, not from memory:\n\nIn the measured window, were admission rate and throughput equal? Should they be, given what WIP did during that window?\nIs average WIP equal to the WIP you saw at the end? Why would a time average differ from a closing snapshot?\nThe machine takes 4 s per workpiece. What throughput does that predict? Check it.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Lab 0 — Measuring the Factory</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-00-measuring-the-factory.html#debrief",
+    "href": "labs/lab-00-measuring-the-factory.html#debrief",
+    "title": "1  Lab 0 — Measuring the Factory",
+    "section": "1.3 Debrief",
+    "text": "1.3 Debrief\n\nSuppose the boundary had been drawn to exclude the input belt. Which numbers change? Which stay the same? (All the WIP numbers change; the flows at the new boundary change; the machine does not.) A metric without its boundary is not a number — it’s a vibe.\n“We produced 75 units” — count, stock, or flow? What else must be stated before it means anything?\nEvery number in the report carries an exact numerator/denominator and a declared window. That bookkeeping felt pedantic today, on one machine. Every later lab runs on exactly this machinery, unchanged — that’s what makes their comparisons trustworthy.\n\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nNo optimization objective, by design: the deliverable is a correctly read report, not a better factory. Good debrief format: have learners write down their three numbers with units and windows, then compare phrasings.\nThe admission-rate metric is the entry-boundary variant of the same throughput machinery (boundary: entry in scenario.yaml) — same settlement records, different port set. Cite that when someone asks whether input and output are measured “the same way”.\nReference run 01M0Z5SZDS04X54CDCE5C2KJ8A (committed verification summary): throughput 15.00/min — exactly the machine’s 4 s rate; average WIP 40.00; admission rate 15.00/min, equal to throughput because the measured window starts after the input belt has filled — the visible inflow&gt;outflow disagreement lives in the warmup, which is exactly the debrief point about windows.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Lab 0 — Measuring the Factory</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/rules-of-evidence.html",
+    "href": "interludes/rules-of-evidence.html",
+    "title": "2  Interlude — The Rules of Evidence",
+    "section": "",
+    "text": "2.1 A number is a claim with a method\nRead after Lab 0, before Lab 1 · no Factorio required · ~20 minutes\nLab 0 handed you one machine and asked for three numbers: what’s inside, what entered, what left. Small as it was, every measurement discipline this course enforces was already present. This interlude names the rules you were following — because from here on the systems grow, and the rules are what keep large numbers from becoming large lies.\nEvery figure a FISL report prints carries three attachments: the method that produced it, the window it was measured over, and a validity verdict. This is not decoration. “Throughput 15/min” is not a fact; “15 completions per minute across the sink boundary, over the 10-minute measured window, census clean” is. Strip the attachments and two honest numbers become incomparable — or worse, comparable-looking.\nThe habit to build now: whenever you see a rate or a fraction, ask per what? A rate is a count divided by a window; a fraction is a count divided by a denominator. Both halves are choices, and both halves can be wrong independently of the count.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interlude — The Rules of Evidence</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/rules-of-evidence.html#the-boundary-is-declared-not-discovered",
+    "href": "interludes/rules-of-evidence.html#the-boundary-is-declared-not-discovered",
+    "title": "2  Interlude — The Rules of Evidence",
+    "section": "2.2 The boundary is declared, not discovered",
+    "text": "2.2 The boundary is declared, not discovered\nLab 0’s blue and orange ports were not scenery: they are the declared boundary of the system, fixed before the experiment starts. Everything between them — belts, machine buffers, your pockets — is inside. “Inside” and “outside” are decided by the declaration, not by what feels like part of the factory.\nThis is what makes counting exact. Admissions are crossings of one declared surface; completions are crossings of another; WIP is what has crossed the first and not the second. Move the boundary and all three numbers legitimately change — which is why FISL freezes it into the scenario’s identity, and why comparing runs is only meaningful when that identity is the same.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interlude — The Rules of Evidence</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/rules-of-evidence.html#windows-half-open-tick-exact",
+    "href": "interludes/rules-of-evidence.html#windows-half-open-tick-exact",
+    "title": "2  Interlude — The Rules of Evidence",
+    "section": "2.3 Windows: half-open, tick-exact",
+    "text": "2.3 Windows: half-open, tick-exact\nThe experiment clock is the simulation’s own tick counter — not wall time, not your watch. A measurement window is a half-open interval of ticks, \\([a, b)\\): it owns its first tick and does not own its last.\n\n\n\nAdjacent windows tile the clock exactly. The boundary tick belongs to the window that starts on it — never to both, never to neither.\n\n\nThe payoff is boring and absolute: adjacent windows tile time with no gap and no overlap, so an event is counted exactly once no matter how phases are cut. Warmup, measured window, and any tail phases are all intervals of this kind. When you later see a number that depends delicately on its window — and in Lab 6 you will meet one that hides for twelve minutes — the window convention is what lets you reason about it instead of shrugging.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interlude — The Rules of Evidence</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/rules-of-evidence.html#conservation-is-the-auditor",
+    "href": "interludes/rules-of-evidence.html#conservation-is-the-auditor",
+    "title": "2  Interlude — The Rules of Evidence",
+    "section": "2.4 Conservation is the auditor",
+    "text": "2.4 Conservation is the auditor\nThe WIP number is bookkeeping: admissions minus completions, maintained as a ledger. Bookkeeping can drift from reality, so FISL periodically takes a census — physically counting every workpiece in the zone, your inventory included — and demands the ledger and the census agree exactly, with zero tolerance. Disagreement doesn’t adjust the number; it flags the run.\nThat last clause is the rule of evidence in miniature: a measurement problem is reported, never repaired silently. A run can complete and still carry validity flags; the flags travel with every number derived from it. You will never be handed a cleaned-up figure with the cleaning hidden.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interlude — The Rules of Evidence</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/rules-of-evidence.html#reproducibility-is-the-apparatus",
+    "href": "interludes/rules-of-evidence.html#reproducibility-is-the-apparatus",
+    "title": "2  Interlude — The Rules of Evidence",
+    "section": "2.5 Reproducibility is the apparatus",
+    "text": "2.5 Reproducibility is the apparatus\nThe simulation is deterministic and every rate in it is a constant. Rerun a scenario without intervening and you get — not approximately, bit-for-bit — the same telemetry and the same report. This is what makes your runs experiments in the scientific sense: an intervention’s effect is the entire difference between two runs, with nothing left over for luck to explain. It is a luxury no real factory offers, and the course spends it deliberately: every disagreement between your prediction and the data is a wrong prediction, never noise.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interlude — The Rules of Evidence</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/rules-of-evidence.html#claims-to-carry-into-lab-1",
+    "href": "interludes/rules-of-evidence.html#claims-to-carry-into-lab-1",
+    "title": "2  Interlude — The Rules of Evidence",
+    "section": "2.6 Claims to carry into Lab 1",
+    "text": "2.6 Claims to carry into Lab 1\nLab 1 puts two machines in series, and their catalog capacities differ: the first can craft every 1.6 s, the second every 2.0 s. Before running:\n\nRerun any completed run without changing anything. Every reported number will repeat exactly — decimals and all. (Do this once; it is the cheapest calibration of trust you will ever perform.)\nOver any window, the change in WIP will equal admissions minus completions in that window, exactly. The census guarantees you’d be told otherwise.\nConvert the two craft times to capacities (60 s ÷ craft seconds) and write both down. The run will report one throughput. Predict which of your two numbers it is — and notice that you are already doing Lab 2’s job.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interlude — The Rules of Evidence</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/rules-of-evidence.html#further-reading",
+    "href": "interludes/rules-of-evidence.html#further-reading",
+    "title": "2  Interlude — The Rules of Evidence",
+    "section": "2.7 Further reading",
+    "text": "2.7 Further reading\n\nHopp & Spearman, Factory Physics (3rd ed.), ch. 6 “A Science of Manufacturing” — the argument that manufacturing needs laws and measurements rather than slogans; this course’s founding premise.\nP. J. Denning & J. P. Buzen, “The Operational Analysis of Queueing Network Models”, Computing Surveys 10(3), 1978 — measurement laws stated as identities on observed data, exactly the stance FISL’s ledger takes.\nThe conventions here are FISL’s ADRs 0001 (experiment time and phases), 0010 (observation windows), and 0017 (conservation-ledger WIP with census cross-check).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Interlude — The Rules of Evidence</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-01-flow-and-capacity.html",
+    "href": "labs/lab-01-flow-and-capacity.html",
+    "title": "3  Lab 1 — Flow and Capacity",
+    "section": "",
+    "text": "3.1 The system\nScenario: fp-01-flow-and-capacity · one run of ~10 minutes\nLab 0 had one machine, so “the machine’s speed” and “the factory’s speed” were the same number. Add a second machine with a different speed and they come apart — and one of the most common industrial mistakes is born: reading a machine’s spec sheet as a promise about system output.\nTwo stages in series. The first machine is a fast model (one workpiece per 1.6 s — installed capacity 37.5/min). The second is a slow model (one per 2.0 s — installed capacity 30/min). Material supply is effectively unlimited, so nothing upstream of the line can be blamed for anything.\nMeasured: admission rate and completion throughput (both boundaries), current/average WIP, and each machine’s productive/starved/blocked fractions.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Lab 1 — Flow and Capacity</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-01-flow-and-capacity.html#run-it-and-audit-the-capacities",
+    "href": "labs/lab-01-flow-and-capacity.html#run-it-and-audit-the-capacities",
+    "title": "3  Lab 1 — Flow and Capacity",
+    "section": "3.2 Run it, and audit the capacities",
+    "text": "3.2 Run it, and audit the capacities\nPredict before starting: the two machines install 37.5/min and 30/min of capacity. What will the sink actually receive per minute?\nDuring the run, walk the line:\n\nMachine 1 runs, stalls against its packed output belt, runs again — it has capacity it cannot use.\nMachine 2 never rests.\nThe belt between them is solid; the belt after machine 2 is sparse.\n\nAfterward, the report gives the audit: completion throughput equals the slower machine’s rate — serial capacity does not add, it bottlenecks. Machine 1’s productive fraction is capped at the ratio of the rates (1.6/2.0 = 80%), and the report shows the shortfall explicitly as blocked time, not as a mystery.\nThree cross-checks worth doing by hand:\n\nadmission rate vs throughput — during the warmup the input belt was still filling, so admissions ran ahead of completions and WIP grew. In the measured window (steady state) the two rates converge. The report’s two boundary measurements let you verify conservation numerically: inflow − outflow = ΔWIP, exactly.\nmachine 1’s craft count vs system throughput — machine 1 transforms more workpieces per minute than the sink receives only while the middle belt is still filling; at steady state it cannot. Factorio’s own production statistics would happily show you crafts; FISL’s throughput is deliberately measured at the completion boundary because crafts are not deliveries.\nwould more input help? — the source already replenishes faster than machine 1 draws. Piling more inventory upstream of a full line changes the queue, not the output. (Try it: the toolbox has chests.)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Lab 1 — Flow and Capacity</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-01-flow-and-capacity.html#debrief",
+    "href": "labs/lab-01-flow-and-capacity.html#debrief",
+    "title": "3  Lab 1 — Flow and Capacity",
+    "section": "3.3 Debrief",
+    "text": "3.3 Debrief\n\nYour line “installs” 67.5/min of combined capacity and delivers 30/min. Is any capacity missing? Where did it go, in the report’s vocabulary?\nA vendor offers to upgrade machine 1 to a model twice as fast. What does the measured data say that’s worth?\nWrite the rule you’d give a new plant manager for predicting a serial line’s output from its stage capacities. (You’ve just derived the first half of the next lab.)\n\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nThe three cross-checks are the lab. If time is short, drop the walking and keep the arithmetic — the report contains everything needed.\nRates: M1 = 2 s recipe / 1.25 speed = 1.6 s; M2 = 1 s / 0.5 = 2.0 s.\nReference run 01M0Z5V6MH175RJ5927SZG1YHF (committed verification summary): throughput 30.00/min — exactly the slower stage’s rate; admission 29.67/min; average WIP 60.0; pooled fractions productive 90.0% / blocked 9.3% / starved 0.8% — i.e. per machine, M1 ≈ 80% productive with ≈ 19% blocked (the 1.6/2.0 rate ratio, softened by its output buffer) and M2 ≈ 100% productive, pooled over two machines. The capacity audit is rate arithmetic made visible.\nNo committed reference solutions: the lab’s experiments (extra upstream inventory, rearranged belts) are cheap enough to do live, and the formal upgrade comparison is Lab 2’s whole subject.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Lab 1 — Flow and Capacity</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/capacity.html",
+    "href": "interludes/capacity.html",
+    "title": "4  Interlude — Capacity and the Weakest Link",
+    "section": "",
+    "text": "4.1 Capacity is arithmetic, not aspiration\nRead after Lab 1, before Lab 2 · no Factorio required · ~20 minutes\nLab 1 showed you a gap: two machines whose catalog capacities were 37.5 and 30 workpieces per minute, and a line that delivered 30. Nothing was broken. Nothing was wasted, either, in any way you could fix by working harder. This interlude turns that gap into arithmetic you can do for any line — and into a prediction Lab 2 is built to test.\nA machine’s capacity is the rate it could sustain if material were always waiting and space always open. In this laboratory it is exact:\n\\[\n\\text{craft time} = \\frac{\\text{recipe seconds}}{\\text{machine speed}},\n\\qquad\n\\text{capacity} = \\frac{60}{\\text{craft time}} \\text{ per minute.}\n\\]\nThe three assembler tiers run at speeds 0.5, 0.75, and 1.25; the machining recipe takes 2 s of work, inspection and finishing 1 s each. Every capacity number in this course — 15, 30, 37.5, 45 — comes from this one division. Real factories need measurement campaigns to learn these numbers; here you can read them off the nameplate. What you do with them is the same in both worlds.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interlude — Capacity and the Weakest Link</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/capacity.html#the-weakest-link-sets-the-pace",
+    "href": "interludes/capacity.html#the-weakest-link-sets-the-pace",
+    "title": "4  Interlude — Capacity and the Weakest Link",
+    "section": "4.2 The weakest link sets the pace",
+    "text": "4.2 The weakest link sets the pace\nPut machines in series and their capacities do not add, average, or negotiate. In a deterministic line, sustained output is:\n\\[\n\\text{line capacity} = \\min(\\text{capacity}_1, \\ldots, \\text{capacity}_n)\n\\]\n\n\n\nInstalled capacity by stage for a fast → slow → fast line. The line delivers the minimum; every unit of capacity above the dashed line is installed but unusable — not through mismanagement, but by arithmetic.\n\n\nThe stage achieving that minimum is the constraint (you will also hear bottleneck; the flow interlude will call its rate \\(r_b\\)). Two consequences follow immediately, and both are routinely disbelieved by people meeting them in the wild:\n\nCapacity added anywhere but the constraint adds nothing. Upgrade a 37.5/min stage to 45 and the min() does not move. The money is spent, the output is identical.\nInstalled capacity is not a promise. Lab 1’s line “wasted” 7.5/min of the first machine’s capability — permanently, structurally, and invisibly to anyone auditing the machines one at a time. Only the system number reveals it.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interlude — Capacity and the Weakest Link</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/capacity.html#utilization-needs-a-denominator",
+    "href": "interludes/capacity.html#utilization-needs-a-denominator",
+    "title": "4  Interlude — Capacity and the Weakest Link",
+    "section": "4.3 “Utilization” needs a denominator",
+    "text": "4.3 “Utilization” needs a denominator\nThe natural next question — how busy is each machine? — is a trap unless you ask it precisely. “Utilization” as a bare percentage smuggles in two choices: busy doing what (crafting? powered? merely occupied?) and busy out of what (the whole window? the time the machine existed?). FISL deliberately has no metric named “utilization”: when the course starts measuring busyness (Lab 4), every such number will name its numerator states and its denominator explicitly.\nFor now, one honest preview from pure arithmetic: a non-constraint machine in a line running at rate \\(m\\) can be doing useful work at most \\(m/\\text{capacity}\\) of the time. The faster a machine is relative to the constraint, the lazier it must look. Hold that thought; it will turn diagnosis upside down in Lab 4.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interlude — Capacity and the Weakest Link</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/capacity.html#claims-to-carry-into-lab-2",
+    "href": "interludes/capacity.html#claims-to-carry-into-lab-2",
+    "title": "4  Interlude — Capacity and the Weakest Link",
+    "section": "4.4 Claims to carry into Lab 2",
+    "text": "4.4 Claims to carry into Lab 2\nLab 2 is a three-stage line — 37.5, 30, and 45 workpieces per minute — with live diagnostics deliberately withheld. Commitments, in writing:\n\nMeasured throughput will be 30/min exactly — the minimum, nothing blended.\nThe two reference interventions upgrade one machine each. The one that touches a non-constraint will change throughput by exactly nothing; the one that touches the constraint will move the line to the new minimum — compute it before running.\nYou can name the constraint from catalog arithmetic before the run starts, and the withheld diagnostics cannot stop you: the machine whose capacity equals the measured line rate is the constraint.\n\nIf claim 2’s first half feels too strong — surely some improvement leaks through? — good. That intuition is exactly what the lab exists to correct, and in a deterministic world the correction is total.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interlude — Capacity and the Weakest Link</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/capacity.html#further-reading",
+    "href": "interludes/capacity.html#further-reading",
+    "title": "4  Interlude — Capacity and the Weakest Link",
+    "section": "4.5 Further reading",
+    "text": "4.5 Further reading\n\nHopp & Spearman, Factory Physics (3rd ed.), ch. 7 “Basic Factory Dynamics” — bottleneck rate and line parameters; ch. 18 “Capacity Management” for the decision-making layer this course only touches.\nE. M. Goldratt & J. Cox, The Goal (1984) — the constraint idea as narrative; the five focusing steps are Lab 2’s debrief in novel form.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interlude — Capacity and the Weakest Link</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-02-the-constraint.html",
+    "href": "labs/lab-02-the-constraint.html",
+    "title": "5  Lab 2 — The Constraint",
+    "section": "",
+    "text": "5.1 The system\nScenario: fp-02-the-constraint · runs of ~12 minutes each\nLab 1 ended with a rule: a serial line delivers at its slowest stage’s rate. This lab weaponizes it. You get a three-stage line, a toolbox full of faster machines, and one instruction: raise throughput. The instrumentation will not help you during the run — the panel shows current WIP and nothing else. Where you spend your upgrade is your diagnosis, made in public.\nThree machines: fast → slow → fast (1.6 s, 2.0 s, and 1.33 s per workpiece — but nobody hands the learner this table; the models just look different). Ample supply, clean sink. The toolbox holds upgrade machines of every tier.\nPost-run — and only post-run — the report reveals each machine’s productive/starved/blocked fractions. Live, you are as blind as a real plant manager on the floor: you can watch machines and you can watch the one WIP number.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab 2 — The Constraint</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-02-the-constraint.html#run-1-baseline-and-a-choice",
+    "href": "labs/lab-02-the-constraint.html#run-1-baseline-and-a-choice",
+    "title": "5  Lab 2 — The Constraint",
+    "section": "5.2 Run 1 — baseline, and a choice",
+    "text": "5.2 Run 1 — baseline, and a choice\nRun the line untouched once and watch it the way Lab 4 will later formalize: which machine never rests? What piles up, and where? Then make your call: which single machine would you upgrade? Write it down before looking at the post-run report — then check the state table. The machine with ~zero idle time, upstream neighbors blocked and downstream neighbors starved, is the system’s constraint.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab 2 — The Constraint</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-02-the-constraint.html#run-2-spend-the-upgrade",
+    "href": "labs/lab-02-the-constraint.html#run-2-spend-the-upgrade",
+    "title": "5  Lab 2 — The Constraint",
+    "section": "5.3 Run 2 — spend the upgrade",
+    "text": "5.3 Run 2 — spend the upgrade\nTwo committed reference interventions bracket the choice (run either, or your own):\n\nA — upgrade a non-constraint: replace the downstream fast machine with the fastest model in the toolbox. A real machine gets really, genuinely faster.\nB — upgrade the constraint: replace the middle machine with a mid-tier model — a smaller upgrade, to the right place.\n\nfisl solutions scenarios/factory-physics/fp02-the-constraint --run \\\n    --json course/data/lab-02-comparison.json\nPredictions to lock in first: A moves throughput by ______; B moves it to ______ (careful: not the new machine’s own rate — work out which machine paces the line afterward).\nWhat the reference runs measured, against a baseline of 30.00/min, avg WIP 57.54, pooled productive/starved/blocked 82.6/11.3/6.1%:\n\nA changed nothing the customer can see: throughput 30.00/min (+0.0%), WIP −0.5%. What did move: the upgraded machine starves harder — pooled starved +80.8% (to 20.5%) and pooled productive fell to 73.4%. A real upgrade, faithfully measured, delivering nothing.\nB lifted throughput to 37.50/min (+25.0%) — exactly the upstream machine’s 1.6 s rate, not the new machine’s own 45/min: the constraint didn’t vanish, it moved, and the improvement stopped exactly where the next constraint began. WIP fell 41.7% as the pre-constraint queue drained.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab 2 — The Constraint</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-02-the-constraint.html#debrief",
+    "href": "labs/lab-02-the-constraint.html#debrief",
+    "title": "5  Lab 2 — The Constraint",
+    "section": "5.4 Debrief",
+    "text": "5.4 Debrief\n\nSolutions A and B are the same action — swap one machine for a faster one. Why are their outcomes so different? Finish the sentence: “an improvement matters only if…”\nAfter B, what would you upgrade next? Trace the sequence three steps ahead. What does each step cost, and what stops the sequence from being worth continuing forever?\nThe live view hid the state fractions on purpose. What did that force you to do that a dashboard would have done for you — and which of those skills survives in a real plant where the dashboard is wrong?\nYou diagnosed the constraint from behavior (who never rests, what piles up where). Lab 4 turns that observation into a named, measured signature — starvation and blocking — and then asks a harder question: what do buffers actually buy?\n\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nThe withheld-live-diagnosis visibility is the point of this lab’s configuration: learner_live exposes only current_wip; the state fractions and per-machine table are post-run. The runtime still records everything — disclosure policy, not measurement policy.\nReference runs (2026-08-26): baseline 01M0Z61XH0VQ2JNKQRDP0426P4, A 01M0Z644ZYFBWHBFR8TCC5YVHN, B 01M0Z66CM2ASSF6AJ270DEZQFT; dataset regenerates with fisl solutions scenarios/factory-physics/fp02-the-constraint   --run --json course/data/lab-02-comparison.json. The fp02 baseline numbers are bit-identical to fp04’s (57.54 / 30.00 / 82.6-11.3-6.1) — same world, same seed, different scenario id: cross-scenario determinism you can cite when someone doubts the reproducibility claims.\nBonus data point for the Lab 4 debrief: upgrading a non-constraint lowered the pooled productive fraction (82.6% → 73.4%) while changing nothing real — the “utilization” proxy misleads in both directions.\nfp02 deliberately shares its physical layout with fp04 (both need fast → slow → fast); the labs differ in metrics, visibility, and what the learner is asked to do with the same world. Teaching order is 0 → 1 → 2 → 3 → 4.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab 2 — The Constraint</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/accounting-of-flow.html",
+    "href": "interludes/accounting-of-flow.html",
+    "title": "6  Interlude — The Accounting of Flow",
+    "section": "",
+    "text": "6.1 Stocks and flows\nRead after Lab 2, before Lab 3 · no Factorio required · ~30 minutes\nThe labs so far handed you numbers one at a time: a boundary and a count (Lab 0), an installed capacity and a smaller achieved output (Lab 1), a constraint hiding in a line of unequal machines (Lab 2). This interlude does the one thing a lab cannot: it steps outside any particular factory and shows what must be true of all of them. It ends with claims stated precisely enough to be wrong — and Lab 3 is the experiment that tests them.\nEvery quantity you have measured so far is one of two kinds, and keeping them apart is half of this subject.\nA stock (or level) is an amount present at an instant: workpieces on the belt right now, items in a chest, the WIP number on the FISL panel. Its unit is a pure count — work units.\nA flow (or rate) is an amount crossing a boundary per unit time: workpieces admitted per minute, finished goods leaving per minute. Its unit is a count divided by time.\nThe two are related the way a bathtub’s water level relates to its faucet and drain: the stock changes exactly as fast as inflow exceeds outflow. Nothing else changes a stock — not effort, not intention, not reorganization. If WIP rose over your measurement window, work entered faster than it left; there is no second explanation.\nYou cannot add a stock to a flow, and a ratio of the two is a time — remember that; it is about to matter.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Interlude — The Accounting of Flow</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/accounting-of-flow.html#the-boundary-does-the-counting",
+    "href": "interludes/accounting-of-flow.html#the-boundary-does-the-counting",
+    "title": "6  Interlude — The Accounting of Flow",
+    "section": "6.2 The boundary does the counting",
+    "text": "6.2 The boundary does the counting\nFISL forces you to declare a boundary before any measurement: the blue source port is where material enters, the orange sink port is where it leaves, and the measurement window is a half-open interval of simulation ticks — a tick belongs to the window that starts on it, never to two windows at once. These are not bureaucratic details. They are what makes the following bookkeeping exact.\nOver a window, count two running totals: \\(A(t)\\), admissions through the source since the window opened, and \\(D(t)\\), completions through the sink. Then at every instant\n\\[\n\\mathrm{WIP}(t) \\;=\\; \\mathrm{WIP}(0) + A(t) - D(t),\n\\]\nbecause a workpiece inside the boundary is precisely one that has been admitted and not yet completed — wherever it physically is: on a belt, in a machine buffer, mid-craft, in your pockets. This is a conservation law, and it is the entire content of FISL’s WIP ledger. It holds with no assumptions about what the machines are doing.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Interlude — The Accounting of Flow</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/accounting-of-flow.html#from-conservation-to-littles-law",
+    "href": "interludes/accounting-of-flow.html#from-conservation-to-littles-law",
+    "title": "6  Interlude — The Accounting of Flow",
+    "section": "6.3 From conservation to Little’s Law",
+    "text": "6.3 From conservation to Little’s Law\nNow average the stock over the whole window of length \\(T\\). A useful way to compute that average: each workpiece contributes exactly 1 to \\(\\mathrm{WIP}(t)\\) for every second it spends inside the boundary. So the accumulated quantity\n\\[\n\\int_0^T \\mathrm{WIP}(t)\\, dt \\quad \\text{(work-unit–seconds)}\n\\]\nequals the total time spent inside the system, summed over workpieces.\n\n\n\nThe two cumulative counts and the quantity between them. The vertical gap at any instant is WIP; the horizontal gap at any count is one piece’s time inside; the shaded area is both at once — the sum of every piece’s time inside, and the integral of WIP over the window.\n\n\nDivide both sides by \\(T\\), and divide-and-multiply by the number of completions \\(N\\):\n\\[\n\\overline{\\mathrm{WIP}}\n= \\frac{1}{T}\\int_0^T \\mathrm{WIP}\\, dt\n= \\underbrace{\\frac{N}{T}}_{\\text{throughput}} \\times\n  \\underbrace{\\frac{1}{N}\\int_0^T \\mathrm{WIP}\\, dt}_{\\text{avg time inside per completion}}\n\\]\n\\[\n\\boxed{\\;\\overline{\\mathrm{WIP}} = \\mathrm{TH} \\times \\mathrm{CT}\\;}\n\\]\nAverage inventory equals throughput times average time inside the boundary. This is Little’s Law. The derivation used only conservation and arithmetic: no assumption about how many machines, how fast, in what order, deterministic or random, FIFO or chaos. That is why it holds for factories, hospitals, ticket queues, and software teams alike — anything with a boundary you are willing to declare.\nCheck the units: a flow (units/s) times a time (s) is a stock (units). The three quantities occupy a triangle with only two degrees of freedom.\nTwo honesty notes, because FISL will hold you to them:\n\nThe identity is exact when the window’s edges are tidy — the system starts and ends empty, or holds the same inventory at both edges. A warmup phase before the measured window exists to buy you the second condition. Boundary leftovers are why FISL reports validity beside every number.\nFISL’s report computes cycle time (derived) as accumulated WIP-area divided by completions — Little’s Law used as a definition. The law’s empirical content is then a different claim: that this derived time equals the time an actual marked workpiece spends inside. You can test that with a stopwatch. In a deterministic steady system, they must agree.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Interlude — The Accounting of Flow</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/accounting-of-flow.html#the-vocabulary-of-a-line",
+    "href": "interludes/accounting-of-flow.html#the-vocabulary-of-a-line",
+    "title": "6  Interlude — The Accounting of Flow",
+    "section": "6.4 The vocabulary of a line",
+    "text": "6.4 The vocabulary of a line\nThree parameters describe any single-product line, and the literature (see below) names them:\n\nBottleneck rate \\(r_b\\): the capacity of the slowest station — the ceiling on long-run throughput. You measured one in Lab 2: the middle machine’s 30/min was \\(r_b\\) for that line, and no upgrade elsewhere moved output.\nRaw process time \\(T_0\\): the time one workpiece needs to traverse an otherwise empty system — all processing, no waiting behind other work. Be careful what you include: if the belt from source to first machine takes 40 s to ride, that is part of \\(T_0\\), because an empty system still makes the workpiece ride it. Conveyors are stations whose process is delay.\nCritical WIP \\(W_0 = r_b \\times T_0\\): Little’s Law evaluated at the best possible operating point — full throughput at minimum time. It is the least inventory a line can hold while producing at capacity. Below \\(W_0\\), there is not enough work in the system to keep the bottleneck fed; above it, the extra inventory buys nothing but waiting — in a deterministic world.\n\nFrom these, the best any line can possibly do at a given WIP level \\(w\\):\n\\[\n\\mathrm{TH}_{\\text{best}}(w) = \\min\\!\\left(\\frac{w}{T_0},\\; r_b\\right)\n\\qquad\n\\mathrm{CT}_{\\text{best}}(w) = \\max\\!\\left(T_0,\\; \\frac{w}{r_b}\\right)\n\\]\n\n\n\nThe best-case operating curves, both drawn against the WIP level \\(w\\). Left of \\(W_0\\) the line is inventory-starved: throughput climbs with WIP at slope \\(1/T_0\\) while every piece flows through in the minimum time. Right of \\(W_0\\) the bottleneck is saturated: throughput is pinned at \\(r_b\\) and additional inventory buys nothing but waiting.\n\n\nRead the second one aloud: once WIP exceeds \\(W_0\\), every additional unit of inventory adds \\(1/r_b\\) to every workpiece’s flow time and adds nothing to output. Inventory above critical WIP is pure flow-time, purchased at full price.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Interlude — The Accounting of Flow</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/accounting-of-flow.html#claims-to-carry-into-lab-3",
+    "href": "interludes/accounting-of-flow.html#claims-to-carry-into-lab-3",
+    "title": "6  Interlude — The Accounting of Flow",
+    "section": "6.5 Claims to carry into Lab 3",
+    "text": "6.5 Claims to carry into Lab 3\nLab 3 puts you in a line whose source admits work as fast as it can. Before you run it, this interlude commits to the following, in writing:\n\nMultiply the report’s throughput by its derived cycle time (consistent units). It will equal average WIP — not approximately: to the last decimal, because the derived CT makes this an identity. The stopwatch test of claim 2 is where the physics lives.\nA single workpiece you visually track from source to sink will take (to within a craft cycle) the derived CT the report prints.\nThe uncontrolled line will hold far more than \\(W_0\\) of inventory, and its throughput will be no higher for it — output will sit at \\(r_b\\) exactly.\nAny intervention that only limits admission will leave throughput untouched and reduce WIP and CT together, in the ratio Little’s Law dictates — but no intervention of that kind can push WIP below \\(\\mathrm{TH} \\times T_0\\). Compute \\(T_0\\) for the Lab 3 line yourself (walk it; count belt tiles; a belt tile is a delay) and write your predicted floor down before run 2.\n\nIf any of these fails in your data, the theory as stated is wrong or the measurement’s validity flags will tell you why. That is the deal this course offers: no number without a method, no law without an experiment.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Interlude — The Accounting of Flow</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/accounting-of-flow.html#further-reading",
+    "href": "interludes/accounting-of-flow.html#further-reading",
+    "title": "6  Interlude — The Accounting of Flow",
+    "section": "6.6 Further reading",
+    "text": "6.6 Further reading\n\nHopp & Spearman, Factory Physics (3rd ed.), ch. 7 “Basic Factory Dynamics” — \\(r_b\\), \\(T_0\\), \\(W_0\\), and the best/worst-case performance curves this interlude previewed (their practical-worst-case curve needs variability, which this course meets later).\nJ. D. C. Little, “A Proof for the Queuing Formula \\(L = \\lambda W\\)”, Operations Research 9(3), 1961 — the original proof; Little & Graves, “Little’s Law” (in Building Intuition, 2008) is the readable retrospective.\nThe half-open windows and conservation ledger this interlude leaned on are FISL’s ADRs 0010 and 0017 — the apparatus was built so that the bookkeeping above is exact rather than approximate.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Interlude — The Accounting of Flow</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-03-littles-law.html",
+    "href": "labs/lab-03-littles-law.html",
+    "title": "7  Lab 3 — WIP and Little’s Law",
+    "section": "",
+    "text": "7.1 The system\nScenario: fp-03-littles-law · two runs of ~12 minutes each\nYou will operate a small workpiece line twice: first exactly as you find it, then after making one modification. Between the two runs, three numbers — inventory, output rate, and flow time — will rearrange themselves in a way that is not a coincidence, and the law that binds them is the subject of this lab.\nA conveyor line runs west to east: a blue source chest where raw workpieces enter the system, three machines that transform them in stages (rough → machined → inspected → finished), and an orange sink chest where finished work leaves. The source and sink are laboratory equipment — indestructible, and the exact points where FISL counts material entering and leaving. A toolbox chest near your spawn holds spare belts, inserters, and machines; its contents are ordinary materials and are never counted in any measurement.\nThree quantities are measured, all against the same declared boundary:\nDuring the run you can see only the current WIP. Everything else is withheld until the experiment ends — instrumentation that announces the answer would spoil the diagnosis.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab 3 — WIP and Little's Law</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-03-littles-law.html#the-system",
+    "href": "labs/lab-03-littles-law.html#the-system",
+    "title": "7  Lab 3 — WIP and Little’s Law",
+    "section": "",
+    "text": "WIP (work in process): workpieces that have entered at the source and not yet left at the sink — wherever they physically are: on belts, in machine buffers, mid-craft, even in your pockets.\nThroughput (TH): finished workpieces leaving through the sink, per minute, over the measured window.\nCycle time (CT): how long a workpiece spends inside the system.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab 3 — WIP and Little's Law</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-03-littles-law.html#run-1-observe",
+    "href": "labs/lab-03-littles-law.html#run-1-observe",
+    "title": "7  Lab 3 — WIP and Little’s Law",
+    "section": "7.2 Run 1 — observe",
+    "text": "7.2 Run 1 — observe\n\n\n\n\n\n\nFigure 7.1: The FISL panel in READY: the experiment waits for you to press Start.\n\n\n\nStart the experiment and don’t change anything. Spend the twelve minutes walking the line (hold Alt for the detail overlay):\n\nFollow the belt west from the middle. What state is the first belt segment in? Estimate how many workpieces are sitting on it.\nWatch each machine for thirty seconds. Which one is always busy? What are the other two doing most of the time?\nWatch the WIP number on the panel. Is it moving?\n\nAfterward, read your report (fisl report runs/&lt;run-id&gt;). A reference run of this exact scenario produced:\n\n\n\nMetric\nValue\n\n\n\n\naverage WIP\n51.70 work units\n\n\nthroughput\n15.00 / min\n\n\ncycle time (derived)\n206.78 s\n\n\n\nNow a calculation you can do in your head: total processing time per workpiece — the time machines actually spend working on it — is about 8 seconds (4 + 2 + 2). Yet each workpiece spent 207 seconds inside the system. Where were the other 199 seconds?\nYou walked past the answer: the packed input belt. Over 95% of each workpiece’s life was spent waiting in a queue, and nearly all of the system’s inventory was that queue.\n\n\n\n\n\n\nFigure 7.2: Run 1, mid-experiment: the input belt packed solid with waiting workpieces — this queue is the WIP number on the panel.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab 3 — WIP and Little's Law</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-03-littles-law.html#the-theory-you-just-watched",
+    "href": "labs/lab-03-littles-law.html#the-theory-you-just-watched",
+    "title": "7  Lab 3 — WIP and Little’s Law",
+    "section": "7.3 The theory you just watched",
+    "text": "7.3 The theory you just watched\nMultiply throughput by cycle time, in consistent units:\n\\[\n0.25\\ \\text{workpieces/s} \\times 206.78\\ \\text{s} = 51.70\\ \\text{workpieces}\n\\]\nThat is your average WIP, exactly. This is Little’s Law:\n\\[\n\\text{WIP} = \\text{TH} \\times \\text{CT}\n\\]\nIt holds for any stable flow system with a declared boundary — factories, hospitals, ticket queues, software teams — with no assumptions about what happens inside. It is an accounting identity of flow, and you have now measured all three of its terms simultaneously in a system you could walk around in.\nRead it as a constraint: the three quantities are not independent. If throughput is pinned by a bottleneck (yours is: the first machine can only do one workpiece per 4 s, i.e. 15/min), then WIP and cycle time are the same decision. Carry 52 units of inventory and your flow time must be ~207 s. Want a 30-second flow time? Then you may hold at most \\(0.25 \\times 30 = 7.5\\) units of WIP — no clever routing can evade this.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab 3 — WIP and Little's Law</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-03-littles-law.html#run-2-intervene",
+    "href": "labs/lab-03-littles-law.html#run-2-intervene",
+    "title": "7  Lab 3 — WIP and Little’s Law",
+    "section": "7.4 Run 2 — intervene",
+    "text": "7.4 Run 2 — intervene\nThe queue exists because the source inserter admits work as fast as it can swing, while the bottleneck consumes one workpiece per 4 s. The fix is not a faster machine — it’s admitting work at the rate the system actually consumes it. Factorio’s circuit network lets you build exactly that.\nOne question decides everything: where should the signal watch? The queue forms where work waits — immediately upstream of the bottleneck. A gate anywhere else only stops the queue growing past the gate; everything between the gate and the machine still packs solid.\nStart a new run, and before pressing Start:\n\nWalk to the source inserter (beside the blue chest).\nSelect the red wire tool from the shortcut strip (bottom right; enable it via the … menu if hidden).\nClick the inserter, then click a belt tile about halfway to the first machine — circuit wire only reaches 9 tiles, and the full span is 10, so the wire needs one relay hop. Then click the last belt tile before the first machine’s input inserter. Press Q to put the wire away. (If a click refuses to attach the wire, you’re stretching past its reach — pick a closer tile.)\nOpen the last belt tile (the gate): enable Read belt contents, mode Hold. Open the halfway tile too and make sure its circuit options are all off — it only carries the wire.\nOpen the source inserter: set Enable/disable with the condition rough workpiece &lt; 2. (Why 2 and not 1? The belt trip from the source takes ~5 s while the machine eats one workpiece per 4 s — a staging allowance of one extra piece covers the travel time so the bottleneck never starves. Try 1 later and watch what happens to throughput.)\n\n\n\n\n\n\n\nFigure 7.3: The pull gate: red wire from the source inserter to the last belt tile before machine 1.\n\n\n\nYou have built a pull signal: a workpiece is admitted only while fewer than two are staged at the machine. Press Start and watch the same twelve minutes — the belt stays nearly empty, and the WIP number tells the story live.\nThen compare your two attempts:\nfisl compare runs/&lt;run-1&gt; runs/&lt;run-2&gt;\nPredict before you look: what happened to throughput? To WIP? To cycle time? Check every prediction against the deltas — and check that Little’s Law still binds all three numbers in run 2.\n\n\n\n\n\n\nIf your WIP only dropped ~20%…\n\n\n\n…your gate is watching a tile near the source. Walk the line: everything downstream of your monitored tile is still packed. The signal must watch the point where the queue actually forms. This exact mistake was made by the first version of this lab’s own reference solution — it measured avg WIP 41.66 instead of 19.16. Diagnosing a control system by walking the physical line is itself the skill being taught here.\n\n\n\n\n\n\n\n\nIf nothing changed at all…\n\n\n\n…your wire never connected. An inserter with an enable condition but no circuit network ignores the condition completely — the run comes out identical to the baseline, down to the last decimal. The usual cause is wire reach: a red wire spans at most 9 tiles, and the direct inserter-to-gate span here is 10, so it needs the relay hop from step 3. Walk the wire and check both segments are actually drawn. This, too, was a mistake the reference solution made (version 2 wired the distance directly; the script reported success and changed nothing). A control system has two halves — the decision and the actuation path — and configuring the first does nothing without the second.\n\n\nAnd why doesn’t WIP go to ~2? Walk the line in run 2 and count what’s left: one or two workpieces staged at the gate, a few moving on belts, one inside each machine. This line is ~90 tiles long — about 48 s of pure belt travel — so even a perfect pull system must carry \\(\\text{TH} \\times \\text{transit} \\approx 0.25 \\times 48 \\approx 12\\) workpieces of in-transit inventory. Conveyors are inventory. The run-1 queue was waste; the run-2 residual is transportation. Little’s Law prices both identically.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab 3 — WIP and Little's Law</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-03-littles-law.html#debrief",
+    "href": "labs/lab-03-littles-law.html#debrief",
+    "title": "7  Lab 3 — WIP and Little’s Law",
+    "section": "7.5 Debrief",
+    "text": "7.5 Debrief\n\nThroughput did not change. Why not? What would change it?\nNearly all cycle time in run 1 was queueing. Is queue time always waste? What did the big queue buy the system, if anything, in this deterministic world? (Hold this question — it returns with force when variability enters the course.)\nThe intervention limited admission, not capacity. Name a real system you know that controls flow time this way — and one that instead lets the queue grow.\nYour factory processed work in 8 s but delivered in 207 s. If a customer asked “why does my order take so long,” what is the honest answer?",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab 3 — WIP and Little's Law</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-03-littles-law.html#what-the-simulation-assumed-away",
+    "href": "labs/lab-03-littles-law.html#what-the-simulation-assumed-away",
+    "title": "7  Lab 3 — WIP and Little’s Law",
+    "section": "7.6 What the simulation assumed away",
+    "text": "7.6 What the simulation assumed away\nThis world is deterministic: machines never fail, never vary, and the supply never fluctuates. In such a world a large input queue is pure waste — it buys nothing. Real systems hold inventory partly to absorb variability, and whether a buffer is waste or insurance is the central question of the variability course that follows. Do not conclude from this lab that all inventory is bad; conclude that inventory has a price denominated in flow time, and that the price is exact: CT = WIP / TH.\n\n\n\n\n\n\nFigure 7.4: The debrief: fisl compare of the push baseline vs the pull solution.\n\n\n\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nThe reference intervention is committed as scenarios/factory-physics/fp03-littles-law/solutions/a-pull-signal/ and the whole lab dataset regenerates with one deterministic command: fisl solutions scenarios/factory-physics/fp03-littles-law --run --json   course/data/lab-03-comparison.json — rerun it after any scenario or baseline change and re-check the numbers cited in this chapter.\nBaseline reference numbers come from the committed verification run 01M10GTKR13N2RCW3AYCPVFS65 (2026-08-27 baseline revision). Measured pull-solution result (run 01M10GZ303RBTWMF2PWA02CD3P, solution v3): TH unchanged at 15.00/min, avg WIP 19.16 (−62.9%), CT 76.64 s — right on the transit floor predicted in the solution README. Every number in this chapter has now reproduced identically across two independently built baselines and multiple machines (the original verified run was 01M0XP8VJ78KXRC8DB6BATBW39; a human-played run matched it bit-for-bit).\nThe ~20% “gate near the source” failure in the callout is real: it was version 1 of the reference solution (run 01M0Y063ACYSD8JWRF78EJAWTF). Learners who make it are in good company; send them to walk the line.\nThe “nothing changed at all” failure is also real: version 2 of the reference solution wired the 10-tile span directly, past the 9-tile circuit wire reach — connect_to() returns false without raising, and run 01M0Y31VW4X12TBZN8S0HQA4T0 was bit-identical to baseline. Send those learners to walk the wire.\nCommon learner friction: selecting the red wire tool (walk them to the shortcut … menu), and pressing F near belts (vacuums workpieces into the inventory — harmless to the ledger, but confusing).\nScreenshot capture: run windowed (--window-size 1680x950), hold Alt for the info overlay, zoom to frame the line; plain OS screenshots into course/images/lab-03/ with the filenames listed in that folder’s README, then uncomment the figure blocks in this chapter.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab 3 — WIP and Little's Law</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/states-of-a-machine.html",
+    "href": "interludes/states-of-a-machine.html",
+    "title": "8  Interlude — The States of a Machine",
+    "section": "",
+    "text": "8.1 A taxonomy, not a feeling\nRead after Lab 3, before Lab 4 · no Factorio required · ~25 minutes\nYou now own three system-level instruments: the constraint (Lab 2), the conservation ledger (Lab 3), and Little’s Law tying them together. What you cannot yet do is look at a single machine and say what its time went to. Lab 4 gives you that instrument. This interlude defines it carefully — because “how busy is this machine” is the most abused question in operations, and the abuse always hides in the definitions.\nAt every moment, a measured machine is in exactly one activity: working or not working — decided by evidence (products finished, craft progress moving), not by appearance. When it is not working, the interesting question is the cause:\nTwo disciplines make this a measurement rather than a mood:",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Interlude — The States of a Machine</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/states-of-a-machine.html#a-taxonomy-not-a-feeling",
+    "href": "interludes/states-of-a-machine.html#a-taxonomy-not-a-feeling",
+    "title": "8  Interlude — The States of a Machine",
+    "section": "",
+    "text": "starved — ready to work, but no material has arrived;\nblocked — work finished, but the output has nowhere to go;\nunavailable — the machine cannot run (no power, for instance);\ndisabled — deliberately switched off;\nidle_other — none of the above; genuinely uncommitted time.\n\n\n\nEvery second lands in exactly one state. The fractions over any window sum to one; nothing is double-counted, nothing vanishes.\nA gap in observation is never a state. If an interval couldn’t be classified, it is reported as coverage missing beside the numbers — it is not quietly assigned to “idle”, and it never shrinks a denominator. You are always told how much of the window the classification actually saw.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Interlude — The States of a Machine</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/states-of-a-machine.html#denominators-again-and-machines-that-come-and-go",
+    "href": "interludes/states-of-a-machine.html#denominators-again-and-machines-that-come-and-go",
+    "title": "8  Interlude — The States of a Machine",
+    "section": "8.2 Denominators, again — and machines that come and go",
+    "text": "8.2 Denominators, again — and machines that come and go\nA state fraction is time-in-state divided by — what, exactly? The default is the full measured window. But Lab 4’s toolbox lets you add and remove machines mid-run, and then the window is the wrong denominator for the newcomer: a machine built at minute 6 was not starved for the first six minutes, it was nonexistent.\nFISL therefore tracks each machine’s eligibility: the span from when it joined the measured set to when it left. Per-machine fractions are reported against eligible time; pooled fractions sum only eligible machine-time. When you redesign the line mid-run in Lab 4, the report’s per-machine table will show exactly this — and a machine you removed will simply stop accumulating, rather than haunting the denominator.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Interlude — The States of a Machine</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/states-of-a-machine.html#dependency-the-constraints-states-are-contagious",
+    "href": "interludes/states-of-a-machine.html#dependency-the-constraints-states-are-contagious",
+    "title": "8  Interlude — The States of a Machine",
+    "section": "8.3 Dependency: the constraint’s states are contagious",
+    "text": "8.3 Dependency: the constraint’s states are contagious\nHere is the structural insight Lab 4 stages. In a line, the constraint is the one machine with no excess capacity — so it is the one machine that should never rest. Its neighbors have spare speed, and spare speed must show up somewhere: as waiting.\n\n\n\nA deterministic fast → slow → fast line at steady state. The constraint runs continuously; the upstream machine periodically has nowhere to put finished work, the downstream machine periodically has nothing to work on.\n\n\nThe direction is diagnostic, not decorative: blocking accumulates upstream of the constraint, starvation downstream. Waiting states point at the constraint like iron filings around a magnet. And the arithmetic from the capacity interlude sets the magnitudes, to first order: a machine of capacity \\(c\\) in a line pacing at \\(m\\) can be productive at most \\(m/c\\) of the time. For the 37.5 / 30 / 45 line:\n\n\n\nmachine\ncapacity\nfirst-order productive fraction\n\n\n\n\nM1\n37.5/min\n30 / 37.5 = 80%, remainder mostly blocked\n\n\nM2\n30/min\n~100% — the constraint\n\n\nM3\n45/min\n30 / 45 ≈ 67%, remainder mostly starved\n\n\n\nRead the table twice, because it inverts the usual audit: the fastest machine looks the laziest, and the busiest-looking machine is the constraint. A manager rewarding “utilization” machine-by-machine punishes exactly the machines that are fine and flatters the one that limits the factory.\n(First order is not exact: belts hold inventory and stagger the waiting, so measured fractions will land near these numbers, not on them. The deviation is itself data — Lab 4’s chapter takes it up.)",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Interlude — The States of a Machine</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/states-of-a-machine.html#what-a-buffer-really-does",
+    "href": "interludes/states-of-a-machine.html#what-a-buffer-really-does",
+    "title": "8  Interlude — The States of a Machine",
+    "section": "8.4 What a buffer really does",
+    "text": "8.4 What a buffer really does\nPut a chest between M1 and M2 and M1’s blocked time falls — the chest absorbs output that M2 isn’t ready for. No new capacity exists anywhere; throughput cannot move. The buffer converts one currency into another: waiting time into inventory. Whether that trade is ever worth making is a question this course finishes on (Lab 6) and its sequel begins with; for now it is enough to see that a buffer is a currency exchange, not a factory improvement.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Interlude — The States of a Machine</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/states-of-a-machine.html#claims-to-carry-into-lab-4",
+    "href": "interludes/states-of-a-machine.html#claims-to-carry-into-lab-4",
+    "title": "8  Interlude — The States of a Machine",
+    "section": "8.5 Claims to carry into Lab 4",
+    "text": "8.5 Claims to carry into Lab 4\n\nThe constraint’s productive fraction will be ~100%; M1 and M3 will land near 80% and 67% respectively — M1’s remainder mostly blocked, M3’s mostly starved. Write your three predictions down first.\nRanking machines by productive fraction will identify the constraint without any capacity arithmetic — the diagnosis works even when the nameplates are hidden.\nBuffering above the constraint will cut M1’s blocked fraction and raise WIP, while throughput stays at 30/min exactly.\nReplacing a machine mid-run will show up in the report as two rows: the old machine’s eligibility ending, the new one’s beginning — and no fraction anywhere will use time outside its own machine’s eligibility.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Interlude — The States of a Machine</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/states-of-a-machine.html#further-reading",
+    "href": "interludes/states-of-a-machine.html#further-reading",
+    "title": "8  Interlude — The States of a Machine",
+    "section": "8.6 Further reading",
+    "text": "8.6 Further reading\n\nHopp & Spearman, Factory Physics (3rd ed.), ch. 8 “Variability Basics” — its blocking/starving treatment is stochastic where ours is deterministic; read it to see which conclusions survive when the craft times start to wobble.\nGoldratt & Cox, The Goal — Herbie, the hiking metaphor: dependency and the constraint’s states, in narrative form.\nThe classification contract is FISL’s ADR 0007; eligibility and dynamic membership are ADR 0016.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Interlude — The States of a Machine</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-04-starvation-blocking.html",
+    "href": "labs/lab-04-starvation-blocking.html",
+    "title": "9  Lab 4 — Starvation and Blocking",
+    "section": "",
+    "text": "9.1 The system\nScenario: fp-04-starvation-blocking · runs of ~12 minutes each\nIn Lab 3 every machine had the same story: one bottleneck at the head of the line, one queue in front of it. This lab’s line is quieter and stranger: three machines of different speeds, and the slow one is hidden in the middle. You will diagnose which machine constrains the system without being told — using only what the machines’ behavior betrays — and then discover that the two obvious fixes are not the same fix at all.\nThe same conveyor architecture as Lab 3, compressed: blue source chest, three machines (rough → machined → inspected → finished), orange sink chest. But look closer at the machines — they are not identical models this time. Their speeds differ, and speed times recipe determines each stage’s appetite:\nThe table is in front of you, so you know M2 is the constraint. A learner walking the factory floor doesn’t get this table — and that is the point of run 1: the machines will tell you anyway.\nThree new numbers join WIP, throughput, and cycle time this lab — measured per machine and pooled across the line, over the measured window:\nThere is deliberately no single “utilization” number, and there never will be: you always see which states are counted and against what denominator.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab 4 — Starvation and Blocking</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-04-starvation-blocking.html#the-system",
+    "href": "labs/lab-04-starvation-blocking.html#the-system",
+    "title": "9  Lab 4 — Starvation and Blocking",
+    "section": "",
+    "text": "Stage\nMachine\nRecipe time\nSeconds per workpiece\n\n\n\n\nM1 (machining)\nassembling-machine-3\n2 s\n1.6 s\n\n\nM2 (inspection)\nassembling-machine-1\n1 s\n2.0 s\n\n\nM3 (finishing)\nassembling-machine-2\n1 s\n1.33 s\n\n\n\n\n\n\nproductive fraction — share of machine-time with real craft progress (measured from progress, not from the status lamp);\nstarved fraction — no progress, waiting for input;\nblocked fraction — no progress, output has nowhere to go.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab 4 — Starvation and Blocking</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-04-starvation-blocking.html#run-1-diagnose",
+    "href": "labs/lab-04-starvation-blocking.html#run-1-diagnose",
+    "title": "9  Lab 4 — Starvation and Blocking",
+    "section": "9.2 Run 1 — diagnose",
+    "text": "9.2 Run 1 — diagnose\nStart the experiment, change nothing, and spend the run walking the line. The first minutes are calm — the mismatches take a few minutes to express themselves as full buffers. By mid-run, watch each machine for thirty seconds (Alt overlay on):\n\nM1: it runs, then halts with its output full, runs again. The short belt between M1 and M2 is packed solid. M1 is blocked — it could produce more, but downstream won’t accept it.\nM2: never stops. Input always waiting, output always drains.\nM3: it runs, then sits with an empty input for a beat, runs again. M3 is starved — it could produce more, but upstream won’t feed it.\n\nThat pattern is the diagnosis signature worth memorizing:\n\nBlocked above, starved below — the constraint sits in between.\n\nYou just located a bottleneck without a stopwatch, a spec sheet, or a single measurement: coupled machines point at their constraint. After the run, fisl report runs/&lt;run-id&gt; turns your walking impressions into numbers — a per-machine table of productive/starved/blocked fractions and the pooled fractions. The reference baseline measured:\n\n\n\nMachine\nproductive\nstarved\nblocked\n\n\n\n\nM1 (fast, upstream)\n85.7%\n1.5%\n12.8%\n\n\nM2 (the constraint)\n99.0%\n1.0%\n—\n\n\nM3 (fast, downstream)\n66.4%\n33.6%\n—\n\n\n\nCheck it against the rates: M3 needs only 1.33 of every 2.0 seconds to keep pace with M2 — so it must idle exactly ⅓ of the time, and it does, to the decimal. M1’s blocked share is a little under its ⅕ rate surplus because its own output buffer soaks up part of each stall. And the constraint never rests. The machines’ behavior is the spec sheet.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab 4 — Starvation and Blocking</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-04-starvation-blocking.html#run-2-intervene-two-ways",
+    "href": "labs/lab-04-starvation-blocking.html#run-2-intervene-two-ways",
+    "title": "9  Lab 4 — Starvation and Blocking",
+    "section": "9.3 Run 2 — intervene, two ways",
+    "text": "9.3 Run 2 — intervene, two ways\nThe toolbox holds both remedies. Choose one per run, and predict all three headline numbers before pressing Start.\nIntervention A — a buffer. Splice a chest into the belt just upstream of M2: pick three belt tiles, replace them with inserter → wooden chest → inserter (all facing the flow direction). M1’s surplus now has somewhere to go.\nIntervention B — attack the constraint. Replace M2’s slow machine with the fast assembling-machine-3 from the toolbox (mine the old one, drop the new one in its place, set the inspection recipe).\nThen compare:\nfisl compare runs/&lt;baseline&gt; runs/&lt;intervention&gt;\nWhat actually happens — reference runs of the committed solutions, against a baseline that measured TH 30.00/min, avg WIP 57.54, CT 115.08 s:\n\nA makes blocked time vanish (measured: 6.1% → 0.0% pooled) and lifts the pooled productive fraction to 89.2% — every machine looks healthier. Throughput does not move at all (30.00/min, +0.0%): M2 never stopped being the constraint, and a buffer feeds no one faster. The surplus M1 produces now accumulates in the chest for the entire run, so WIP climbs and climbs — average WIP 91.16 (+58.4%), and still rising when the experiment ended (final WIP 122 vs the baseline’s steady 58) — and cycle time with it: 182.31 s (+58.4%). Little’s Law is not optional. You improved every machine’s statistics and worsened every workpiece.\nB moves throughput — measured 37.50/min (+25.0%), exactly the next constraint’s rate (M1’s 1.6 s). Average WIP fell to 33.23 (−42.3%) and cycle time to 53.17 s (−53.8%) as the pre-constraint queue drained. And watch the state signature migrate: blocked time vanishes here too, but pooled starved time nearly doubles (11.3% → 21.9%) — M2 and M3 now wait on M1. Walk the line again: blocked-above/starved-below now points at M1. The method still works; the answer moved, because the constraint moved.\n\nNow put the two pooled productive fractions side by side with throughput:\n\n\n\n\npooled productive\nthroughput\n\n\n\n\nbaseline\n82.6%\n30.00/min\n\n\nA — buffer\n89.2% (best)\n30.00/min (no change)\n\n\nB — upgrade\n78.1% (worst)\n37.50/min (best)\n\n\n\nAcross these three runs the pooled productive fraction — the closest thing this lab has to a “utilization” score — ranks the interventions exactly backwards. The intervention that made machines busiest delivered nothing; the intervention that delivered the most made machines idle the most. This is why FISL refuses to print a bare utilization number: it is not that the quantity is unmeasurable, it is that maximizing it is not the objective, and a dashboard that headlines it teaches the wrong reflex.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab 4 — Starvation and Blocking</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-04-starvation-blocking.html#debrief",
+    "href": "labs/lab-04-starvation-blocking.html#debrief",
+    "title": "9  Lab 4 — Starvation and Blocking",
+    "section": "9.4 Debrief",
+    "text": "9.4 Debrief\n\nIntervention A raised the pooled productive fraction. Is the system better? What single measured number settles it?\nA plant manager rewards each station for high productive time. Which intervention does that policy purchase? What does it do to inventory?\nAfter B, the constraint is M1. What is the next action this factory should take — and when should it stop upgrading machines? (Look at the source: admission is still uncontrolled. Lab 3’s pull gate and this lab’s constraint-hunting eventually meet.)\nIn this deterministic world the buffer bought literally nothing but inventory. Real factories buy buffers on purpose. What are they paying for that this world lacks? (That question is the door to the entire variability course.)",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab 4 — Starvation and Blocking</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-04-starvation-blocking.html#what-the-simulation-assumed-away",
+    "href": "labs/lab-04-starvation-blocking.html#what-the-simulation-assumed-away",
+    "title": "9  Lab 4 — Starvation and Blocking",
+    "section": "9.5 What the simulation assumed away",
+    "text": "9.5 What the simulation assumed away\nNo variability, no failures: rate mismatches here are constant and eternal, so any finite buffer before a slower machine fills and any buffer after it drains. Real systems’ buffers absorb fluctuation — they earn productive time back when machines fail or vary. What survives contact with reality unchanged: buffers never raise the sustained rate above the constraint’s rate, and inventory’s price stays denominated in flow time.\n\n\n\n\n\n\nFigure 9.1: The debrief: baseline vs buffer vs constraint upgrade. This figure regenerates from run data (fisl solutions … --run --svg) — never hand-capture it.\n\n\n\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nReference interventions are committed as scenarios/factory-physics/fp04-starvation-blocking/solutions/ (a-buffer-before-constraint, b-upgrade-constraint); the full lab dataset — baseline plus both solutions, compared — regenerates with fisl solutions scenarios/factory-physics/fp04-starvation-blocking --run   --json course/data/lab-04-comparison.json. Reference runs (2026-08-26): baseline 01M0YHYH9TAVJP0SK6F60XX8W9 (TH 30.00/min, avg WIP 57.54, CT 115.08 s — the rate arithmetic hit exactly), buffer 01M0YJ0RNJCQZ7ZRSXVC75J1VR, upgrade 01M0YJ304T2T1GQ8R2AFEPS62J (37.50/min, again exact). Pooled fractions (productive/starved/blocked): baseline 82.6/11.3/6.1, buffer 89.2/10.8/0.0, upgrade 78.1/21.9/0.0. Rerun the command after any scenario or baseline change and re-check the numbers cited in this chapter.\nMachine-state fractions come from ADR 0007 classification: productive is measured craft progress, never the status lamp; unknown states surface as unclassified/coverage rather than disappearing into idle. The per-machine table in fisl report shows eligibility windows — solution B’s machine swap is a live demonstration of dynamic entity-set membership (ADR 0016).\nSteady state arrives only after the M1→M2 buffer fills (~3–4 min); the 4-minute warmup exists so the measured window starts stationary. If you shorten phases, re-check that.\nLearners who did Lab 3 will ask why the source-side queue is still allowed to pack. Correct instinct — tell them to bring their pull gate, then ask what it does to M1’s starved fraction (nothing, until the staging allowance is too tight — a lovely extension exercise).",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab 4 — Starvation and Blocking</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/customers-clock.html",
+    "href": "interludes/customers-clock.html",
+    "title": "10  Interlude — The Customer’s Clock",
+    "section": "",
+    "text": "10.1 Demand is a flow with a deadline attached\nRead after Lab 4, before Lab 5 · no Factorio required · ~25 minutes\nEvery sink so far has been infinitely patient: it absorbed whatever arrived, whenever it arrived, and throughput was the whole story. Lab 5 replaces it with a customer — demand that arrives on its own schedule and stops being satisfiable 30 seconds later. This interlude builds the measurement kit for that world, and it ends at the hardest honesty problem in the course: what to report about a deadline you never got to see.\nThe customer in Lab 5 demands 12 workpieces per minute, continuously. Each unit of demand is created at a moment, joins a backlog if it cannot be served immediately, and is filled strictly first-in-first-out. Its wait is the time from creation to fulfillment, and the scenario declares a maximum tolerable wait — the deadline.\nTwo rules keep the accounting honest:",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Interlude — The Customer's Clock</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/customers-clock.html#demand-is-a-flow-with-a-deadline-attached",
+    "href": "interludes/customers-clock.html#demand-is-a-flow-with-a-deadline-attached",
+    "title": "10  Interlude — The Customer’s Clock",
+    "section": "",
+    "text": "FIFO, enforced. The oldest unserved demand is always served first, so waits are well-defined and no analysis can quietly cherry-pick which customer got which item.\nSurplus is not a bank. Producing ahead of demand does not pre-credit customers who haven’t asked yet; a delivery with no open demand behind it is recorded as surplus, full stop. (Real contracts work this way too: shipping early doesn’t excuse shipping late next month.)",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Interlude — The Customer's Clock</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/customers-clock.html#the-service-metrics",
+    "href": "interludes/customers-clock.html#the-service-metrics",
+    "title": "10  Interlude — The Customer’s Clock",
+    "section": "10.2 The service metrics",
+    "text": "10.2 The service metrics\nOn-time item rate: of all demanded items in the window, the fraction fulfilled within their deadline. It is item-weighted — a cohort of ten counts ten times a cohort of one — and it is a service number, not a production number. That distinction has teeth: a line can run at full throughput and still fail every deadline, if the timing is wrong.\nWait percentiles (Lab 5 uses p95): the wait that 95% of demanded items beat. Averages flatter service systems — one customer served instantly and one who waited a minute average to “30 s”, which describes neither. The tail is where customers live.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Interlude — The Customer's Clock</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/customers-clock.html#censoring-the-deadline-you-didnt-see",
+    "href": "interludes/customers-clock.html#censoring-the-deadline-you-didnt-see",
+    "title": "10  Interlude — The Customer’s Clock",
+    "section": "10.3 Censoring: the deadline you didn’t see",
+    "text": "10.3 Censoring: the deadline you didn’t see\nThe run ends. Some demand near the end was created, its deadline still in the future when observation stopped. What is it?\n\n\n\nThree fates for a unit of demand against an observation horizon. Only the first two are verdicts; the third is an honest refusal to issue one.\n\n\n\nFulfilled within the deadline → on time. Final.\nDeadline observed passing unfulfilled → late. Final — note this needs no run-end: the verdict lands the instant the deadline passes, and later fulfillment cannot repair it.\nDeadline beyond the horizon → unresolved. Not on time, not late — unknown, and reported as exactly that.\n\nThe temptation is to fold unresolved units into whichever bucket flatters the story (“not late yet” → on time). FISL’s rules instead: the on-time rate’s window and horizon are declared so that reported cohorts have observable deadlines (Lab 5’s scenario adds a service_tail phase for precisely this), and the wait percentile is strictly censored — if any unit needed for the percentile is unfulfilled, the metric refuses to print a number at all. You will see censored in a real report in Lab 5, and it will be the most honest cell in the table.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Interlude — The Customer's Clock</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/customers-clock.html#service-capacity-and-the-cost-of-a-cap",
+    "href": "interludes/customers-clock.html#service-capacity-and-the-cost-of-a-cap",
+    "title": "10  Interlude — The Customer’s Clock",
+    "section": "10.4 Service, capacity, and the cost of a cap",
+    "text": "10.4 Service, capacity, and the cost of a cap\nThe line’s capacity is 15/min; the customer wants 12/min. That 25% margin means 100% on-time service is achievable — and, remarkably, achievable at wildly different WIP levels, which is the entire drama of Lab 5: push and a well-tuned pull deliver identical service; only the inventory differs.\nBut admission control has a cliff. Cap the line’s intake below demand — say at 10/min against 12 — and backlog grows at 2/min, forever. Waits grow with the backlog; once the queue is longer than what the cap can clear within the patience window, every subsequent unit is late. The measured on-time rate then mostly reflects how early in the run the queue outgrew the deadline — keep running and it decays toward zero. One number to internalize: an over-tight cap doesn’t degrade service proportionally (10/12 ≈ 83%); it collapses it, because lateness compounds through the queue.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Interlude — The Customer's Clock</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/customers-clock.html#claims-to-carry-into-lab-5",
+    "href": "interludes/customers-clock.html#claims-to-carry-into-lab-5",
+    "title": "10  Interlude — The Customer’s Clock",
+    "section": "10.5 Claims to carry into Lab 5",
+    "text": "10.5 Claims to carry into Lab 5\n\nThe baseline (push) will serve 100% on time. So will a correctly tuned pull — with the same p95 wait — while carrying a fraction of the WIP. Service metrics alone cannot distinguish them; the ledger can.\nThe deliberately over-tight reference solution admits 10/min against 12/min demand. Predict: on-time far below 83%, decaying with run length, and a p95 that prints censored rather than a number.\nLittle’s Law works on the backlog too: the customer’s average wait relates backlog and demand rate exactly as WIP relates to throughput and cycle time. One law, second appearance.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Interlude — The Customer's Clock</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/customers-clock.html#further-reading",
+    "href": "interludes/customers-clock.html#further-reading",
+    "title": "10  Interlude — The Customer’s Clock",
+    "section": "10.6 Further reading",
+    "text": "10.6 Further reading\n\nHopp & Spearman, Factory Physics (3rd ed.), ch. 10 “Push and Pull Production Systems” — the control side of what Lab 5 measures; ch. 3 and 4 for where push (MRP) and pull (JIT) actually came from.\nLittle & Graves, “Little’s Law” (in Building Intuition, 2008) — §on applications includes exactly this waiting-line reading.\nThe demand-cohort and censoring contract is FISL’s ADR 0008.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Interlude — The Customer's Clock</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-05-push-and-pull.html",
+    "href": "labs/lab-05-push-and-pull.html",
+    "title": "11  Lab 5 — Push and Pull",
+    "section": "",
+    "text": "11.1 What “95% service” means here, exactly\nScenario: fp-05-push-and-pull · runs of ~13 minutes each\nEvery lab so far had a silent customer: the sink took whatever arrived, whenever it arrived. This lab gives the customer a voice — a deterministic demand of 12 workpieces/min with a declared patience of 30 seconds — and one number that speaks for them: the fraction of demanded work served within that patience, the on-time item rate. The factory is Lab 3’s line, capacity 15/min. It can serve this customer. The question is what else your control policy does while serving them — and what happens when a policy stops serving them.\nFISL refuses to print an ambiguous “service level.” The on-time item rate is defined so every part is auditable:\nYou get a second customer number: the p95 wait — the wait below which 95% of demanded quantity was served. If any selected demand was never served within the horizon, this comes back censored rather than as a number, because an unserved unit’s wait is not zero, not infinite, and not knowable.",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Lab 5 — Push and Pull</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-05-push-and-pull.html#what-95-service-means-here-exactly",
+    "href": "labs/lab-05-push-and-pull.html#what-95-service-means-here-exactly",
+    "title": "11  Lab 5 — Push and Pull",
+    "section": "",
+    "text": "demand arrives in cohorts — the quantity created at each boundary tick, aged from that tick;\ndeliveries are matched to the oldest outstanding demand first (FIFO) — a fresh delivery can’t be declared on-time while older demand waits;\na demanded unit is on time if fulfilled within 30 s of its creation; passing the deadline fixes the outcome — later fulfillment still reduces backlog, but history is not rewritten;\nthe rate’s numerator and denominator refer to the same cohorts: demand created during the measured phase, followed to their deadlines through a short service_tail phase after production measurement ends. Demand created before the window (opening backlog) or after it never touches the ratio;\na deadline the experiment didn’t live to observe is censored — reported as unresolved, never guessed on-time or late.",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Lab 5 — Push and Pull</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-05-push-and-pull.html#run-1-push",
+    "href": "labs/lab-05-push-and-pull.html#run-1-push",
+    "title": "11  Lab 5 — Push and Pull",
+    "section": "11.2 Run 1 — push",
+    "text": "11.2 Run 1 — push\nRun the line untouched: admission at full inserter speed, production at 15/min against demand of 12/min. Predict: on-time rate? p95 wait? And what does the factory look like? (You did Lab 3. You know: the input belt packs solid, WIP in the dozens.) The customer, notice, is perfectly happy — overproduction does serve demand. It just pays for that service with inventory, flow time, and a stream of surplus the customer never asked for (surplus is recorded separately and never credits future demand).",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Lab 5 — Push and Pull</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-05-push-and-pull.html#run-2-pull-two-ways",
+    "href": "labs/lab-05-push-and-pull.html#run-2-pull-two-ways",
+    "title": "11  Lab 5 — Push and Pull",
+    "section": "11.3 Run 2 — pull, two ways",
+    "text": "11.3 Run 2 — pull, two ways\n\nA — pull to consumption: Lab 3’s gate, verbatim (wire, relay hop, rough &lt; 2 at the last belt before machine 1). Admission paces itself to the bottleneck (15/min ≥ 12/min demand). Measured: on-time 100.0% and p95 wait 3.02 s — identical to push, to the hundredth of a second — while average WIP fell 62.9% (51.70 → 19.16) and cycle time with it. Pull is free here; capacity covers demand, and push’s extra inventory was buying nothing.\nB — the over-tight pull (deliberately wrong): a combinator clock admits one workpiece per 6 seconds — exactly 10.00/min measured, below the 12/min demand. Average WIP 7.33 — the smallest number in this course. And: on-time rate 22.5%, and the p95 wait comes back censored because some demand was simply never served. The 22.5% is arithmetic, not noise: backlog grows 2/min while service runs at 10/min, so a cohort’s wait exceeds 30 s once backlog passes 5 — about 2.5 minutes in. Only the first quarter of the measured demand was ever going to make it. Read that report slowly — it is what a “lean” factory that forgot its customer looks like in honest instrumentation.\n\nfisl solutions scenarios/factory-physics/fp05-push-and-pull --run \\\n    --json course/data/lab-05-comparison.json\nThe measured three-run comparison is the lab:\n\n\n\n\nadmission\navg WIP\non-time\np95 wait\n\n\n\n\npush (baseline)\n15.00/min\n51.70\n100.0%\n3.02 s\n\n\nA — pull-tuned\n14.30/min\n19.16\n100.0%\n3.02 s\n\n\nB — over-tight\n10.00/min\n7.33\n22.5%\ncensored\n\n\n\nRead column by column: B wins the WIP column decisively — and it is the only run that isn’t a factory. Push and A have identical customers and a 2.7× inventory difference. The whole lab is in that table.",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Lab 5 — Push and Pull</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-05-push-and-pull.html#debrief",
+    "href": "labs/lab-05-push-and-pull.html#debrief",
+    "title": "11  Lab 5 — Push and Pull",
+    "section": "11.4 Debrief",
+    "text": "11.4 Debrief\n\nThe canonical objective form here is a requirement plus a preference: maintain on-time ≥ 95% within 30 s; then minimize average WIP. Why must it be ordered like that, rather than a single blended score? What would a blended score have said about run B?\nSolution A’s gate watches the bottleneck, not the customer. Why does that work here? Under what change (demand 16/min? machine slowdown?) would it stop working, and which metric would tell you first?\nBacklog and on-time rate measure different things. Construct a run (mentally) with high on-time rate and repeated nonzero backlog — and one with the opposite. Which customer is angrier?\nThe censored p95 in run B is a feature. What would a dashboard that filled it in with “the waits we happened to observe” have concluded?",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Lab 5 — Push and Pull</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-05-push-and-pull.html#what-the-simulation-assumed-away",
+    "href": "labs/lab-05-push-and-pull.html#what-the-simulation-assumed-away",
+    "title": "11  Lab 5 — Push and Pull",
+    "section": "11.5 What the simulation assumed away",
+    "text": "11.5 What the simulation assumed away\nDemand here is a metronome. Real demand fluctuates — and the moment it does, the buffer question from Lab 4 and the service question from this lab collide: safety stock and safety capacity exist to protect service against variability. That collision is the variability course. What carries over unchanged: service is a constraint you state explicitly — with a tolerance, a cohort population, and an observation horizon — or it is a vibe.\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nReference runs (2026-08-26): baseline 01M0Z68MAR07HYK6ADFF8MTTVV, A 01M0Z6B1JESS0T4Q0N9WPHDPYG, B 01M0Z6DF3N10M8DMR7ZDZNMS5E; dataset regenerates with fisl solutions scenarios/factory-physics/fp05-push-and-pull   --run --json course/data/lab-05-comparison.json. Solution B’s combinator clock hit exactly 10.00/min on the first execution of the 2.0 combinator control-behavior APIs. A’s WIP (19.16) is bit-identical to fp03’s pulled run — same gate, same world, now with a customer watching.\nThe 22.5% on-time in B is derivable in class: backlog grows at (12−10)/min; a cohort waits &gt; 30 s once backlog exceeds 10/min × 0.5 min = 5, which happens 2.5 min into the 10-minute window.\nPooled machine states tell the same story from the machine side: baseline/A both 66.9% productive (the (100+50+50)/3 rate arithmetic of this line), B down at 44.7% with starved 55.3% — the whole line idles while the customer waits.\nThe service_tail phase (1 min, demand inactive) exists so the last measured cohort’s 30 s deadline is observable — the compiler enforces that property and will reject a scenario that couldn’t resolve its own reported deadlines.\nLive view shows only current WIP; service status live is deliberately withheld in this first version (objectives/visibility land with the objectives issue).",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Lab 5 — Push and Pull</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/objectives-without-a-score.html",
+    "href": "interludes/objectives-without-a-score.html",
+    "title": "12  Interlude — Objectives Without a Score",
+    "section": "",
+    "text": "12.1 Two kinds of wanting\nRead after Lab 5, before Lab 6 · no Factorio required · ~20 minutes\nLab 5 ended with a comparison table and a refusal: three runs, nine metrics, and no column telling you who won. That refusal is a design decision with an argument behind it, and Lab 6 — where the scenario itself finally declares objectives — is built on the argument. Read it here first, so that when the capstone’s report says INFEASIBLE you know it is a verdict, not a value judgment.\nAn objective in FISL is one of exactly two things:\nThe evaluation rule is a conjunction: a run is feasible when every requirement passes. Fail one and the run is INFEASIBLE — and here is the part that matters — its preference values do not compete. A gorgeous WIP number attached to a failed customer is not a partial win; it is a well-decorated failure.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Interlude — Objectives Without a Score</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/objectives-without-a-score.html#two-kinds-of-wanting",
+    "href": "interludes/objectives-without-a-score.html#two-kinds-of-wanting",
+    "title": "12  Interlude — Objectives Without a Score",
+    "section": "",
+    "text": "A requirement: a hard line on one metric — on-time rate at least 95%, supply loss at most 2%. Each requirement gets a verdict: PASS, FAIL, or UNDETERMINED (more on the third shortly).\nA preference: a direction on one metric — less WIP is better. Preferences get no verdict at all, ever. They only order runs.\n\n\n\n\n\nRequirements carve the plane; only inside the carved region do preferences get a vote. The two left points are not “close” or “far” from feasibility — they are outside, and the preference arrow cannot reach them.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Interlude — Objectives Without a Score</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/objectives-without-a-score.html#why-there-is-no-score",
+    "href": "interludes/objectives-without-a-score.html#why-there-is-no-score",
+    "title": "12  Interlude — Objectives Without a Score",
+    "section": "12.2 Why there is no score",
+    "text": "12.2 Why there is no score\nThe alternative everyone reaches for is a weighted score: 0.6 × service + 0.3 × loss + 0.1 × WIP, tune to taste. The course refuses it for three reasons that compound:\n\nThe weights are an editorial opinion wearing arithmetic’s clothes. Whoever sets them decides how many units of saved inventory buy back one failed customer — a trade the customer was never consulted on. Requirements make the same commitments legibly: the threshold is printed, arguable, and owned.\nA score erases the difference between failure modes. Two runs scoring 0.71 — one failing service, one failing supply — need entirely different interventions. The conjunction preserves which line was crossed; the sum destroys it.\nScores invite optimization of the score. Once a single number is the target, the system’s operators will find the corner of metric space that maximizes it, which is rarely the corner anyone wanted. Requirements plus preferences leave nothing to game: pass the lines, then improve the direction.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Interlude — Objectives Without a Score</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/objectives-without-a-score.html#undetermined-is-a-verdict-not-an-apology",
+    "href": "interludes/objectives-without-a-score.html#undetermined-is-a-verdict-not-an-apology",
+    "title": "12  Interlude — Objectives Without a Score",
+    "section": "12.3 UNDETERMINED is a verdict, not an apology",
+    "text": "12.3 UNDETERMINED is a verdict, not an apology\nWhat if a requirement’s metric couldn’t be measured completely — a censored percentile, an incomplete window? The requirement evaluates to UNDETERMINED: not passed, not failed, unknown. And unknown propagates: a run with one failed requirement is INFEASIBLE outright, but a run with no failures and one UNDETERMINED is UNDETERMINED overall — you may not call it feasible on a hunch.\nThis is Lab 5’s censoring discipline promoted to the evaluation layer: missing evidence never rounds toward the answer you were hoping for. Note also what objectives do not touch: protocol validity. Whether the run was a clean experiment (census exact, no violations) is reported separately from whether its outcome passed. A flagged run that “passes” is still a flagged run; a pristine experiment can fail honestly.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Interlude — Objectives Without a Score</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/objectives-without-a-score.html#symptoms-causes-and-the-trap-the-capstone-sets",
+    "href": "interludes/objectives-without-a-score.html#symptoms-causes-and-the-trap-the-capstone-sets",
+    "title": "12  Interlude — Objectives Without a Score",
+    "section": "12.4 Symptoms, causes, and the trap the capstone sets",
+    "text": "12.4 Symptoms, causes, and the trap the capstone sets\nOne more idea completes the kit. Requirements name symptoms — the places where the system’s behavior touches someone who can be hurt: the customer waiting, the supplier’s deliveries lost. Nothing guarantees that distinct symptoms have distinct causes. When they share one cause, two things follow:\n\na fix aimed at a symptom can green its own requirement and move the conjunction not at all — effort spent, feasibility unchanged;\nthe counting intuition (“we fail two requirements, so we’re two fixes away”) is wrong in both directions. One cause can fail two requirements; one fix can pass both.\n\nLab 6 is this paragraph made playable: a line squeezed by its supplier and its customer at once, a toolbox full of plausible local fixes, and a conjunction that only system thinking satisfies.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Interlude — Objectives Without a Score</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/objectives-without-a-score.html#claims-to-carry-into-lab-6",
+    "href": "interludes/objectives-without-a-score.html#claims-to-carry-into-lab-6",
+    "title": "12  Interlude — Objectives Without a Score",
+    "section": "12.5 Claims to carry into Lab 6",
+    "text": "12.5 Claims to carry into Lab 6\n\nAny intervention that leaves the line’s constraint at 30/min cannot make the service requirement pass — however much it improves supply loss, WIP, or anything else. Feasibility is decided at the constraint.\nAt least one reference solution will green one requirement while the conjunction stays INFEASIBLE — and fisl compare will print its preference values anyway, visibly not competing.\nAmong feasible runs, the WIP preference will produce a ranking; no infeasible run’s WIP will participate in it, no matter how low.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Interlude — Objectives Without a Score</span>"
+    ]
+  },
+  {
+    "objectID": "interludes/objectives-without-a-score.html#further-reading",
+    "href": "interludes/objectives-without-a-score.html#further-reading",
+    "title": "12  Interlude — Objectives Without a Score",
+    "section": "12.6 Further reading",
+    "text": "12.6 Further reading\n\nHopp & Spearman, Factory Physics (3rd ed.), ch. 6 “A Science of Manufacturing” — “the essence of manufacturing management is trade-offs”; requirements-plus-preferences is that sentence made operational. Ch. 19 “Synthesis” for the whole-system view Lab 6 rehearses.\nThe evaluation contract — verdicts, conjunction, no scalar score, and the INFEASIBLE framing in comparisons — is FISL’s ADR 0012 (with disclosure rules in ADR 0011).",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Interlude — Objectives Without a Score</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-06-system-optimization.html",
+    "href": "labs/lab-06-system-optimization.html",
+    "title": "13  Lab 6 — System Optimization",
+    "section": "",
+    "text": "13.1 The system\nScenario: fp-06-system-optimization · runs of ~18 minutes each\nEvery previous lab isolated one idea and handed you one dial. The capstone takes the dials away. The factory is squeezed from both ends at once — a supplier who won’t slow down and a customer who won’t wait — and the toolbox contains every remedy this course has taught: faster machines, buffer chests, circuit components. Most combinations of them fail. The lab is over when you can say why the ones that fail, fail — before running them.\nThe familiar fast → slow → fast line (37.5 / 30 / 45 workpieces per minute), with two new external facts:\nArithmetic the learner can do at the whiteboard before touching anything: the line’s constraint produces 30/min. The supplier delivers 36. The customer wants 33. Every minute, 6 units pile up at the gate and 3 units of demand go unserved. Both ends bleed, from one cause.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Lab 6 — System Optimization</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-06-system-optimization.html#the-system",
+    "href": "labs/lab-06-system-optimization.html#the-system",
+    "title": "13  Lab 6 — System Optimization",
+    "section": "",
+    "text": "A scheduled supplier. 36 workpieces/min arrive on a fixed schedule, whether you’re ready or not, into a warehouse holding at most 100 with a 10-unit overflow yard behind it. Deliveries that find both full are lost forever — the supply-loss metric counts them against everything the supplier scheduled. The warehouse starts nearly full (90) so the line never starves at startup — but do not mistake the quiet opening minutes for health. An empty line swallows a lot of material while its belts and machine buffers fill, and that cold-start gulp drains the warehouse; the structural 6/min surplus then spends the first stretch of the run silently refilling it. The loss doesn’t start until the buffers are full again — and then it never stops.\nA customer, as in Lab 5: 33/min demanded, 30 s patience, FIFO backlog, on-time item rate watching.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Lab 6 — System Optimization</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-06-system-optimization.html#the-objectives-and-why-there-is-no-score",
+    "href": "labs/lab-06-system-optimization.html#the-objectives-and-why-there-is-no-score",
+    "title": "13  Lab 6 — System Optimization",
+    "section": "13.2 The objectives — and why there is no score",
+    "text": "13.2 The objectives — and why there is no score\nRequirements:  on-time item rate &gt;= 95%   AND   supply loss &lt;= 2%\nPreference:    minimize average WIP\nThe requirements are a conjunction: pass both or the run is infeasible. The preference only ranks runs within the feasible set — fisl compare prints an infeasible run’s WIP but marks it as not competing. There is no weighted score, deliberately: a score would let 7.33 units of WIP buy back a failed customer, and Lab 5 already showed where that leads. An incomplete measurement evaluates as UNDETERMINED — never quietly as a pass or a failure.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Lab 6 — System Optimization</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-06-system-optimization.html#run-1-watch-it-fail-twice",
+    "href": "labs/lab-06-system-optimization.html#run-1-watch-it-fail-twice",
+    "title": "13  Lab 6 — System Optimization",
+    "section": "13.3 Run 1 — watch it fail twice",
+    "text": "13.3 Run 1 — watch it fail twice\nRun the baseline untouched and watch both requirements fail on one screen: the on-time rate sinking as backlog accumulates, and — later than you’d expect — the supply-loss row waking up. Note when each failure becomes visible. The service failure shows within minutes; the supply failure hides for most of the run behind refilling buffers, then arrives all at once and permanently. A ten-minute audit of this factory would have reported one problem; the system has two. Walk the line mid-run and collect the full diagnosis kit from earlier labs: which machine never rests (Lab 2), who is blocked and who is starved (Lab 4), where the queue sits (Lab 3), what the customer sees (Lab 5).",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Lab 6 — System Optimization</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-06-system-optimization.html#run-2-spend-your-effort",
+    "href": "labs/lab-06-system-optimization.html#run-2-spend-your-effort",
+    "title": "13  Lab 6 — System Optimization",
+    "section": "13.4 Run 2 — spend your effort",
+    "text": "13.4 Run 2 — spend your effort\nTwo committed reference runs bracket the space; your own combinations are the real assignment.\n\nA — buffer the inflow (the seductive partial fix): splice a chest into the belt upstream of the constraint. Supply loss stops — intake now keeps up with the supplier — and the service failure doesn’t move, while WIP grows all run. One requirement green, one red: INFEASIBLE. You moved the loss from the supplier’s scrap heap into your own inventory account.\nB — relieve the constraint: swap the middle machine for the 45/min model. The line’s pace moves to 37.5/min — above the supplier’s 36 and the customer’s 33 — and both requirements pass with one action, because both symptoms shared one cause. WIP settles moderate; this is the feasible run the preference actually ranks.\n\nfisl solutions scenarios/factory-physics/fp06-system-optimization --run \\\n    --json course/data/lab-06-comparison.json\nThen go beyond the references: add B’s upgrade and Lab 3’s pull gate — how low can average WIP go while both requirements hold? That number, and your explanation of what limits it, is the capstone deliverable.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Lab 6 — System Optimization</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-06-system-optimization.html#debrief",
+    "href": "labs/lab-06-system-optimization.html#debrief",
+    "title": "13  Lab 6 — System Optimization",
+    "section": "13.5 Debrief",
+    "text": "13.5 Debrief\n\nSolution A passed the requirement everyone upstream could see and failed the one the customer feels. Which dashboards in a real company report the first kind of number? Who reports the second?\nThe baseline’s supply loss was invisible for most of the run — buffer space absorbed a structural 6/min deficit until it didn’t. How long would a measurement window have to be before you’d trust a “no loss” reading? What plays the role of that buffer space in a real supply agreement?\nWhy did one machine swap fix two apparently unrelated problems? State the general rule about symptoms and constraints.\nNow raise the supplier to 40/min (above M1’s 37.5 ceiling). No machine swap fixes intake. What are your options, and what does each cost in which currency — loss, inventory, or capacity? (This is the first scenario in the course with no clean answer. That’s the point.)\nAcross seven labs you measured stocks, flows, constraints, states, service, and loss — always with declared boundaries, windows, and denominators. Which of those habits survives contact with a real operation where nobody hands you a conservation ledger?",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Lab 6 — System Optimization</span>"
+    ]
+  },
+  {
+    "objectID": "labs/lab-06-system-optimization.html#what-the-whole-course-assumed-away",
+    "href": "labs/lab-06-system-optimization.html#what-the-whole-course-assumed-away",
+    "title": "13  Lab 6 — System Optimization",
+    "section": "13.6 What the whole course assumed away",
+    "text": "13.6 What the whole course assumed away\nDeterminism, to the end. Every rate in this factory is a constant, so every diagnosis is an arithmetic identity and every fix either works or doesn’t. Real systems add variability — and with it, buffers earn keep, utilization near 100% becomes dangerous rather than merely pointless, and “how much capacity is enough” becomes a distribution question. The variability course starts exactly where this lab’s 40/min homework leaves off: when the clean answer stops existing, what do you buy insurance with — inventory, capacity, or time?\n\n\n\n\n\n\nInstructor notes\n\n\n\n\n\n\nReference interventions: a-buffer-the-inflow (expect: supply loss 0, service still failing, WIP growing all run — INFEASIBLE) and b-upgrade-constraint (expect: both requirements PASS, TH 37.5/min, the customer’s p95 wait collapsing to seconds). Cite measured numbers after the first fisl solutions … --run against this scenario version.\nBaseline mechanics (learned the hard way — a 10-minute window measured only 0.8% loss): the cold-start belt fill plus machine buffers drain the warehouse during warmup, so the measured window opens with tens of units of free warehouse space. The 6/min structural surplus spends ~12 minutes (from supply start) refilling that space before overflow begins; thereafter essentially the full 6/min is lost. Over the 15 min window expect roughly 5–7% of scheduled supply lost — comfortably failing the 2% requirement — with TH pinned at 30/min and on-time at or below ~50%. Verify against the first run of this scenario version before quoting exact numbers.\nThe masking effect is now part of the lesson (see Run 1 and the debrief): transient buffer space hides a structural deficit; short audits report health.\nThe in-game panel shows all three objective rules from READY onward (visibility discloses them); verdicts appear only in the post-run report — no provisional in-game pass/fail.\nThe supply-loss denominator is the supplier’s scheduled quantity in the window (telemetry records both scheduled arrivals and overflow losses); the metric is a fraction with exact integers behind it.",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Lab 6 — System Optimization</span>"
+    ]
+  },
+  {
+    "objectID": "appendices/notation.html",
+    "href": "appendices/notation.html",
+    "title": "Appendix A — Notation and Definitions",
+    "section": "",
+    "text": "A.1 Symbols\nThe course’s formal spine on four pages. Everything here is defined somewhere in a lab or interlude; this is the place to look it up without hunting.\nThe load-bearing identities:\n\\[\n\\mathrm{WIP}(t) = \\mathrm{WIP}(0) + A(t) - D(t)\n\\qquad\n\\overline{\\mathrm{WIP}} = \\mathrm{TH} \\times \\mathrm{CT}\n\\]\n\\[\n\\mathrm{TH}_{\\text{best}}(w) = \\min\\!\\left(\\tfrac{w}{T_0},\\, r_b\\right)\n\\qquad\n\\mathrm{CT}_{\\text{best}}(w) = \\max\\!\\left(T_0,\\, \\tfrac{w}{r_b}\\right)\n\\]",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Notation and Definitions</span>"
+    ]
+  },
+  {
+    "objectID": "appendices/notation.html#symbols",
+    "href": "appendices/notation.html#symbols",
+    "title": "Appendix A — Notation and Definitions",
+    "section": "",
+    "text": "Symbol\nName\nUnit\nFirst appears\n\n\n\n\n\\(\\mathrm{WIP}\\), \\(w\\)\nwork in process (inside the declared boundary)\nwork units\nLab 0\n\n\n\\(\\mathrm{TH}\\)\nthroughput (completions across the sink boundary)\nwork units / time\nLab 0\n\n\n\\(\\mathrm{CT}\\)\ncycle time (time a unit spends inside the boundary)\ntime\nLab 3\n\n\n\\(A(t)\\), \\(D(t)\\)\ncumulative admissions / completions since window start\nwork units\nflow interlude\n\n\n\\(r_b\\)\nbottleneck (constraint) rate\nwork units / time\nflow interlude\n\n\n\\(T_0\\)\nraw process time — traversal of an empty system, transit included\ntime\nflow interlude\n\n\n\\(W_0 = r_b T_0\\)\ncritical WIP\nwork units\nflow interlude",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Notation and Definitions</span>"
+    ]
+  },
+  {
+    "objectID": "appendices/notation.html#conventions-every-number-obeys",
+    "href": "appendices/notation.html#conventions-every-number-obeys",
+    "title": "Appendix A — Notation and Definitions",
+    "section": "A.2 Conventions every number obeys",
+    "text": "A.2 Conventions every number obeys\n\nClock. The experiment clock is simulation ticks (60 per second), never wall time. All durations and windows are tick-exact.\nWindows. Half-open intervals \\([a, b)\\): a window owns its first tick, not its last. Adjacent windows tile time — every tick counted once, no tick twice.\nBoundary. The system boundary is declared in the scenario (source and sink ports); WIP is everything admitted and not yet completed, wherever it physically sits — belts, machine buffers, and the operator’s inventory included.\nPhases. A run is a declared sequence (typically warmup → measured → optional tails such as service_tail). Metrics name the phase their window covers.\nUnits. Stocks are work units; flows are work units per time; a ratio of stock to flow is a time. Fractions always name a numerator set and a denominator.\nIdentity. The resolved scenario (boundary, phases, metrics, objectives — everything semantic) has a hash; runs are comparable only when it matches. A separate reproducibility fingerprint additionally pins the world; matching fingerprints make runs bit-comparable.",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Notation and Definitions</span>"
+    ]
+  },
+  {
+    "objectID": "appendices/notation.html#metric-families",
+    "href": "appendices/notation.html#metric-families",
+    "title": "Appendix A — Notation and Definitions",
+    "section": "A.3 Metric families",
+    "text": "A.3 Metric families\n\n\n\n\n\n\n\n\nMetric\nWhat it is\nFine print\n\n\n\n\nwip\nconservation ledger: admissions − completions, maintained per tick\naudited by a physical census (zero tolerance); disagreement flags the run, never adjusts the number\n\n\naggregate (time mean)\ntime-weighted average of a tracked value over a window\nexact integral, not a sampling\n\n\nthroughput\nboundary crossings per time; boundary: completion (default) counts the sink, boundary: entry counts admissions\nthe two differ whenever WIP is changing — that difference is the WIP change\n\n\ncycle_time (derived)\naccumulated WIP-area ÷ completions (Little’s Law used as a definition)\nthe empirical claim is that it matches a tracked unit’s lived time; in this deterministic course it must\n\n\nproduction_state / state_fraction\nper-machine time classified into productive / starved / blocked / unavailable / disabled / idle_other\nstates partition time; coverage missing is reported beside, never absorbed into a state or a denominator\n\n\neligibility\nthe span a machine belongs to the measured set (dynamic membership)\nper-machine fractions use eligible time; pooled fractions sum eligible machine-time only\n\n\non_time_item_rate\nof demanded items in the cohort window, the fraction fulfilled within the deadline\nitem-weighted; FIFO enforced; deadlines observed passing are final; surplus never pre-credits demand\n\n\ndemand_wait_percentile\nthe wait beaten by p% of demanded items\nstrictly censored: any required-but-unfulfilled unit → the metric prints censored, not a number\n\n\nsupply_loss\nof a supplier’s scheduled quantity in the window, the fraction lost at a full finite buffer\nrequires scheduled supply and finite capacity; exact integers behind the fraction",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Notation and Definitions</span>"
+    ]
+  },
+  {
+    "objectID": "appendices/notation.html#verdicts-and-flags",
+    "href": "appendices/notation.html#verdicts-and-flags",
+    "title": "Appendix A — Notation and Definitions",
+    "section": "A.4 Verdicts and flags",
+    "text": "A.4 Verdicts and flags\n\nRequirement: PASS / FAIL / UNDETERMINED (incomplete or censored evidence — never rounded to either side).\nRun feasibility: the conjunction of requirements. Any FAIL → INFEASIBLE; else any UNDETERMINED → UNDETERMINED; else feasible.\nPreference: a direction, reported and used only to rank feasible runs. Never a verdict, never a weight, never a score.\nProtocol validity: a separate axis entirely — census agreement, coverage, rule violations. A run can pass every objective while flagged, and vice versa; reports show both.",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Notation and Definitions</span>"
+    ]
+  },
+  {
+    "objectID": "appendices/readings-map.html",
+    "href": "appendices/readings-map.html",
+    "title": "Appendix B — Readings Map",
+    "section": "",
+    "text": "This course is not a companion to any book: its spine is the lab sequence and the measurement discipline, and nothing here requires outside reading. But the theory it teaches has a literature, and one book in particular — Hopp & Spearman’s Factory Physics — covers the same laws with the depth a lab course trades away for contact with a running system. This appendix maps each unit to the reading that extends it. Chapter numbers refer to the 3rd edition (Waveland Press, 2011).\n\n\n\n\n\n\n\nCourse unit\nExtends into\n\n\n\n\nLab 0 · Rules of Evidence interlude\nH&S ch. 6 A Science of Manufacturing; Denning & Buzen, “The Operational Analysis of Queueing Network Models” (1978) — measurement laws as identities on observed data\n\n\nLab 1 · Capacity interlude\nH&S ch. 7 Basic Factory Dynamics (parameters, bottleneck rate); ch. 18 Capacity Management\n\n\nLab 2\nH&S ch. 7; Goldratt & Cox, The Goal (1984) — the constraint as narrative\n\n\nAccounting of Flow interlude · Lab 3\nH&S ch. 7 (Little’s Law, best/worst cases, critical WIP); Little, “A Proof for the Queuing Formula \\(L = \\lambda W\\)”, Operations Research 9(3), 1961; Little & Graves, “Little’s Law”, in Building Intuition (2008)\n\n\nStates of a Machine interlude · Lab 4\nH&S ch. 8 Variability Basics (blocking/starving — stochastic where this course is deterministic)\n\n\nCustomer’s Clock interlude · Lab 5\nH&S ch. 10 Push and Pull Production Systems; ch. 3–4 for the history push and pull actually come from (MRP; JIT and lean)\n\n\nObjectives interlude · Lab 6\nH&S ch. 6 (trade-offs); ch. 17 Supply Chain Management (the supplier seed Lab 6 plants); ch. 19 Synthesis\n\n\nThe road not (yet) taken\nH&S ch. 8–9 (Variability Basics, The Corrupting Influence of Variability) — everything this course’s determinism assumed away, and the spine of the sequel\n\n\n\nThree reading habits, if you go on:\n\nTranslate the notation both ways. H&S’s \\(r_b\\), \\(T_0\\), \\(W_0\\) are this course’s symbols on purpose; their \\(L = \\lambda W\\) is our \\(\\overline{\\mathrm{WIP}} = \\mathrm{TH} \\times \\mathrm{CT}\\).\nAsk what each formula assumes. Much of the book’s power — and all of its queueing formulas — needs variability. Every law this course demonstrated holds in the deterministic special case; the practical worst case and the VUT equation do not exist there. When a formula surprises you, check which world it lives in.\nTake the measurement discipline with you. Declared boundaries, explicit windows, named denominators, censored honesty: the book assumes clean numbers arrive from somewhere. You now know what it costs to produce one.",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>B</span>  <span class='chapter-title'>Readings Map</span>"
+    ]
+  }
+]
