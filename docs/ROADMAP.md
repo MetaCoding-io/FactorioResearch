@@ -15,6 +15,8 @@ Relationship to other planning documents:
 - `CONCEPT_COVERAGE.md` — the MECE audit of Hopp & Spearman's *Factory
   Physics* against the course sequence (what's taught where, what's a
   non-goal, what's an open gap).
+- `COURSE_II_SCOPE.md` — the Course II (variability) scoping memo:
+  lab sequence, engineering scope, gates, open decisions.
 - **This file** — where we are, what's next, in what order, and why.
 
 ---
@@ -72,8 +74,12 @@ In dependency order (later items consume earlier ones):
    registration, solution/drill doctrine, worked example, pre-flight
    checklist); `FISL_V1_SCHEMA.md` gained the missing §13.11
    `supply_loss`.
-3. **Course II (variability)** and **Course III (organizational)** as
-   scoped in `CONCEPT_COVERAGE.md`, plus its open gap decisions.
+3. **Course II (variability)** — scoping memo drafted for review:
+   `COURSE_II_SCOPE.md` (thesis, seeded-randomness first principles,
+   seven-lab sequence II-0..II-6, engineering scope in ADR-sized pieces,
+   gates — external-learner gate precedes Course II code — and four open
+   decisions). **Course III (organizational)** remains as scoped in
+   `CONCEPT_COVERAGE.md`.
    Gap #1 (WIP-sweep) **closed**: Lab 7 / `fp07-characteristic-curves` —
    a circuit-built CONWIP gate (pulse counters + memory cell + belt relay
    chain, i.e. the conservation ledger rebuilt in circuits) swept at
