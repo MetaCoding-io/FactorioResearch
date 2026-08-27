@@ -29,3 +29,6 @@ format:
     theme: cosmo
     toc: true
     number-sections: true
+    # MathML is generated at build time: the committed rendered book needs
+    # no CDN, so math survives offline viewing and locked-down networks.
+    html-math-method: mathml

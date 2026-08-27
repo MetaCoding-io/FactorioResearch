@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -301,43 +272,43 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="math inline">\(\mathrm{WIP}\)</span>, <span class="math inline">\(w\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><annotation encoding="application/x-tex">\mathrm{WIP}</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math></td>
 <td>work in process (inside the declared boundary)</td>
 <td>work units</td>
 <td>Lab 0</td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(\mathrm{TH}\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">H</mi></mrow><annotation encoding="application/x-tex">\mathrm{TH}</annotation></semantics></math></td>
 <td>throughput (completions across the sink boundary)</td>
 <td>work units / time</td>
 <td>Lab 0</td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\mathrm{CT}\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">T</mi></mrow><annotation encoding="application/x-tex">\mathrm{CT}</annotation></semantics></math></td>
 <td>cycle time (time a unit spends inside the boundary)</td>
 <td>time</td>
 <td>Lab 3</td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(A(t)\)</span>, <span class="math inline">\(D(t)\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">A(t)</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D(t)</annotation></semantics></math></td>
 <td>cumulative admissions / completions since window start</td>
 <td>work units</td>
 <td>flow interlude</td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(r_b\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math></td>
 <td>bottleneck (constraint) rate</td>
 <td>work units / time</td>
 <td>flow interlude</td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(T_0\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math></td>
 <td>raw process time — traversal of an empty system, transit included</td>
 <td>time</td>
 <td>flow interlude</td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(W_0 = r_b T_0\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mn>0</mn></msub><mo>=</mo><msub><mi>r</mi><mi>b</mi></msub><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">W_0 = r_b T_0</annotation></semantics></math></td>
 <td>critical WIP</td>
 <td>work units</td>
 <td>flow interlude</td>
@@ -345,22 +316,22 @@ window.Quarto = {
 </tbody>
 </table>
 <p>The load-bearing identities:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="2.0em"></mspace><mover><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mo accent="true">¯</mo></mover><mo>=</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">H</mi></mrow><mo>×</mo><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">T</mi></mrow></mrow><annotation encoding="application/x-tex">
 \mathrm{WIP}(t) = \mathrm{WIP}(0) + A(t) - D(t)
 \qquad
 \overline{\mathrm{WIP}} = \mathrm{TH} \times \mathrm{CT}
-\]</span></p>
-<p><span class="math display">\[
+</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">H</mi></mrow><mtext mathvariant="normal">best</mtext></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>w</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>min</mo><mspace width="-0.167em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="false"><mi>w</mi><msub><mi>T</mi><mn>0</mn></msub></mfrac><mo>,</mo><mspace width="0.167em"></mspace><msub><mi>r</mi><mi>b</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="2.0em"></mspace><msub><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">T</mi></mrow><mtext mathvariant="normal">best</mtext></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>w</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>max</mo><mspace width="-0.167em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>0</mn></msub><mo>,</mo><mspace width="0.167em"></mspace><mfrac displaystyle="false"><mi>w</mi><msub><mi>r</mi><mi>b</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \mathrm{TH}_{\text{best}}(w) = \min\!\left(\tfrac{w}{T_0},\, r_b\right)
 \qquad
 \mathrm{CT}_{\text{best}}(w) = \max\!\left(T_0,\, \tfrac{w}{r_b}\right)
-\]</span></p>
+</annotation></semantics></math></p>
 </section>
 <section id="conventions-every-number-obeys" class="level2" data-number="A.2">
 <h2 data-number="A.2" class="anchored" data-anchor-id="conventions-every-number-obeys"><span class="header-section-number">A.2</span> Conventions every number obeys</h2>
 <ul>
 <li><strong>Clock.</strong> The experiment clock is simulation ticks (60 per second), never wall time. All durations and windows are tick-exact.</li>
-<li><strong>Windows.</strong> Half-open intervals <span class="math inline">\([a, b)\)</span>: a window owns its first tick, not its last. Adjacent windows tile time — every tick counted once, no tick twice.</li>
+<li><strong>Windows.</strong> Half-open intervals <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">[a, b)</annotation></semantics></math>: a window owns its first tick, not its last. Adjacent windows tile time — every tick counted once, no tick twice.</li>
 <li><strong>Boundary.</strong> The system boundary is declared in the scenario (source and sink ports); WIP is everything admitted and not yet completed, wherever it physically sits — belts, machine buffers, and the operator’s inventory included.</li>
 <li><strong>Phases.</strong> A run is a declared sequence (typically <em>warmup</em> → <em>measured</em> → optional tails such as <em>service_tail</em>). Metrics name the phase their window covers.</li>
 <li><strong>Units.</strong> Stocks are work units; flows are work units per time; a ratio of stock to flow is a time. Fractions always name a numerator set and a denominator.</li>

@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -315,7 +286,7 @@ window.Quarto = {
 <figcaption>A deterministic fast → slow → fast line at steady state. The constraint runs continuously; the upstream machine periodically has nowhere to put finished work, the downstream machine periodically has nothing to work on.</figcaption>
 </figure>
 </div>
-<p>The direction is diagnostic, not decorative: <strong>blocking accumulates upstream of the constraint, starvation downstream.</strong> Waiting states point at the constraint like iron filings around a magnet. And the arithmetic from the capacity interlude sets the magnitudes, to first order: a machine of capacity <span class="math inline">\(c\)</span> in a line pacing at <span class="math inline">\(m\)</span> can be productive at most <span class="math inline">\(m/c\)</span> of the time. For the 37.5 / 30 / 45 line:</p>
+<p>The direction is diagnostic, not decorative: <strong>blocking accumulates upstream of the constraint, starvation downstream.</strong> Waiting states point at the constraint like iron filings around a magnet. And the arithmetic from the capacity interlude sets the magnitudes, to first order: a machine of capacity <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math> in a line pacing at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math> can be productive at most <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>/</mi><mi>c</mi></mrow><annotation encoding="application/x-tex">m/c</annotation></semantics></math> of the time. For the 37.5 / 30 / 45 line:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">

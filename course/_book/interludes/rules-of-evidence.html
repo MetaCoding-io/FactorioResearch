@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -298,7 +269,7 @@ window.Quarto = {
 </section>
 <section id="windows-half-open-tick-exact" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="windows-half-open-tick-exact"><span class="header-section-number">2.3</span> Windows: half-open, tick-exact</h2>
-<p>The experiment clock is the simulation’s own tick counter — not wall time, not your watch. A measurement window is a <strong>half-open interval</strong> of ticks, <span class="math inline">\([a, b)\)</span>: it owns its first tick and does not own its last.</p>
+<p>The experiment clock is the simulation’s own tick counter — not wall time, not your watch. A measurement window is a <strong>half-open interval</strong> of ticks, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">[a, b)</annotation></semantics></math>: it owns its first tick and does not own its last.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../images/interludes/windows.svg" class="img-fluid figure-img" style="width:100.0%"></p>

@@ -103,35 +103,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -387,15 +358,15 @@ Figure&nbsp;7.2: Run 1, mid-experiment: the input belt packed solid with waiting
 <section id="the-theory-you-just-watched" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="the-theory-you-just-watched"><span class="header-section-number">7.3</span> The theory you just watched</h2>
 <p>Multiply throughput by cycle time, in consistent units:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.25</mn><mspace width="0.222em"></mspace><mtext mathvariant="normal">workpieces/s</mtext><mo>×</mo><mn>206.78</mn><mspace width="0.222em"></mspace><mtext mathvariant="normal">s</mtext><mo>=</mo><mn>51.70</mn><mspace width="0.222em"></mspace><mtext mathvariant="normal">workpieces</mtext></mrow><annotation encoding="application/x-tex">
 0.25\ \text{workpieces/s} \times 206.78\ \text{s} = 51.70\ \text{workpieces}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>That is your average WIP, exactly. This is <strong>Little’s Law</strong>:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">WIP</mtext><mo>=</mo><mtext mathvariant="normal">TH</mtext><mo>×</mo><mtext mathvariant="normal">CT</mtext></mrow><annotation encoding="application/x-tex">
 \text{WIP} = \text{TH} \times \text{CT}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>It holds for any stable flow system with a declared boundary — factories, hospitals, ticket queues, software teams — with no assumptions about what happens inside. It is an accounting identity of flow, and you have now measured all three of its terms simultaneously in a system you could walk around in.</p>
-<p>Read it as a constraint: the three quantities are not independent. If throughput is pinned by a bottleneck (yours is: the first machine can only do one workpiece per 4 s, i.e.&nbsp;15/min), then <strong>WIP and cycle time are the same decision</strong>. Carry 52 units of inventory and your flow time <em>must</em> be ~207 s. Want a 30-second flow time? Then you may hold at most <span class="math inline">\(0.25 \times 30 = 7.5\)</span> units of WIP — no clever routing can evade this.</p>
+<p>Read it as a constraint: the three quantities are not independent. If throughput is pinned by a bottleneck (yours is: the first machine can only do one workpiece per 4 s, i.e.&nbsp;15/min), then <strong>WIP and cycle time are the same decision</strong>. Carry 52 units of inventory and your flow time <em>must</em> be ~207 s. Want a 30-second flow time? Then you may hold at most <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.25</mn><mo>×</mo><mn>30</mn><mo>=</mo><mn>7.5</mn></mrow><annotation encoding="application/x-tex">0.25 \times 30 = 7.5</annotation></semantics></math> units of WIP — no clever routing can evade this.</p>
 </section>
 <section id="run-2-intervene" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="run-2-intervene"><span class="header-section-number">7.4</span> Run 2 — intervene</h2>
@@ -449,7 +420,7 @@ If nothing changed <em>at all</em>…
 <p>…your wire never connected. An inserter with an enable condition but no circuit network <strong>ignores the condition completely</strong> — the run comes out identical to the baseline, down to the last decimal. The usual cause is wire reach: a red wire spans at most 9 tiles, and the direct inserter-to-gate span here is 10, so it needs the relay hop from step 3. Walk the wire and check both segments are actually drawn. This, too, was a mistake the reference solution made (version 2 wired the distance directly; the script reported success and changed nothing). A control system has two halves — the <em>decision</em> and the <em>actuation path</em> — and configuring the first does nothing without the second.</p>
 </div>
 </div>
-<p><strong>And why doesn’t WIP go to ~2?</strong> Walk the line in run 2 and count what’s left: one or two workpieces staged at the gate, a few <em>moving</em> on belts, one inside each machine. This line is ~90 tiles long — about 48 s of pure belt travel — so even a perfect pull system must carry <span class="math inline">\(\text{TH} \times \text{transit} \approx 0.25 \times 48 \approx 12\)</span> workpieces of in-transit inventory. <strong>Conveyors are inventory.</strong> The run-1 queue was waste; the run-2 residual is transportation. Little’s Law prices both identically.</p>
+<p><strong>And why doesn’t WIP go to ~2?</strong> Walk the line in run 2 and count what’s left: one or two workpieces staged at the gate, a few <em>moving</em> on belts, one inside each machine. This line is ~90 tiles long — about 48 s of pure belt travel — so even a perfect pull system must carry <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">TH</mtext><mo>×</mo><mtext mathvariant="normal">transit</mtext><mo>≈</mo><mn>0.25</mn><mo>×</mo><mn>48</mn><mo>≈</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">\text{TH} \times \text{transit} \approx 0.25 \times 48 \approx 12</annotation></semantics></math> workpieces of in-transit inventory. <strong>Conveyors are inventory.</strong> The run-1 queue was waste; the run-2 residual is transportation. Little’s Law prices both identically.</p>
 </section>
 <section id="debrief" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="debrief"><span class="header-section-number">7.5</span> Debrief</h2>

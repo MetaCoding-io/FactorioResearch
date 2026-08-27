@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -296,18 +267,18 @@ window.Quarto = {
 <section id="the-boundary-does-the-counting" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="the-boundary-does-the-counting"><span class="header-section-number">6.2</span> The boundary does the counting</h2>
 <p>FISL forces you to declare a boundary before any measurement: the blue source port is where material enters, the orange sink port is where it leaves, and the measurement window is a half-open interval of simulation ticks — a tick belongs to the window that starts on it, never to two windows at once. These are not bureaucratic details. They are what makes the following bookkeeping exact.</p>
-<p>Over a window, count two running totals: <span class="math inline">\(A(t)\)</span>, admissions through the source since the window opened, and <span class="math inline">\(D(t)\)</span>, completions through the sink. Then at every instant</p>
-<p><span class="math display">\[
+<p>Over a window, count two running totals: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">A(t)</annotation></semantics></math>, admissions through the source since the window opened, and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D(t)</annotation></semantics></math>, completions through the sink. Then at every instant</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mo>=</mo><mspace width="0.278em"></mspace><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">
 \mathrm{WIP}(t) \;=\; \mathrm{WIP}(0) + A(t) - D(t),
-\]</span></p>
+</annotation></semantics></math></p>
 <p>because a workpiece inside the boundary is precisely one that has been admitted and not yet completed — wherever it physically is: on a belt, in a machine buffer, mid-craft, in your pockets. This is a conservation law, and it is the entire content of FISL’s WIP ledger. It holds with no assumptions about what the machines are doing.</p>
 </section>
 <section id="from-conservation-to-littles-law" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="from-conservation-to-littles-law"><span class="header-section-number">6.3</span> From conservation to Little’s Law</h2>
-<p>Now average the stock over the whole window of length <span class="math inline">\(T\)</span>. A useful way to compute that average: each workpiece contributes exactly 1 to <span class="math inline">\(\mathrm{WIP}(t)\)</span> for every second it spends inside the boundary. So the accumulated quantity</p>
-<p><span class="math display">\[
+<p>Now average the stock over the whole window of length <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>. A useful way to compute that average: each workpiece contributes exactly 1 to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{WIP}(t)</annotation></semantics></math> for every second it spends inside the boundary. So the accumulated quantity</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∫</mo><mn>0</mn><mi>T</mi></msubsup><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>t</mi><mspace width="1.0em"></mspace><mtext mathvariant="normal">(work-unit–seconds)</mtext></mrow><annotation encoding="application/x-tex">
 \int_0^T \mathrm{WIP}(t)\, dt \quad \text{(work-unit–seconds)}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>equals the <em>total time spent inside the system, summed over workpieces</em>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -315,16 +286,16 @@ window.Quarto = {
 <figcaption>The two cumulative counts and the quantity between them. The vertical gap at any instant is WIP; the horizontal gap at any count is one piece’s time inside; the shaded area is both at once — the sum of every piece’s time inside, and the integral of WIP over the window.</figcaption>
 </figure>
 </div>
-<p>Divide both sides by <span class="math inline">\(T\)</span>, and divide-and-multiply by the number of completions <span class="math inline">\(N\)</span>:</p>
-<p><span class="math display">\[
+<p>Divide both sides by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>, and divide-and-multiply by the number of completions <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mo accent="true">¯</mo></mover><mo>=</mo><mfrac><mn>1</mn><mi>T</mi></mfrac><msubsup><mo>∫</mo><mn>0</mn><mi>T</mi></msubsup><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>t</mi><mo>=</mo><munder><munder><mfrac><mi>N</mi><mi>T</mi></mfrac><mo accent="true">⏟</mo></munder><mtext mathvariant="normal">throughput</mtext></munder><mo>×</mo><munder><munder><mrow><mfrac><mn>1</mn><mi>N</mi></mfrac><msubsup><mo>∫</mo><mn>0</mn><mi>T</mi></msubsup><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>t</mi></mrow><mo accent="true">⏟</mo></munder><mtext mathvariant="normal">avg time inside per completion</mtext></munder></mrow><annotation encoding="application/x-tex">
 \overline{\mathrm{WIP}}
 = \frac{1}{T}\int_0^T \mathrm{WIP}\, dt
 = \underbrace{\frac{N}{T}}_{\text{throughput}} \times
   \underbrace{\frac{1}{N}\int_0^T \mathrm{WIP}\, dt}_{\text{avg time inside per completion}}
-\]</span></p>
-<p><span class="math display">\[
+</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><menclose notation="box"><mrow><mspace width="0.278em"></mspace><mover><mrow><mi mathvariant="normal">W</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">P</mi></mrow><mo accent="true">¯</mo></mover><mo>=</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">H</mi></mrow><mo>×</mo><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">T</mi></mrow><mspace width="0.278em"></mspace></mrow></menclose><annotation encoding="application/x-tex">
 \boxed{\;\overline{\mathrm{WIP}} = \mathrm{TH} \times \mathrm{CT}\;}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>Average inventory equals throughput times average time inside the boundary. This is <strong>Little’s Law</strong>. The derivation used only conservation and arithmetic: no assumption about how many machines, how fast, in what order, deterministic or random, FIFO or chaos. That is why it holds for factories, hospitals, ticket queues, and software teams alike — anything with a boundary you are willing to declare.</p>
 <p>Check the units: a flow (units/s) times a time (s) is a stock (units). The three quantities occupy a triangle with only two degrees of freedom.</p>
 <p>Two honesty notes, because FISL will hold you to them:</p>
@@ -337,23 +308,23 @@ window.Quarto = {
 <h2 data-number="6.4" class="anchored" data-anchor-id="the-vocabulary-of-a-line"><span class="header-section-number">6.4</span> The vocabulary of a line</h2>
 <p>Three parameters describe any single-product line, and the literature (see below) names them:</p>
 <ul>
-<li><strong>Bottleneck rate</strong> <span class="math inline">\(r_b\)</span>: the capacity of the slowest station — the ceiling on long-run throughput. You measured one in Lab 2: the middle machine’s 30/min was <span class="math inline">\(r_b\)</span> for that line, and no upgrade elsewhere moved output.</li>
-<li><strong>Raw process time</strong> <span class="math inline">\(T_0\)</span>: the time one workpiece needs to traverse an otherwise <em>empty</em> system — all processing, no waiting behind other work. Be careful what you include: if the belt from source to first machine takes 40 s to ride, that is part of <span class="math inline">\(T_0\)</span>, because an empty system still makes the workpiece ride it. Conveyors are stations whose process is <em>delay</em>.</li>
-<li><strong>Critical WIP</strong> <span class="math inline">\(W_0 = r_b \times T_0\)</span>: Little’s Law evaluated at the best possible operating point — full throughput at minimum time. It is the <em>least</em> inventory a line can hold while producing at capacity. Below <span class="math inline">\(W_0\)</span>, there is not enough work in the system to keep the bottleneck fed; above it, the extra inventory buys nothing but waiting — in a deterministic world.</li>
+<li><strong>Bottleneck rate</strong> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math>: the capacity of the slowest station — the ceiling on long-run throughput. You measured one in Lab 2: the middle machine’s 30/min was <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math> for that line, and no upgrade elsewhere moved output.</li>
+<li><strong>Raw process time</strong> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>: the time one workpiece needs to traverse an otherwise <em>empty</em> system — all processing, no waiting behind other work. Be careful what you include: if the belt from source to first machine takes 40 s to ride, that is part of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>, because an empty system still makes the workpiece ride it. Conveyors are stations whose process is <em>delay</em>.</li>
+<li><strong>Critical WIP</strong> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mn>0</mn></msub><mo>=</mo><msub><mi>r</mi><mi>b</mi></msub><mo>×</mo><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">W_0 = r_b \times T_0</annotation></semantics></math>: Little’s Law evaluated at the best possible operating point — full throughput at minimum time. It is the <em>least</em> inventory a line can hold while producing at capacity. Below <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math>, there is not enough work in the system to keep the bottleneck fed; above it, the extra inventory buys nothing but waiting — in a deterministic world.</li>
 </ul>
-<p>From these, the best any line can possibly do at a given WIP level <span class="math inline">\(w\)</span>:</p>
-<p><span class="math display">\[
+<p>From these, the best any line can possibly do at a given WIP level <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">H</mi></mrow><mtext mathvariant="normal">best</mtext></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>w</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>min</mo><mspace width="-0.167em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mi>w</mi><msub><mi>T</mi><mn>0</mn></msub></mfrac><mo>,</mo><mspace width="0.278em"></mspace><msub><mi>r</mi><mi>b</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="2.0em"></mspace><msub><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">T</mi></mrow><mtext mathvariant="normal">best</mtext></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>w</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>max</mo><mspace width="-0.167em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>0</mn></msub><mo>,</mo><mspace width="0.278em"></mspace><mfrac><mi>w</mi><msub><mi>r</mi><mi>b</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \mathrm{TH}_{\text{best}}(w) = \min\!\left(\frac{w}{T_0},\; r_b\right)
 \qquad
 \mathrm{CT}_{\text{best}}(w) = \max\!\left(T_0,\; \frac{w}{r_b}\right)
-\]</span></p>
+</annotation></semantics></math></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../images/interludes/best-case-curves.svg" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption>The best-case operating curves, both drawn against the WIP level <span class="math inline">\(w\)</span>. Left of <span class="math inline">\(W_0\)</span> the line is inventory-starved: throughput climbs with WIP at slope <span class="math inline">\(1/T_0\)</span> while every piece flows through in the minimum time. Right of <span class="math inline">\(W_0\)</span> the bottleneck is saturated: throughput is pinned at <span class="math inline">\(r_b\)</span> and additional inventory buys nothing but waiting.</figcaption>
+<figcaption>The best-case operating curves, both drawn against the WIP level <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math>. Left of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math> the line is inventory-starved: throughput climbs with WIP at slope <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">1/T_0</annotation></semantics></math> while every piece flows through in the minimum time. Right of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math> the bottleneck is saturated: throughput is pinned at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math> and additional inventory buys nothing but waiting.</figcaption>
 </figure>
 </div>
-<p>Read the second one aloud: once WIP exceeds <span class="math inline">\(W_0\)</span>, every additional unit of inventory adds <span class="math inline">\(1/r_b\)</span> to every workpiece’s flow time and adds <em>nothing</em> to output. Inventory above critical WIP is pure flow-time, purchased at full price.</p>
+<p>Read the second one aloud: once WIP exceeds <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math>, every additional unit of inventory adds <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><msub><mi>r</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">1/r_b</annotation></semantics></math> to every workpiece’s flow time and adds <em>nothing</em> to output. Inventory above critical WIP is pure flow-time, purchased at full price.</p>
 </section>
 <section id="claims-to-carry-into-lab-3" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="claims-to-carry-into-lab-3"><span class="header-section-number">6.5</span> Claims to carry into Lab 3</h2>
@@ -361,16 +332,16 @@ window.Quarto = {
 <ol type="1">
 <li>Multiply the report’s throughput by its derived cycle time (consistent units). It will equal average WIP — not approximately: to the last decimal, because the derived CT makes this an identity. The <em>stopwatch</em> test of claim 2 is where the physics lives.</li>
 <li>A single workpiece you visually track from source to sink will take (to within a craft cycle) the derived CT the report prints.</li>
-<li>The uncontrolled line will hold far more than <span class="math inline">\(W_0\)</span> of inventory, and its throughput will be no higher for it — output will sit at <span class="math inline">\(r_b\)</span> exactly.</li>
-<li>Any intervention that only <em>limits admission</em> will leave throughput untouched and reduce WIP and CT together, in the ratio Little’s Law dictates — but no intervention of that kind can push WIP below <span class="math inline">\(\mathrm{TH} \times T_0\)</span>. Compute <span class="math inline">\(T_0\)</span> for the Lab 3 line yourself (walk it; count belt tiles; a belt tile is a delay) and write your predicted floor down before run 2.</li>
+<li>The uncontrolled line will hold far more than <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math> of inventory, and its throughput will be no higher for it — output will sit at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math> exactly.</li>
+<li>Any intervention that only <em>limits admission</em> will leave throughput untouched and reduce WIP and CT together, in the ratio Little’s Law dictates — but no intervention of that kind can push WIP below <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">H</mi></mrow><mo>×</mo><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\mathrm{TH} \times T_0</annotation></semantics></math>. Compute <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math> for the Lab 3 line yourself (walk it; count belt tiles; a belt tile is a delay) and write your predicted floor down before run 2.</li>
 </ol>
 <p>If any of these fails in your data, the theory as stated is wrong or the measurement’s validity flags will tell you why. That is the deal this course offers: no number without a method, no law without an experiment.</p>
 </section>
 <section id="further-reading" class="level2" data-number="6.6">
 <h2 data-number="6.6" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">6.6</span> Further reading</h2>
 <ul>
-<li>Hopp &amp; Spearman, <em>Factory Physics</em> (3rd ed.), ch.&nbsp;7 “Basic Factory Dynamics” — <span class="math inline">\(r_b\)</span>, <span class="math inline">\(T_0\)</span>, <span class="math inline">\(W_0\)</span>, and the best/worst-case performance curves this interlude previewed (their practical-worst-case curve needs variability, which this course meets later).</li>
-<li>J. D. C. Little, “A Proof for the Queuing Formula <span class="math inline">\(L = \lambda W\)</span>”, <em>Operations Research</em> 9(3), 1961 — the original proof; Little &amp; Graves, “Little’s Law” (in <em>Building Intuition</em>, 2008) is the readable retrospective.</li>
+<li>Hopp &amp; Spearman, <em>Factory Physics</em> (3rd ed.), ch.&nbsp;7 “Basic Factory Dynamics” — <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math>, and the best/worst-case performance curves this interlude previewed (their practical-worst-case curve needs variability, which this course meets later).</li>
+<li>J. D. C. Little, “A Proof for the Queuing Formula <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mi>λ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">L = \lambda W</annotation></semantics></math>”, <em>Operations Research</em> 9(3), 1961 — the original proof; Little &amp; Graves, “Little’s Law” (in <em>Building Intuition</em>, 2008) is the readable retrospective.</li>
 <li>The half-open windows and conservation ledger this interlude leaned on are FISL’s ADRs 0010 and 0017 — the apparatus was built so that the bookkeeping above is exact rather than approximate.</li>
 </ul>
 

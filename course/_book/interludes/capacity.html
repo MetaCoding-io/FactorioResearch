@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -287,26 +258,26 @@ window.Quarto = {
 <section id="capacity-is-arithmetic-not-aspiration" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="capacity-is-arithmetic-not-aspiration"><span class="header-section-number">4.1</span> Capacity is arithmetic, not aspiration</h2>
 <p>A machine’s <strong>capacity</strong> is the rate it could sustain if material were always waiting and space always open. In this laboratory it is exact:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">craft time</mtext><mo>=</mo><mfrac><mtext mathvariant="normal">recipe seconds</mtext><mtext mathvariant="normal">machine speed</mtext></mfrac><mo>,</mo><mspace width="2.0em"></mspace><mtext mathvariant="normal">capacity</mtext><mo>=</mo><mfrac><mn>60</mn><mtext mathvariant="normal">craft time</mtext></mfrac><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> per minute.</mtext></mrow></mrow><annotation encoding="application/x-tex">
 \text{craft time} = \frac{\text{recipe seconds}}{\text{machine speed}},
 \qquad
 \text{capacity} = \frac{60}{\text{craft time}} \text{ per minute.}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>The three assembler tiers run at speeds 0.5, 0.75, and 1.25; the machining recipe takes 2 s of work, inspection and finishing 1 s each. Every capacity number in this course — 15, 30, 37.5, 45 — comes from this one division. Real factories need measurement campaigns to learn these numbers; here you can read them off the nameplate. What you <em>do</em> with them is the same in both worlds.</p>
 </section>
 <section id="the-weakest-link-sets-the-pace" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="the-weakest-link-sets-the-pace"><span class="header-section-number">4.2</span> The weakest link sets the pace</h2>
 <p>Put machines in series and their capacities do not add, average, or negotiate. In a deterministic line, sustained output is:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">line capacity</mtext><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mtext mathvariant="normal">capacity</mtext><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mtext mathvariant="normal">capacity</mtext><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \text{line capacity} = \min(\text{capacity}_1, \ldots, \text{capacity}_n)
-\]</span></p>
+</annotation></semantics></math></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../images/interludes/line-capacity.svg" class="img-fluid figure-img" style="width:100.0%"></p>
 <figcaption>Installed capacity by stage for a fast → slow → fast line. The line delivers the minimum; every unit of capacity above the dashed line is installed but unusable — not through mismanagement, but by arithmetic.</figcaption>
 </figure>
 </div>
-<p>The stage achieving that minimum is the <strong>constraint</strong> (you will also hear <em>bottleneck</em>; the flow interlude will call its rate <span class="math inline">\(r_b\)</span>). Two consequences follow immediately, and both are routinely disbelieved by people meeting them in the wild:</p>
+<p>The stage achieving that minimum is the <strong>constraint</strong> (you will also hear <em>bottleneck</em>; the flow interlude will call its rate <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>b</mi></msub><annotation encoding="application/x-tex">r_b</annotation></semantics></math>). Two consequences follow immediately, and both are routinely disbelieved by people meeting them in the wild:</p>
 <ul>
 <li><strong>Capacity added anywhere but the constraint adds nothing.</strong> Upgrade a 37.5/min stage to 45 and the min() does not move. The money is spent, the output is identical.</li>
 <li><strong>Installed capacity is not a promise.</strong> Lab 1’s line “wasted” 7.5/min of the first machine’s capability — permanently, structurally, and invisibly to anyone auditing the machines one at a time. Only the <em>system</em> number reveals it.</li>
@@ -315,7 +286,7 @@ window.Quarto = {
 <section id="utilization-needs-a-denominator" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="utilization-needs-a-denominator"><span class="header-section-number">4.3</span> “Utilization” needs a denominator</h2>
 <p>The natural next question — <em>how busy is each machine?</em> — is a trap unless you ask it precisely. “Utilization” as a bare percentage smuggles in two choices: busy <em>doing what</em> (crafting? powered? merely occupied?) and busy <em>out of what</em> (the whole window? the time the machine existed?). FISL deliberately has no metric named “utilization”: when the course starts measuring busyness (Lab 4), every such number will name its numerator states and its denominator explicitly.</p>
-<p>For now, one honest preview from pure arithmetic: a non-constraint machine in a line running at rate <span class="math inline">\(m\)</span> can be doing useful work at most <span class="math inline">\(m/\text{capacity}\)</span> of the time. The <em>faster</em> a machine is relative to the constraint, the <em>lazier</em> it must look. Hold that thought; it will turn diagnosis upside down in Lab 4.</p>
+<p>For now, one honest preview from pure arithmetic: a non-constraint machine in a line running at rate <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math> can be doing useful work at most <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>/</mi><mtext mathvariant="normal">capacity</mtext></mrow><annotation encoding="application/x-tex">m/\text{capacity}</annotation></semantics></math> of the time. The <em>faster</em> a machine is relative to the constraint, the <em>lazier</em> it must look. Hold that thought; it will turn diagnosis upside down in Lab 4.</p>
 </section>
 <section id="claims-to-carry-into-lab-2" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="claims-to-carry-into-lab-2"><span class="header-section-number">4.4</span> Claims to carry into Lab 2</h2>
