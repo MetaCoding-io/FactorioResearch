@@ -314,8 +314,9 @@ both and compares.
 
 ## 5. Connecting the graphical client
 
-`fisl run` prints something like `Connect a Factorio client to
-localhost:42025`. Then:
+`fisl run` prints the connect line **and a ready-to-paste client
+command** with the correct port and that run's `--mod-directory` — copy
+it into a second terminal and you're in. The shape of what it prints:
 
 ```sh
 $FACTORIO_BASE/bin/x64/factorio \

@@ -42,10 +42,9 @@ Every lab follows the same operational rhythm:
 1. In a terminal: `fisl run scenarios/factory-physics/<lab>`. This
    compiles the experiment, starts a private Factorio server from the
    lab's pristine baseline world, and prints a port number.
-2. Launch your Factorio client and connect to it (the User Guide's
-   client section has the exact command; the essential flags are
-   `--mp-connect localhost:<port>` and `--mod-directory
-   runs/<run_id>/server/mods`).
+2. `fisl run` also prints a **ready-to-paste client command** (correct
+   port and mod directory included) — copy it into a second terminal and
+   the game opens straight into the lab.
 3. In-game you'll spawn on the lab floor. The **FISL panel** (top left)
    shows READY. Walk around, look at everything, build if the lab calls
    for it — **the experiment clock does not start until you press Start

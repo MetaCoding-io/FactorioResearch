@@ -325,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Every lab follows the same operational rhythm:</p>
 <ol type="1">
 <li>In a terminal: <code>fisl run scenarios/factory-physics/&lt;lab&gt;</code>. This compiles the experiment, starts a private Factorio server from the lab’s pristine baseline world, and prints a port number.</li>
-<li>Launch your Factorio client and connect to it (the User Guide’s client section has the exact command; the essential flags are <code>--mp-connect localhost:&lt;port&gt;</code> and <code>--mod-directory    runs/&lt;run_id&gt;/server/mods</code>).</li>
+<li><code>fisl run</code> also prints a <strong>ready-to-paste client command</strong> (correct port and mod directory included) — copy it into a second terminal and the game opens straight into the lab.</li>
 <li>In-game you’ll spawn on the lab floor. The <strong>FISL panel</strong> (top left) shows READY. Walk around, look at everything, build if the lab calls for it — <strong>the experiment clock does not start until you press Start Experiment.</strong> The READY world is your practice range: nothing you do before Start is measured, and a fresh <code>fisl run</code> always begins from the same pristine world.</li>
 <li>Press <strong>Start Experiment</strong> and operate. Two rules are enforced, not suggested: there is no pause (the clock is simulation ticks), and disconnecting mid-run aborts the run — data preserved, run marked aborted. Aborting is cheap; just run again.</li>
 <li>When the final phase ends, the panel shows your results, and <code>fisl report runs/&lt;run_id&gt;</code> prints the full measurement record.</li>

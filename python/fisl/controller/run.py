@@ -185,6 +185,15 @@ def execute_run(
                 f"Connect a Factorio client to [bold]localhost:{server.game_port}[/bold] "
                 "and press Start Experiment in the FISL panel."
             )
+            # Ready-to-paste client command: the mod directory is the one
+            # thing learners cannot be expected to figure out (the FISL mods
+            # aren't on the mod portal, so the client can't auto-download).
+            console.print(
+                "In another terminal:\n"
+                f"  {server.factorio_bin} \\\n"
+                f"      --mp-connect localhost:{server.game_port} \\\n"
+                f"      --mod-directory {server.workspace / 'mods'}"
+            )
 
         # 5. monitor until COMPLETED/ABORTED
         total_ticks = resolved["experiment"]["total_duration_ticks"]
