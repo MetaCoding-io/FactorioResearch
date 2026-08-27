@@ -1,0 +1,148 @@
+{
+  "run_id": "01M12QBM6DYF8PHBC72WA91CQ2",
+  "resolved_scenario_hash": "sha256:839dab8fd7a92092eb714ad912d2e61b9aac7c127e5a46375edb14381ce230bd",
+  "scenario": {
+    "id": "fp-sandbox",
+    "version": "0.1.0",
+    "title": "Operator Training"
+  },
+  "metrics": {
+    "average_wip": {
+      "type": "aggregate",
+      "aggregation": "time_mean",
+      "source": "line_wip",
+      "window": {
+        "phase": "measured",
+        "start_tick": 900,
+        "end_tick": 3600
+      },
+      "coverage_complete": true,
+      "census_validity": {
+        "census_checks_in_window": 45,
+        "discrepancy_intervals": [],
+        "valid": true
+      },
+      "value": 39.95481481481482,
+      "unit": "work units",
+      "exact": {
+        "numerator": 107878,
+        "denominator": 2700
+      },
+      "area_work_unit_ticks": 107878,
+      "window_ticks": 2700
+    },
+    "current_wip": {
+      "type": "current_value",
+      "source": "line_wip",
+      "note": "live display metric"
+    },
+    "fraction_productive": {
+      "type": "state_fraction",
+      "source": "machine_state",
+      "state": "productive",
+      "entity_aggregation": "pooled_machine_time",
+      "denominator": "full_window",
+      "window": {
+        "phase": "measured",
+        "start_tick": 900,
+        "end_tick": 3600
+      },
+      "machine_count": 1,
+      "window_ticks": 2700,
+      "denominator_machine_ticks": 2700,
+      "per_machine_denominator_ticks": {
+        "3": 2700
+      },
+      "state_machine_ticks": 2700,
+      "classified_machine_ticks": 2700,
+      "coverage_complete": true,
+      "value": 1.0,
+      "exact": {
+        "numerator": 2700,
+        "denominator": 2700
+      },
+      "coverage_fraction": 1.0
+    },
+    "line_wip": {
+      "type": "wip",
+      "method": "conservation_ledger",
+      "flow": "workpiece_flow",
+      "final_wip": 40,
+      "change_points": 65
+    },
+    "machine_state": {
+      "type": "production_state",
+      "adapter": "crafting_machine",
+      "classifier_version": "crafting_machine/1",
+      "membership_resolution": "dynamic_boundary",
+      "entity_set": "line_machines",
+      "machine_count": 1,
+      "machines": [
+        {
+          "unit_number": 3,
+          "prototype": "assembling-machine-1",
+          "position": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      ],
+      "eligibility": {
+        "3": {
+          "from_tick": 0,
+          "to_tick": 3600
+        }
+      },
+      "eligible_machine_ticks": 3600,
+      "per_machine_eligible_ticks": {
+        "3": 3600
+      },
+      "run_ticks": 3600,
+      "pooled_state_ticks": {
+        "starved": 259,
+        "productive": 3341
+      },
+      "per_machine_state_ticks": {
+        "3": {
+          "starved": 259,
+          "productive": 3341
+        }
+      },
+      "classified_machine_ticks": 3600,
+      "covered_machine_ticks": 3600,
+      "span_count": 2
+    },
+    "measured_throughput": {
+      "type": "throughput",
+      "flow": "workpiece_flow",
+      "window": {
+        "phase": "measured",
+        "start_tick": 900,
+        "end_tick": 3600
+      },
+      "boundary": "completion",
+      "method": "completion_sink_delivery",
+      "completed_quantity": 11,
+      "window_ticks": 2700,
+      "value_per_minute": 14.666666666666666,
+      "exact_per_minute": {
+        "numerator": 44,
+        "denominator": 3
+      },
+      "coverage_complete": true
+    }
+  },
+  "validity": {
+    "completed": true,
+    "aborted": false,
+    "abort_reason": null,
+    "protocol_events": {},
+    "manual_carriage_residual": 0
+  },
+  "lua_cross_verification": {
+    "available": true,
+    "agrees": true,
+    "mismatches": []
+  },
+  "lifecycle": "COMPLETED"
+}

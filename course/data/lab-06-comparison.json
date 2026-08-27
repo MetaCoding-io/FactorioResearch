@@ -1,19 +1,19 @@
 {
   "scenario": {
-    "id": "fp-05-push-and-pull",
+    "id": "fp-06-system-optimization",
     "version": "0.1.0",
-    "title": "Push and Pull"
+    "title": "System Optimization"
   },
   "compatibility": {
     "same_experiment_semantics": true,
     "resolved_hashes": [
-      "sha256:a18d3849f596157df601dbb0e5641cceaf6ef69b724c0d5606e6340e2a3dc146"
+      "sha256:83e8cd99dc81af41447c1fa0c7062cd4adc5f3e7ee31e11f207653e1f6dded60"
     ],
     "same_controlled_condition": true
   },
   "runs": [
     {
-      "run_id": "01M12Q9GBFVFSF55VKFT0RM40W",
+      "run_id": "01M12QM8ABZMM4D41674R4VB9M",
       "lifecycle": "COMPLETED",
       "scripted_intervention": null,
       "validity": {
@@ -29,7 +29,7 @@
             "type": "preference",
             "metric": "average_wip",
             "unit": "work_units",
-            "value": 51.69583333333333,
+            "value": 57.04475925925926,
             "measurement_complete": true,
             "direction": "minimize",
             "status": "REPORTED"
@@ -38,107 +38,140 @@
             "type": "requirement",
             "metric": "customer_service",
             "unit": "fraction",
-            "value": 1.0,
-            "measurement_complete": true,
-            "rule": {
-              "minimum": 0.95
-            },
-            "status": "PASS"
-          }
-        },
-        "overall_requirement_status": "PASS"
-      }
-    },
-    {
-      "run_id": "01M12QBXNYS0PCAVNFHZM7YEB6",
-      "lifecycle": "COMPLETED",
-      "scripted_intervention": {
-        "id": "a-pull-to-consumption",
-        "applied_at": "pre_start",
-        "steps": [
-          {
-            "name": "solution.lua",
-            "sha256": "sha256:9b73c0a241280aec5baef014e6af26e2d4f608d4f4a9ed2c61d2d27b823aaa36"
-          }
-        ]
-      },
-      "validity": {
-        "completed": true,
-        "aborted": false,
-        "abort_reason": null,
-        "protocol_events": {},
-        "manual_carriage_residual": 0
-      },
-      "objectives": {
-        "objectives": {
-          "minimize_wip": {
-            "type": "preference",
-            "metric": "average_wip",
-            "unit": "work_units",
-            "value": 19.15888888888889,
-            "measurement_complete": true,
-            "direction": "minimize",
-            "status": "REPORTED"
-          },
-          "service_requirement": {
-            "type": "requirement",
-            "metric": "customer_service",
-            "unit": "fraction",
-            "value": 1.0,
-            "measurement_complete": true,
-            "rule": {
-              "minimum": 0.95
-            },
-            "status": "PASS"
-          }
-        },
-        "overall_requirement_status": "PASS"
-      }
-    },
-    {
-      "run_id": "01M12QEB7ABW2HP59GFCWWZM2C",
-      "lifecycle": "COMPLETED",
-      "scripted_intervention": {
-        "id": "b-starve-the-customer",
-        "applied_at": "pre_start",
-        "steps": [
-          {
-            "name": "solution.lua",
-            "sha256": "sha256:ef7d8b88470322d0b843f1555d55042cba43818e2c8e91642fb6901f51794fea"
-          }
-        ]
-      },
-      "validity": {
-        "completed": true,
-        "aborted": false,
-        "abort_reason": null,
-        "protocol_events": {},
-        "manual_carriage_residual": 0
-      },
-      "objectives": {
-        "objectives": {
-          "minimize_wip": {
-            "type": "preference",
-            "metric": "average_wip",
-            "unit": "work_units",
-            "value": 7.330555555555556,
-            "measurement_complete": true,
-            "direction": "minimize",
-            "status": "REPORTED"
-          },
-          "service_requirement": {
-            "type": "requirement",
-            "metric": "customer_service",
-            "unit": "fraction",
-            "value": 0.225,
+            "value": 0.3333333333333333,
             "measurement_complete": true,
             "rule": {
               "minimum": 0.95
             },
             "status": "FAIL"
+          },
+          "supply_requirement": {
+            "type": "requirement",
+            "metric": "supply_loss",
+            "unit": "fraction",
+            "value": 0.06111111111111111,
+            "measurement_complete": true,
+            "rule": {
+              "maximum": 0.02
+            },
+            "status": "FAIL"
           }
         },
         "overall_requirement_status": "FAIL"
+      }
+    },
+    {
+      "run_id": "01M12QQJZG1B8DF4T1A59EFWX0",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "a-buffer-the-inflow",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "solution.lua",
+            "sha256": "sha256:35e67c09ceb7deed508fb9a37d66e267c35263dae4a3805be7914ac1fc1b4455"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      },
+      "objectives": {
+        "objectives": {
+          "minimize_wip": {
+            "type": "preference",
+            "metric": "average_wip",
+            "unit": "work_units",
+            "value": 102.40640740740741,
+            "measurement_complete": true,
+            "direction": "minimize",
+            "status": "REPORTED"
+          },
+          "service_requirement": {
+            "type": "requirement",
+            "metric": "customer_service",
+            "unit": "fraction",
+            "value": 0.33131313131313134,
+            "measurement_complete": true,
+            "rule": {
+              "minimum": 0.95
+            },
+            "status": "FAIL"
+          },
+          "supply_requirement": {
+            "type": "requirement",
+            "metric": "supply_loss",
+            "unit": "fraction",
+            "value": 0.0,
+            "measurement_complete": true,
+            "rule": {
+              "maximum": 0.02
+            },
+            "status": "PASS"
+          }
+        },
+        "overall_requirement_status": "FAIL"
+      }
+    },
+    {
+      "run_id": "01M12QTXK30AWGNJHG3T2JHFAS",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "b-upgrade-constraint",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "solution.lua",
+            "sha256": "sha256:444df153de07241f44971c4aadbfd33bdb499aabfdf620fb0bac3908eda272f2"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      },
+      "objectives": {
+        "objectives": {
+          "minimize_wip": {
+            "type": "preference",
+            "metric": "average_wip",
+            "unit": "work_units",
+            "value": 33.5732962962963,
+            "measurement_complete": true,
+            "direction": "minimize",
+            "status": "REPORTED"
+          },
+          "service_requirement": {
+            "type": "requirement",
+            "metric": "customer_service",
+            "unit": "fraction",
+            "value": 1.0,
+            "measurement_complete": true,
+            "rule": {
+              "minimum": 0.95
+            },
+            "status": "PASS"
+          },
+          "supply_requirement": {
+            "type": "requirement",
+            "metric": "supply_loss",
+            "unit": "fraction",
+            "value": 0.0,
+            "measurement_complete": true,
+            "rule": {
+              "maximum": 0.02
+            },
+            "status": "PASS"
+          }
+        },
+        "overall_requirement_status": "PASS"
       }
     }
   ],
@@ -146,14 +179,14 @@
     {
       "metric": "admission_rate",
       "values": [
-        15.0,
-        14.3,
-        10.0
+        30.6,
+        37.46666666666667,
+        37.46666666666667
       ],
       "displays": [
-        "15.00/min",
-        "14.30/min",
-        "10.00/min"
+        "30.60/min",
+        "37.47/min",
+        "37.47/min"
       ],
       "validities": [
         "",
@@ -162,26 +195,26 @@
       ],
       "deltas_vs_first": [
         0.0,
-        -0.6999999999999993,
-        -5.0
+        6.866666666666667,
+        6.866666666666667
       ],
       "delta_pcts_vs_first": [
         0.0,
-        -4.666666666666662,
-        -33.33333333333333
+        22.4400871459695,
+        22.4400871459695
       ]
     },
     {
       "metric": "average_wip",
       "values": [
-        51.69583333333333,
-        19.15888888888889,
-        7.330555555555556
+        57.04475925925926,
+        102.40640740740741,
+        33.5732962962963
       ],
       "displays": [
-        "51.70 work units",
-        "19.16 work units",
-        "7.33 work units"
+        "57.04 work units",
+        "102.41 work units",
+        "33.57 work units"
       ],
       "validities": [
         "",
@@ -190,26 +223,26 @@
       ],
       "deltas_vs_first": [
         0.0,
-        -32.536944444444444,
-        -44.36527777777778
+        45.361648148148156,
+        -23.47146296296296
       ],
       "delta_pcts_vs_first": [
         0.0,
-        -62.93920098868918,
-        -85.8198328900352
+        79.51939623758733,
+        -41.145695534078655
       ]
     },
     {
       "metric": "customer_service",
       "values": [
-        1.0,
-        1.0,
-        0.225
+        0.3333333333333333,
+        0.33131313131313134,
+        1.0
       ],
       "displays": [
-        "100.0% on time",
-        "100.0% on time",
-        "22.5% on time"
+        "33.3% on time",
+        "33.1% on time",
+        "100.0% on time"
       ],
       "validities": [
         "",
@@ -218,26 +251,54 @@
       ],
       "deltas_vs_first": [
         0.0,
-        0.0,
-        -0.775
+        -0.0020202020202019777,
+        0.6666666666666667
       ],
       "delta_pcts_vs_first": [
         0.0,
+        -0.6060606060605933,
+        200.00000000000006
+      ]
+    },
+    {
+      "metric": "fraction_blocked",
+      "values": [
+        0.05517283950617284,
         0.0,
-        -77.5
+        0.0
+      ],
+      "displays": [
+        "5.5% blocked",
+        "0.0% blocked",
+        "0.0% blocked"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -0.05517283950617284,
+        -0.05517283950617284
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -100.0,
+        -100.0
       ]
     },
     {
       "metric": "fraction_productive",
       "values": [
-        0.6694444444444444,
-        0.6694444444444444,
-        0.44722222222222224
+        0.8318395061728395,
+        0.8916666666666667,
+        0.8958333333333334
       ],
       "displays": [
-        "66.9% productive",
-        "66.9% productive",
-        "44.7% productive"
+        "83.2% productive",
+        "89.2% productive",
+        "89.6% productive"
       ],
       "validities": [
         "",
@@ -246,26 +307,26 @@
       ],
       "deltas_vs_first": [
         0.0,
-        0.0,
-        -0.22222222222222215
+        0.05982716049382719,
+        0.06399382716049384
       ],
       "delta_pcts_vs_first": [
         0.0,
-        0.0,
-        -33.19502074688796
+        7.192151857403646,
+        7.693049763279363
       ]
     },
     {
       "metric": "fraction_starved",
       "values": [
-        0.33055555555555555,
-        0.33055555555555555,
-        0.5527777777777778
+        0.11298765432098766,
+        0.10833333333333334,
+        0.10416666666666667
       ],
       "displays": [
-        "33.1% starved",
-        "33.1% starved",
-        "55.3% starved"
+        "11.3% starved",
+        "10.8% starved",
+        "10.4% starved"
       ],
       "validities": [
         "",
@@ -274,26 +335,26 @@
       ],
       "deltas_vs_first": [
         0.0,
-        0.0,
-        0.22222222222222227
+        -0.004654320987654323,
+        -0.008820987654320989
       ],
       "delta_pcts_vs_first": [
         0.0,
-        0.0,
-        67.22689075630254
+        -4.119318181818183,
+        -7.807036713286713
       ]
     },
     {
       "metric": "line_wip",
       "values": [
-        51.0,
-        13.0,
-        7.0
+        58.0,
+        167.0,
+        34.0
       ],
       "displays": [
-        "final 51",
-        "final 13",
-        "final 7"
+        "final 58",
+        "final 167",
+        "final 34"
       ],
       "validities": [
         "",
@@ -302,26 +363,26 @@
       ],
       "deltas_vs_first": [
         0.0,
-        -38.0,
-        -44.0
+        109.0,
+        -24.0
       ],
       "delta_pcts_vs_first": [
         0.0,
-        -74.50980392156863,
-        -86.27450980392157
+        187.93103448275863,
+        -41.37931034482759
       ]
     },
     {
       "metric": "measured_throughput",
       "values": [
-        15.0,
-        15.0,
-        10.0
+        30.0,
+        30.0,
+        37.53333333333333
       ],
       "displays": [
-        "15.00/min",
-        "15.00/min",
-        "10.00/min"
+        "30.00/min",
+        "30.00/min",
+        "37.53/min"
       ],
       "validities": [
         "",
@@ -331,53 +392,53 @@
       "deltas_vs_first": [
         0.0,
         0.0,
-        -5.0
+        7.533333333333331
       ],
       "delta_pcts_vs_first": [
         0.0,
         0.0,
-        -33.33333333333333
+        25.111111111111107
       ]
     },
     {
       "metric": "p95_customer_wait",
       "values": [
-        3.0166666666666666,
-        3.0166666666666666,
-        null
+        null,
+        null,
+        1.4666666666666666
       ],
       "displays": [
-        "3.02 s",
-        "3.02 s",
-        "censored"
+        "censored",
+        "censored",
+        "1.47 s"
       ],
       "validities": [
-        "",
-        "",
-        "incomplete"
+        "incomplete",
+        "incomplete",
+        ""
       ],
       "deltas_vs_first": [
-        0.0,
-        0.0,
+        null,
+        null,
         null
       ],
       "delta_pcts_vs_first": [
-        0.0,
-        0.0,
+        null,
+        null,
         null
       ]
     },
     {
-      "metric": "loaded_cycle_time",
+      "metric": "supply_loss",
       "values": [
-        206.78333333333333,
-        76.63555555555556,
-        43.983333333333334
+        0.06111111111111111,
+        0.0,
+        0.0
       ],
       "displays": [
-        "206.78 s",
-        "76.64 s",
-        "43.98 s"
+        "6.1% lost",
+        "0.0% lost",
+        "0.0% lost"
       ],
       "validities": [
         "",
@@ -386,13 +447,41 @@
       ],
       "deltas_vs_first": [
         0.0,
-        -130.14777777777778,
-        -162.8
+        -0.06111111111111111,
+        -0.06111111111111111
       ],
       "delta_pcts_vs_first": [
         0.0,
-        -62.93920098868918,
-        -78.7297493350528
+        -100.0,
+        -100.0
+      ]
+    },
+    {
+      "metric": "loaded_cycle_time",
+      "values": [
+        114.08951851851852,
+        204.81281481481483,
+        53.669567791592655
+      ],
+      "displays": [
+        "114.09 s",
+        "204.81 s",
+        "53.67 s"
+      ],
+      "validities": [
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        90.72329629629631,
+        -60.41995072692586
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        79.51939623758733,
+        -52.958371208411016
       ]
     }
   ]
