@@ -210,11 +210,15 @@ denominated in flow time*, and that the price is exact: CT = WIP / TH.
   `fisl solutions scenarios/factory-physics/fp03-littles-law --run --json
   course/data/lab-03-comparison.json` — rerun it after any scenario or
   baseline change and re-check the numbers cited in this chapter.
-- Baseline reference numbers come from run `01M0XP8VJ78KXRC8DB6BATBW39`
-  (committed verification summary matches). Measured pull-solution result
-  (run `01M0Y3SH364FWVZR8NBSDC2WYZ`, solution v3): TH unchanged at
-  15.00/min, avg WIP 19.16 (−62.9%), CT 76.64 s — right on the transit
-  floor predicted in the solution README.
+- Baseline reference numbers come from the committed verification run
+  `01M10GTKR13N2RCW3AYCPVFS65` (2026-08-27 baseline revision). Measured
+  pull-solution result (run `01M10GZ303RBTWMF2PWA02CD3P`, solution v3): TH
+  unchanged at 15.00/min, avg WIP 19.16 (−62.9%), CT 76.64 s — right on
+  the transit floor predicted in the solution README. Every number in this
+  chapter has now reproduced identically across two independently built
+  baselines and multiple machines (the original verified run was
+  `01M0XP8VJ78KXRC8DB6BATBW39`; a human-played run matched it
+  bit-for-bit).
 - The ~20% "gate near the source" failure in the callout is real: it was
   version 1 of the reference solution (run `01M0Y063ACYSD8JWRF78EJAWTF`).
   Learners who make it are in good company; send them to walk the line.

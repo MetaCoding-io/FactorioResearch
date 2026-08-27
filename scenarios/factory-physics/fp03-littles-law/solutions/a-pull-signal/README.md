@@ -38,8 +38,9 @@ and fails loudly if any hop doesn't connect.
 **The floor is transport, not zero.** This line is ~90 tiles long; at belt
 speed that is ~48 s of pure transit, so even a perfect pull system carries
 `TH × transit ≈ 0.25/s × 48 s ≈ 12–14` workpieces of *in-transit* WIP.
-Conveyors are inventory. Measured result (v3,
-run `01M0Y3SH364FWVZR8NBSDC2WYZ`) vs baseline (avg WIP 51.70,
+Conveyors are inventory. Measured result (v3, latest reference run
+`01M10GZ303RBTWMF2PWA02CD3P`; identical values reproduced on the earlier
+baseline as run `01M0Y3SH364FWVZR8NBSDC2WYZ`) vs baseline (avg WIP 51.70,
 TH 15.00/min, CT 206.78 s):
 
 - throughput: **unchanged** at 15.00/min
