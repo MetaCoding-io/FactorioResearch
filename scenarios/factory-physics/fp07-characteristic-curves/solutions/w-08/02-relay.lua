@@ -7,8 +7,8 @@ local surface = game.surfaces["nauvis"]
 local function grab(name, x, y)
   return surface.find_entities_filtered{name = name, position = {x, y}, radius = 0.4}[1]
 end
-local arith_n = grab("arithmetic-combinator", 41.5, -2.5)
-local memory = grab("decider-combinator", -38.5, -2.5)
+local arith_n = grab("arithmetic-combinator", 41, -2.5)
+local memory = grab("decider-combinator", -38, -2.5)
 if not (arith_n and memory) then rcon.print("solution-step-fail: step-1 combinators not found") return end
 local xs = {34.5, 26.5, 18.5, 10.5, 3.5, -2.5, -10.5, -18.5, -26.5, -33.5}
 local r = defines.wire_connector_id.circuit_red

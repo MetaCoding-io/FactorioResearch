@@ -13,9 +13,9 @@ local com_tap = grab("transport-belt", 42.5, 0.5)
 if not (adm_tap and com_tap) then rcon.print("solution-step-fail: tap belts not found") return end
 local W = { type = "virtual", name = "signal-W", quality = "normal" }
 local ok, err = pcall(function()
-  local arith_a = surface.create_entity{name = "arithmetic-combinator", position = {-41.5, -2.5}, direction = defines.direction.east, force = "player", raise_built = true}
-  local arith_n = surface.create_entity{name = "arithmetic-combinator", position = {41.5, -2.5}, direction = defines.direction.west, force = "player", raise_built = true}
-  local memory = surface.create_entity{name = "decider-combinator", position = {-38.5, -2.5}, direction = defines.direction.east, force = "player", raise_built = true}
+  local arith_a = surface.create_entity{name = "arithmetic-combinator", position = {-41, -2.5}, direction = defines.direction.east, force = "player", raise_built = true}
+  local arith_n = surface.create_entity{name = "arithmetic-combinator", position = {41, -2.5}, direction = defines.direction.west, force = "player", raise_built = true}
+  local memory = surface.create_entity{name = "decider-combinator", position = {-38, -2.5}, direction = defines.direction.east, force = "player", raise_built = true}
   if not (arith_a and arith_n and memory) then error("combinators did not place") end
   local pulse = defines.control_behavior.transport_belt.content_read_mode.pulse
   for _, tap in pairs({adm_tap, com_tap}) do
@@ -35,6 +35,7 @@ local ok, err = pcall(function()
   if not com_tap.get_wire_connector(g, true).connect_to(arith_n.get_wire_connector(ig, true)) then error("completion tap wire") end
   if not arith_a.get_wire_connector(outr, true).connect_to(memory.get_wire_connector(ir, true)) then error("arith to memory wire") end
   if not memory.get_wire_connector(outr, true).connect_to(memory.get_wire_connector(ir, true)) then error("memory self loop") end
+  if not (grab("arithmetic-combinator", -41, -2.5) and grab("arithmetic-combinator", 41, -2.5) and grab("decider-combinator", -38, -2.5)) then error("combinators not found at expected snapped centers") end
 end)
 if not ok then rcon.print("solution-step-fail: " .. tostring(err)) return end
 rcon.print("solution-step-ok")

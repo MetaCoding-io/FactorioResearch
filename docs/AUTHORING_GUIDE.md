@@ -215,6 +215,13 @@ learned the hard way (fp03 v2's silent no-op):
   `solution-step-fail: <why>`.
 - Wrap risky spans in `pcall` and print the error; never let a step
   half-apply silently.
+- **`create_entity` snaps positions to the entity's tile grid** and
+  succeeds anyway: a 2×1 combinator "at" x = −41.5 lands at −41 or −42,
+  and a later step that re-finds by the *requested* coordinates misses
+  it (fp07's first run failed exactly this way). Use grid-valid centers
+  (horizontal combinators: integer x, half-tile y), and have the
+  creating step re-find its own entities at those coordinates so a snap
+  surprise fails loudly at creation, not two steps later.
 - Solutions run after READY, before start — same scenario, same baseline,
   so `fisl compare` attributes the whole delta to the intervention. Step
   hashes land in run provenance automatically.

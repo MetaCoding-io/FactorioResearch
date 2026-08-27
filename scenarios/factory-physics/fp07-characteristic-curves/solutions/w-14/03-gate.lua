@@ -2,7 +2,7 @@
 -- while the circuit ledger reads W < CAP. One number moves the whole
 -- operating point along the characteristic curves.
 local surface = game.surfaces["nauvis"]
-local memory = surface.find_entities_filtered{name = "decider-combinator", position = {-38.5, -2.5}, radius = 0.4}[1]
+local memory = surface.find_entities_filtered{name = "decider-combinator", position = {-38, -2.5}, radius = 0.4}[1]
 local inserter = surface.find_entities_filtered{name = "fast-inserter", position = {-43.5, 0.5}, radius = 0.4}[1]
 if not (memory and inserter) then rcon.print("solution-step-fail: memory or source inserter not found") return end
 local W = { type = "virtual", name = "signal-W", quality = "normal" }
