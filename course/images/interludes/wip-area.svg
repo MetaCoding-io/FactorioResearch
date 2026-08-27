@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 8 4 L 0 8 z" fill="#0b0b0b"/>
+    </marker>
+  </defs>
+  <!-- grid -->
+  <line x1="56" y1="310.8" x2="516" y2="310.8" stroke="#e1e0d9" stroke-width="1"/><line x1="56" y1="261.5" x2="516" y2="261.5" stroke="#e1e0d9" stroke-width="1"/><line x1="56" y1="212.3" x2="516" y2="212.3" stroke="#e1e0d9" stroke-width="1"/><line x1="56" y1="163.1" x2="516" y2="163.1" stroke="#e1e0d9" stroke-width="1"/><line x1="56" y1="113.8" x2="516" y2="113.8" stroke="#e1e0d9" stroke-width="1"/><line x1="56" y1="64.6" x2="516" y2="64.6" stroke="#e1e0d9" stroke-width="1"/>
+  <!-- WIP area -->
+  <path d="M 56.0 360.0 L 79.0 360.0 L 79.0 335.4 L 102.0 335.4 L 102.0 310.8 L 129.6 310.8 L 129.6 286.2 L 148.0 286.2 L 148.0 261.5 L 175.6 261.5 L 175.6 236.9 L 207.8 236.9 L 207.8 212.3 L 230.8 212.3 L 230.8 187.7 L 263.0 187.7 L 263.0 163.1 L 295.2 163.1 L 295.2 138.5 L 322.8 138.5 L 322.8 113.8 L 355.0 113.8 L 355.0 89.2 L 387.2 89.2 L 387.2 64.6 L 516.0 64.6 L 516.0 64.6 L 506.8 64.6 L 506.8 89.2 L 479.2 89.2 L 479.2 113.8 L 451.6 113.8 L 451.6 138.5 L 414.8 138.5 L 414.8 163.1 L 387.2 163.1 L 387.2 187.7 L 364.2 187.7 L 364.2 212.3 L 327.4 212.3 L 327.4 236.9 L 304.4 236.9 L 304.4 261.5 L 286.0 261.5 L 286.0 286.2 L 253.8 286.2 L 253.8 310.8 L 212.4 310.8 L 212.4 335.4 L 198.6 335.4 L 198.6 360.0 L 56.0 360.0 Z" fill="#cde2fb" fill-opacity="0.55" stroke="none"/>
+  <!-- axes -->
+  <line x1="56" y1="360" x2="516" y2="360" stroke="#c3c2b7" stroke-width="1.5"/>
+  <line x1="56" y1="360" x2="56" y2="40" stroke="#c3c2b7" stroke-width="1.5"/>
+  <!-- curves -->
+  <path d="M 56.0 360.0 L 79.0 360.0 L 79.0 335.4 L 102.0 335.4 L 102.0 310.8 L 129.6 310.8 L 129.6 286.2 L 148.0 286.2 L 148.0 261.5 L 175.6 261.5 L 175.6 236.9 L 207.8 236.9 L 207.8 212.3 L 230.8 212.3 L 230.8 187.7 L 263.0 187.7 L 263.0 163.1 L 295.2 163.1 L 295.2 138.5 L 322.8 138.5 L 322.8 113.8 L 355.0 113.8 L 355.0 89.2 L 387.2 89.2 L 387.2 64.6 L 516.0 64.6" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M 56.0 360.0 L 198.6 360.0 L 198.6 335.4 L 212.4 335.4 L 212.4 310.8 L 253.8 310.8 L 253.8 286.2 L 286.0 286.2 L 286.0 261.5 L 304.4 261.5 L 304.4 236.9 L 327.4 236.9 L 327.4 212.3 L 364.2 212.3 L 364.2 187.7 L 387.2 187.7 L 387.2 163.1 L 414.8 163.1 L 414.8 138.5 L 451.6 138.5 L 451.6 113.8 L 479.2 113.8 L 479.2 89.2 L 506.8 89.2 L 506.8 64.6 L 516.0 64.6" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- direct labels -->
+  <text x="106" y="148" fill="#2a78d6" font-weight="600">A(t) — admissions</text>
+  <text x="373" y="281" fill="#eb6834" font-weight="600">D(t) — completions</text>
+  <!-- WIP(t) vertical arrow -->
+  <line x1="286.0" y1="261.5" x2="286.0" y2="163.1" stroke="#0b0b0b" stroke-width="1.4" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  <text x="294" y="198" fill="#0b0b0b">WIP(t)</text>
+  <!-- kth piece horizontal arrow -->
+  <line x1="322.8" y1="126.2" x2="451.6" y2="126.2" stroke="#0b0b0b" stroke-width="1.4" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  <text x="392" y="108" fill="#0b0b0b">time inside</text>
+  <!-- area caption -->
+  <text x="112" y="321" fill="#52514e" font-size="12">area = ∫ WIP dt</text>
+  <!-- axis titles + ticks -->
+  <text x="286" y="392" fill="#898781" text-anchor="middle" font-size="12">time within the window →</text>
+  <text x="18" y="200" fill="#898781" text-anchor="middle" font-size="12" transform="rotate(-90 18 200)">cumulative workpieces →</text>
+</svg>

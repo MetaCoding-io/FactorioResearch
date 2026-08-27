@@ -1,6 +1,6 @@
 # Lab 6 — System Optimization
 
-**Scenario:** `fp-06-system-optimization` · runs of ~13 minutes each
+**Scenario:** `fp-06-system-optimization` · runs of ~18 minutes each
 
 Every previous lab isolated one idea and handed you one dial. The capstone
 takes the dials away. The factory is squeezed from both ends at once — a
@@ -19,8 +19,13 @@ minute), with two new external facts:
   whether you're ready or not, into a warehouse holding at most 100 with a
   10-unit overflow yard behind it. **Deliveries that find both full are
   lost forever** — the supply-loss metric counts them against everything
-  the supplier scheduled. The warehouse starts nearly full (90), so the
-  squeeze is minutes away, not theoretical.
+  the supplier scheduled. The warehouse starts nearly full (90) so the
+  line never starves at startup — but do not mistake the quiet opening
+  minutes for health. An empty line swallows a lot of material while its
+  belts and machine buffers fill, and that cold-start gulp drains the
+  warehouse; the structural 6/min surplus then spends the first stretch
+  of the run silently refilling it. The loss doesn't start until the
+  buffers are full again — and then it never stops.
 - **A customer**, as in Lab 5: 33/min demanded, 30 s patience, FIFO
   backlog, on-time item rate watching.
 
@@ -46,9 +51,13 @@ pass or a failure.
 
 ## Run 1 — watch it fail twice
 
-Run the baseline untouched and watch both requirements fail on one screen:
-the panel's WIP number, the post-run report's supply-loss row climbing
-past 2%, the on-time rate sinking as backlog accumulates. Walk the line
+Run the baseline untouched and watch both requirements fail on one
+screen: the on-time rate sinking as backlog accumulates, and — later
+than you'd expect — the supply-loss row waking up. Note *when* each
+failure becomes visible. The service failure shows within minutes; the
+supply failure hides for most of the run behind refilling buffers, then
+arrives all at once and permanently. A ten-minute audit of this factory
+would have reported one problem; the system has two. Walk the line
 mid-run and collect the full diagnosis kit from earlier labs: which
 machine never rests (Lab 2), who is blocked and who is starved (Lab 4),
 where the queue sits (Lab 3), what the customer sees (Lab 5).
@@ -84,6 +93,11 @@ your explanation of what limits it, is the capstone deliverable.
 - Solution A passed the requirement everyone upstream could see and failed
   the one the customer feels. Which dashboards in a real company report
   the first kind of number? Who reports the second?
+- The baseline's supply loss was invisible for most of the run — buffer
+  space absorbed a structural 6/min deficit until it didn't. How long
+  would a measurement window have to be before you'd trust a "no loss"
+  reading? What plays the role of that buffer space in a real supply
+  agreement?
 - Why did one machine swap fix two apparently unrelated problems? State
   the general rule about symptoms and constraints.
 - Now raise the supplier to 40/min (above M1's 37.5 ceiling). No machine
@@ -109,16 +123,24 @@ with — inventory, capacity, or time?
 ::: {.callout-note collapse="true"}
 ## Instructor notes
 
-- Reference interventions: `a-buffer-the-inflow` (expect: supply loss
-  → ~0, service still failing, WIP growing — INFEASIBLE) and
-  `b-upgrade-constraint` (expect: both requirements PASS, TH
-  supply-limited near 36/min). Cite measured numbers after the first
-  `fisl build-baseline scenarios/factory-physics/fp06-system-optimization`
-  and `fisl solutions … --run`.
-- Baseline expectations: TH 30/min; supply loss starts once the
-  90-preloaded warehouse and 10-unit yard fill (~3 min in), losing ~6/min
-  thereafter — roughly 14–15% of scheduled supply in the measured window;
-  on-time decays after backlog exceeds 15 (~5 min in) toward ~50%.
+- Reference interventions: `a-buffer-the-inflow` (expect: supply loss 0,
+  service still failing, WIP growing all run — INFEASIBLE) and
+  `b-upgrade-constraint` (expect: both requirements PASS, TH 37.5/min,
+  the customer's p95 wait collapsing to seconds). Cite measured numbers
+  after the first `fisl solutions … --run` against this scenario version.
+- Baseline mechanics (learned the hard way — a 10-minute window measured
+  only 0.8% loss): the cold-start belt fill plus machine buffers drain
+  the warehouse during warmup, so the measured window opens with tens of
+  units of free warehouse space. The 6/min structural surplus spends
+  ~12 minutes (from supply start) refilling that space before overflow
+  begins; thereafter essentially the full 6/min is lost. Over the 15 min
+  window expect roughly 5–7% of scheduled supply lost — comfortably
+  failing the 2% requirement — with TH pinned at 30/min and on-time at or
+  below ~50%. Verify against the first run of this scenario version
+  before quoting exact numbers.
+- The masking effect is now part of the lesson (see Run 1 and the
+  debrief): transient buffer space hides a structural deficit; short
+  audits report health.
 - The in-game panel shows all three objective *rules* from READY onward
   (visibility discloses them); verdicts appear only in the post-run
   report — no provisional in-game pass/fail.

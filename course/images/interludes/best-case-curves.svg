@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 310" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13">
+  
+  <text x="46" y="30" fill="#0b0b0b" font-weight="600">Best-case throughput TH(w)</text>
+  <line x1="46" y1="250" x2="330" y2="250" stroke="#c3c2b7" stroke-width="1.5"/>
+  <line x1="46" y1="250" x2="46" y2="48" stroke="#c3c2b7" stroke-width="1.5"/>
+  <line x1="46" y1="88.4" x2="330" y2="88.4" stroke="#898781" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="40" y="92" fill="#0b0b0b" text-anchor="end"><tspan>r</tspan><tspan dy="3" font-size="10">b</tspan></text>
+  <line x1="188.0" y1="250" x2="188.0" y2="88.4" stroke="#898781" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="188.0" y="268" fill="#0b0b0b" text-anchor="middle">W₀ = r<tspan dy="3" font-size="10">b</tspan><tspan dy="-3">·T₀</tspan></text>
+  <path d="M 46.0 250.0 L 188.0 88.4 L 330.0 88.4" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round"/>
+  <text x="71" y="150" fill="#52514e" font-size="12">slope 1/T₀</text>
+  <text x="188" y="290" fill="#898781" text-anchor="middle" font-size="12">WIP level w →</text>
+  
+  <text x="416" y="30" fill="#0b0b0b" font-weight="600">Best-case cycle time CT(w)</text>
+  <line x1="416" y1="250" x2="700" y2="250" stroke="#c3c2b7" stroke-width="1.5"/>
+  <line x1="416" y1="250" x2="416" y2="48" stroke="#c3c2b7" stroke-width="1.5"/>
+  <line x1="416" y1="160.2" x2="700" y2="160.2" stroke="#898781" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="410" y="164" fill="#0b0b0b" text-anchor="end">T₀</text>
+  <line x1="558.0" y1="250" x2="558.0" y2="160.2" stroke="#898781" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="558.0" y="268" fill="#0b0b0b" text-anchor="middle">W₀ = r<tspan dy="3" font-size="10">b</tspan><tspan dy="-3">·T₀</tspan></text>
+  <path d="M 416.0 160.2 L 558.0 160.2 L 700.0 70.4" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round"/>
+  <text x="570" y="77" fill="#52514e" font-size="12">slope 1/r<tspan dy="3" font-size="10">b</tspan></text>
+  <text x="558" y="290" fill="#898781" text-anchor="middle" font-size="12">WIP level w →</text>
+</svg>

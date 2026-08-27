@@ -67,6 +67,13 @@ $$
 $$
 
 equals the *total time spent inside the system, summed over workpieces*.
+
+![The two cumulative counts and the quantity between them. The vertical
+gap at any instant is WIP; the horizontal gap at any count is one piece's
+time inside; the shaded area is both at once — the sum of every piece's
+time inside, and the integral of WIP over the
+window.](../images/interludes/wip-area.svg){width=100%}
+
 Divide both sides by $T$, and divide-and-multiply by the number of
 completions $N$:
 
@@ -134,6 +141,13 @@ $$
 \qquad
 \mathrm{CT}_{\text{best}}(w) = \max\!\left(T_0,\; \frac{w}{r_b}\right)
 $$
+
+![The best-case operating curves, both drawn against the WIP level $w$.
+Left of $W_0$ the line is inventory-starved: throughput climbs with WIP
+at slope $1/T_0$ while every piece flows through in the minimum time.
+Right of $W_0$ the bottleneck is saturated: throughput is pinned at $r_b$
+and additional inventory buys nothing but
+waiting.](../images/interludes/best-case-curves.svg){width=100%}
 
 Read the second one aloud: once WIP exceeds $W_0$, every additional unit
 of inventory adds $1/r_b$ to every workpiece's flow time and adds

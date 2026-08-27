@@ -32,8 +32,12 @@ experiment:
   phases:
     - id: warmup
       duration: 2m
+    # 15 minutes, not 10: the cold-start belt fill drains the warehouse
+    # during warmup, so the supply squeeze only becomes visible once the
+    # warehouse refills (~12 min after supply starts). A 10 min window
+    # ends just as loss begins (measured 0.8%); 15 min shows it clearly.
     - id: measured
-      duration: 10m
+      duration: 15m
     - id: service_tail
       duration: 1m
 
