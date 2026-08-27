@@ -403,3 +403,27 @@ def test_visibility_unknown_objective_rejected(raw):
     with pytest.raises(CompilationError) as exc:
         _compile_raw(bad)
     assert any("ghost_objective" in p for p in exc.value.problems)
+
+
+def test_supply_loss_requires_finite_scheduled_buffer(raw):
+    doc = copy.deepcopy(raw)
+    doc["metrics"]["supply_loss"] = {
+        "type": "supply_loss", "port": "workpiece_source",
+        "window": {"phase": "measured"},
+    }
+    # fp03's source uses replenish supply: no scheduled arrivals to lose.
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(doc)
+    assert any("no scheduled supply" in p for p in exc.value.problems)
+
+    doc["ports"]["workpiece_source"]["supply"] = {
+        "mode": "scheduled",
+        "schedule": {"type": "constant", "rate": "36/min"},
+    }
+    with pytest.raises(CompilationError) as exc:
+        _compile_raw(doc)
+    assert any("unbounded external" in p for p in exc.value.problems)
+
+    doc["ports"]["workpiece_source"]["supply"]["external_buffer"] = {"capacity": 10}
+    resolved = _compile_raw(doc)
+    assert resolved["metrics"]["supply_loss"]["port"] == "workpiece_source"

@@ -1,0 +1,288 @@
+spec: fisl/v1
+
+scenario:
+  id: fp-06-system-optimization
+  version: 0.1.0
+  title: System Optimization
+  description: >-
+    The capstone: an unbalanced line squeezed from both ends. A supplier
+    delivers on a fixed schedule into a finite warehouse (overflow is lost
+    forever) while a customer demands more than the baseline constraint
+    can produce. Every locally attractive fix the course has exposed is
+    available in the toolbox; only system thinking passes both
+    requirements. No score — a requirement pair and a preference, evaluated
+    without weights.
+
+factorio:
+  version:
+    minimum: 2.0.77
+    maximum_exclusive: 2.1.0
+  baseline_save: baseline.zip
+  required_mods:
+    fisl-core: compatible
+    fisl-factory-physics: compatible
+
+experiment:
+  seed: 1
+  time:
+    game_speed:
+      policy: fixed
+      value: 1.0
+    pause_policy: prohibited
+  phases:
+    - id: warmup
+      duration: 2m
+    - id: measured
+      duration: 10m
+    - id: service_tail
+      duration: 1m
+
+zones:
+  factory_floor:
+    surface: nauvis
+    area:
+      left_top: [-28, -16]
+      right_bottom: [28, 16]
+
+systems:
+  factory:
+    primary_zone: factory_floor
+    boundary_integrity:
+      entity_containment: flag
+
+entity_sets:
+  line_machines:
+    zone: factory_floor
+    types:
+      - assembling-machine
+    exclude_roles:
+      - fisl_apparatus
+    membership: dynamic
+
+ports:
+  workpiece_source:
+    system: factory
+    direction: source
+    binding:
+      surface: nauvis
+      position: [-20.5, 0.5]
+      prototype: fisl-source-port
+    material:
+      item: fisl-rough-workpiece
+    supply:
+      mode: scheduled
+      schedule:
+        type: constant
+        rate: 36/min
+      initial_quantity: 90
+      active_phases:
+        - warmup
+        - measured
+      external_buffer:
+        capacity: 10
+
+  finished_goods:
+    system: factory
+    direction: sink
+    binding:
+      surface: nauvis
+      position: [21.5, 0.5]
+      prototype: fisl-sink-port
+    material:
+      item: fisl-finished-workpiece
+    demand:
+      id: customer_demand
+      shortage_policy: backlog
+      allocation: fifo
+      active_phases:
+        - measured
+      schedule:
+        type: constant
+        rate: 33/min
+
+flows:
+  workpiece_flow:
+    system: factory
+    unit: workpiece
+    basis:
+      type: conserved_work_unit
+      materials:
+        fisl-rough-workpiece: 1
+        fisl-machined-workpiece: 1
+        fisl-inspected-workpiece: 1
+        fisl-finished-workpiece: 1
+    entry_ports:
+      - workpiece_source
+    completion_ports:
+      - finished_goods
+
+metrics:
+  line_wip:
+    type: wip
+    flow: workpiece_flow
+    method: conservation_ledger
+    validation:
+      physical_census:
+        required: true
+        every: 60t
+        discrepancy_tolerance: 0
+        include_player_inventory: true
+
+  current_wip:
+    type: current_value
+    source: line_wip
+
+  average_wip:
+    type: aggregate
+    source: line_wip
+    aggregation: time_mean
+    window:
+      phase: measured
+
+  admission_rate:
+    type: throughput
+    flow: workpiece_flow
+    boundary: entry
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  measured_throughput:
+    type: throughput
+    flow: workpiece_flow
+    window:
+      phase: measured
+    display_unit: workpieces_per_minute
+
+  loaded_cycle_time:
+    type: cycle_time
+    flow: workpiece_flow
+    method: little_law_derived
+    wip_metric: average_wip
+    throughput_metric: measured_throughput
+    interpretation:
+      profile: stable_flow
+
+  supply_loss:
+    type: supply_loss
+    port: workpiece_source
+    window:
+      phase: measured
+
+  customer_service:
+    type: on_time_item_rate
+    demand: customer_demand
+    cohort_window:
+      phase: measured
+    max_wait: 30s
+    observation_horizon:
+      through_phase: service_tail
+
+  p95_customer_wait:
+    type: demand_wait_percentile
+    demand: customer_demand
+    cohort_window:
+      phase: measured
+    observation_horizon:
+      through_phase: service_tail
+    p: 0.95
+    weighting: demanded_quantity
+    quantile_method: weighted_nearest_rank
+
+  machine_state:
+    type: production_state
+    entities: line_machines
+    adapter: crafting_machine
+
+  fraction_productive:
+    type: state_fraction
+    source: machine_state
+    state: productive
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+  fraction_starved:
+    type: state_fraction
+    source: machine_state
+    state: starved
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+  fraction_blocked:
+    type: state_fraction
+    source: machine_state
+    state: blocked
+    entity_aggregation: pooled_machine_time
+    denominator: full_window
+    window:
+      phase: measured
+
+objectives:
+  service_requirement:
+    type: requirement
+    metric: customer_service
+    minimum: 0.95
+
+  supply_requirement:
+    type: requirement
+    metric: supply_loss
+    maximum: 0.02
+
+  minimize_wip:
+    type: preference
+    metric: average_wip
+    direction: minimize
+
+visibility:
+  learner_live:
+    metrics:
+      - current_wip
+    objectives:
+      - service_requirement
+      - supply_requirement
+      - minimize_wip
+  learner_post_run:
+    metrics:
+      - average_wip
+      - admission_rate
+      - measured_throughput
+      - loaded_cycle_time
+      - supply_loss
+      - customer_service
+      - p95_customer_wait
+      - fraction_productive
+      - fraction_starved
+      - fraction_blocked
+    objectives:
+      - service_requirement
+      - supply_requirement
+      - minimize_wip
+  instructor:
+    metrics:
+      - line_wip
+      - machine_state
+    diagnostics:
+      - coverage
+      - census
+      - protocol_violations
+
+learning:
+  concepts:
+    - system optimization vs local optimization
+    - simultaneous constraints (supply, capacity, demand)
+    - requirements plus preferences without a score
+  represents_directly:
+    - scheduled inbound supply with a finite warehouse and overflow loss
+    - external customer demand with an explicit wait tolerance
+    - capacity redesign via equipment replacement
+  remains_absent:
+    - variability
+    - monetary cost
+    - multi-product interactions
+  not_warranted:
+    - concluding one pass of constraint-chasing is "optimal" — the lab
+      shows feasibility plus a preference, not an optimum proof

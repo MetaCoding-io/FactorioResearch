@@ -70,6 +70,16 @@ def render_report(summary: dict, console: Console) -> None:
             exact = "-"
             method = metric["method"]
             validity_text = ""
+        elif metric_type == "supply_loss":
+            if metric.get("value") is not None:
+                value = f"{metric['value'] * 100:.1f}% lost"
+                exact = f"{metric['lost_quantity']}/{metric['scheduled_quantity']} units"
+            else:
+                value = "no data"
+                exact = "-"
+            window = metric["window"]
+            method = f"external buffer overflow at {metric['port']} over {window['phase']}"
+            validity_text = "complete" if metric.get("coverage_complete") else "[red]incomplete[/red]"
         elif metric_type == "on_time_item_rate":
             if metric.get("value") is not None:
                 value = f"{metric['value'] * 100:.1f}% on time"

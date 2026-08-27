@@ -301,6 +301,17 @@ class StateFractionMetric(_Strict):
     window: PhaseWindow
 
 
+class SupplyLossMetric(_Strict):
+    """Fraction (and quantity) of scheduled inbound supply lost at a source
+    port's finite external buffer within a window (ADR 0003; Lab 6). Only
+    meaningful for scheduled supply with a finite warehouse — the compiler
+    rejects it elsewhere."""
+
+    type: Literal["supply_loss"]
+    port: str
+    window: PhaseWindow
+
+
 class ObservationHorizon(_Strict):
     through_phase: str
 
@@ -345,6 +356,7 @@ Metric = (
     | StateFractionMetric
     | OnTimeItemRateMetric
     | DemandWaitPercentileMetric
+    | SupplyLossMetric
 )
 
 

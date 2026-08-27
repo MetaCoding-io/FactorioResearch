@@ -304,8 +304,36 @@ LAB5 = LabLayout(
     save_name="fp05-baseline",
 )
 
+# Lab 6 shares the fast->slow->fast physical world (constraint mid-line);
+# the capstone's complexity is upstream (scheduled finite supply) and
+# downstream (customer demand), both external accounting. The toolbox
+# carries every remedy the course taught: upgrade machines, buffer chests,
+# circuit components.
+LAB6 = LabLayout(
+    scenario_id="fp-06-system-optimization",
+    source_pos=LAB4.source_pos,
+    sink_pos=LAB4.sink_pos,
+    machines=list(LAB4.machines),
+    substation_xs=LAB4.substation_xs,
+    toolbox_items={
+        "transport-belt": 100,
+        "fast-inserter": 20,
+        "wooden-chest": 10,
+        "steel-chest": 4,
+        "assembling-machine-1": 2,
+        "assembling-machine-2": 2,
+        "assembling-machine-3": 2,
+        "small-electric-pole": 20,
+        "decider-combinator": 4,
+        "constant-combinator": 4,
+        "arithmetic-combinator": 4,
+    },
+    expected_counts=dict(LAB4.expected_counts),
+    save_name="fp06-baseline",
+)
+
 LAYOUTS: dict[str, LabLayout] = {
-    layout.scenario_id: layout for layout in (LAB0, LAB1, LAB2, LAB3, LAB4, LAB5)
+    layout.scenario_id: layout for layout in (LAB0, LAB1, LAB2, LAB3, LAB4, LAB5, LAB6)
 }
 
 

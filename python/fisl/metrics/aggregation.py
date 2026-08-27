@@ -497,6 +497,33 @@ def compute_summary(resolved: dict, run_config: dict, telemetry_path: Path) -> d
             else:
                 entry.update({"value": None, "status": "no_data", "reason": "no machines in entity set"})
             metrics_out[metric_id] = entry
+        elif metric["type"] == "supply_loss":
+            window = metric["window"]
+            start_tick, end_tick = window["start_tick"], window["end_tick"]
+            scheduled = sum(
+                r["quantity"] for r in data.of_type("source_supply_scheduled")
+                if r["port"] == metric["port"] and start_tick <= r["experiment_tick"] < end_tick
+            )
+            lost = sum(
+                r["quantity"] for r in data.of_type("source_supply_lost")
+                if r["port"] == metric["port"] and start_tick <= r["experiment_tick"] < end_tick
+            )
+            entry = {
+                "type": "supply_loss",
+                "port": metric["port"],
+                "window": window,
+                "method": "external_buffer_overflow",
+                "scheduled_quantity": scheduled,
+                "lost_quantity": lost,
+                "coverage_complete": window_complete(end_tick),
+            }
+            if scheduled > 0:
+                fraction = Fraction(lost, scheduled)
+                entry["value"] = float(fraction)
+                entry["exact"] = {"numerator": lost, "denominator": scheduled}
+            else:
+                entry.update({"value": None, "status": "no_data", "reason": "no scheduled supply in window"})
+            metrics_out[metric_id] = entry
         elif metric["type"] == "on_time_item_rate":
             final_tick = data.final_experiment_tick or 0
             counts = on_time_item_rate(data, metric, final_tick)

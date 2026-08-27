@@ -95,7 +95,8 @@ Constructs the scenario's `baseline.zip` from nothing, against a real
 Factorio server. The layout is selected by the scenario id in
 `scenario.yaml` (registered labs: `fp-00-measuring-the-factory`,
 `fp-01-flow-and-capacity`, `fp-02-the-constraint`, `fp-03-littles-law`,
-`fp-04-starvation-blocking`, `fp-05-push-and-pull`). What it actually does, in order:
+`fp-04-starvation-blocking`, `fp-05-push-and-pull`,
+`fp-06-system-optimization`). What it actually does, in order:
 
 1. creates a fresh deterministic map (fixed seed, no water/trees/enemies);
 2. launches a temporary headless server with the FISL mods;
@@ -202,6 +203,14 @@ Human-readable results: every metric with its method, window, exact
 numerator/denominator, and validity (coverage complete? census clean?).
 The same information lives in `runs/<run_id>/summary.json` as JSON.
 
+Scenarios with a *scheduled* external supply into a finite buffer (fp06)
+can declare a **`supply_loss`** metric: the fraction of the supplier's
+scheduled quantity in the window that was lost because both the warehouse
+and its overflow capacity were full. Numerator and denominator are exact
+integers from telemetry (`source_supply_scheduled` / `source_supply_lost`
+records); the compiler rejects the metric on ports without both a schedule
+and a finite buffer, where loss is undefined or impossible.
+
 Scenarios that declare **objectives** (ADR 0012 — fp05 onward) get an
 objectives section: each *requirement* shows PASS / FAIL / UNDETERMINED
 against its explicit rule (an incomplete or censored metric is
@@ -230,17 +239,22 @@ in the numerator and what the denominator is.
 
 ## 4. What the learner experiences
 
-Six labs exist (teaching order 0 → 5): **Lab 0** (one machine; boundary,
+Seven labs exist (teaching order 0 → 6): **Lab 0** (one machine; boundary,
 stock vs flow, admission rate vs throughput), **Lab 1** (two unequal
 stages; installed capacity vs achieved output), **Lab 2** (fast→slow→fast;
 find the constraint with live diagnostics deliberately withheld — the two
 reference solutions upgrade a non-constraint vs the constraint), **Lab 3**
-and **Lab 4** below in detail, and **Lab 5** (Lab 3's line plus an external
+and **Lab 4** below in detail, **Lab 5** (Lab 3's line plus an external
 customer: FIFO backlog demand at 12/min with a 30 s max wait; on-time item
 rate and p95 customer wait join the metrics, with a `service_tail` phase so
 every reported deadline is observed; the two reference solutions are the
 proven pull gate and a deliberately over-tight combinator throttle that
-starves the customer). Chapters live in `course/labs/`; every baseline
+starves the customer), and **Lab 6** (the capstone: a scheduled supplier at
+36/min into a finite warehouse *and* a 33/min customer squeeze the 30/min
+line from both ends; a new `supply_loss` metric counts deliveries lost at
+the full warehouse, and the scenario's declared objectives — on-time ≥ 95%
+AND supply loss ≤ 2%, minimize-WIP preference — make `fisl compare` mark
+partial fixes INFEASIBLE). Chapters live in `course/labs/`; every baseline
 builds with `fisl build-baseline` like any other.
 
 ### Labs 3 & 4 in detail

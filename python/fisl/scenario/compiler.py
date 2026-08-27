@@ -26,6 +26,7 @@ from fisl.scenario.author_models import (
     RequirementObjective,
     ScheduledSupply,
     StateFractionMetric,
+    SupplyLossMetric,
     ThroughputMetric,
     WipMetric,
 )
@@ -470,6 +471,31 @@ def _resolve_metrics(
                 **base,
                 "max_wait_ticks": max_wait,
             }
+        elif isinstance(metric, SupplyLossMetric):
+            port = author.ports.get(metric.port)
+            if port is None:
+                problems.append(f"metrics.{metric_id}: unknown port {metric.port!r}")
+                continue
+            if not isinstance(port.supply, ScheduledSupply):
+                problems.append(
+                    f"metrics.{metric_id}: port {metric.port!r} has no scheduled supply — "
+                    "supply loss only exists for scheduled arrivals"
+                )
+                continue
+            if port.supply.external_buffer.capacity == "unbounded":
+                problems.append(
+                    f"metrics.{metric_id}: port {metric.port!r} has an unbounded external "
+                    "buffer — supply loss is impossible; declare a finite capacity"
+                )
+                continue
+            window = window_for(metric_id, metric.window)
+            if window is None:
+                continue
+            resolved[metric_id] = {
+                "type": "supply_loss",
+                "port": metric.port,
+                "window": window,
+            }
         elif isinstance(metric, DemandWaitPercentileMetric):
             base = demand_service_base(metric_id, metric)
             if base is None:
@@ -550,6 +576,7 @@ def _resolve_metrics(
 _OBJECTIVE_UNITS = {
     "on_time_item_rate": "fraction",
     "state_fraction": "fraction",
+    "supply_loss": "fraction",
     "throughput": "per_minute",
     "aggregate": "work_units",
     "cycle_time": "seconds",

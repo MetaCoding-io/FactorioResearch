@@ -79,6 +79,11 @@ def _metric_value(metric: dict) -> tuple[float | None, str]:
         if coverage is not None and coverage < 1:
             display += f" (cov {coverage * 100:.0f}%)"
         return value, display
+    if metric_type == "supply_loss":
+        value = metric.get("value")
+        if value is None:
+            return None, "no data"
+        return value, f"{value * 100:.1f}% lost"
     if metric_type == "on_time_item_rate":
         value = metric.get("value")
         if value is None:

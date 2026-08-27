@@ -300,6 +300,14 @@ function ports.prepare_interval(experiment_tick, phase_id)
           if active and supply.schedule then
             newly_available = schedules.advance(supply.schedule)
           end
+          if newly_available > 0 then
+            -- The scheduled arrival itself is a primitive fact: it is the
+            -- denominator of supply-loss fractions (loss/scheduled).
+            telemetry.emit({
+              type = "source_supply_scheduled", port = port_id,
+              quantity = newly_available, experiment_tick = experiment_tick,
+            })
+          end
           -- stage as much as possible: external pending first (FIFO), then new
           local to_stage = supply.external_pending + newly_available
           local inserted = 0

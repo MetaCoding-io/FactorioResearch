@@ -469,3 +469,33 @@ def test_demand_wait_percentile_strict_censoring_and_value(tmp_path):
     assert p90["value_ticks"] == 30
     assert p90["value_seconds"] == pytest.approx(0.5)
     assert p90["coverage_complete"] is True
+
+
+def test_supply_loss_fraction_from_scheduled_and_lost(tmp_path):
+    import copy
+
+    resolved = copy.deepcopy(RESOLVED)
+    resolved["metrics"]["supply_loss"] = {
+        "type": "supply_loss", "port": "src",
+        "window": {"phase": "measured", "start_tick": 100, "end_tick": 200},
+    }
+    records = [r for r in base_records() if r["type"] != "experiment_completed"]
+    records += [
+        # Before the window: excluded from both counts.
+        {"type": "source_supply_scheduled", "port": "src", "quantity": 5, "experiment_tick": 50},
+        {"type": "source_supply_lost", "port": "src", "quantity": 5, "experiment_tick": 50},
+        # In-window: 40 scheduled, 6 lost.
+        {"type": "source_supply_scheduled", "port": "src", "quantity": 25, "experiment_tick": 120},
+        {"type": "source_supply_scheduled", "port": "src", "quantity": 15, "experiment_tick": 180},
+        {"type": "source_supply_lost", "port": "src", "quantity": 6, "experiment_tick": 180},
+        {"type": "experiment_completed", "experiment_tick": 200, "summary": {}},
+    ]
+    path = write_telemetry(tmp_path, records)
+    summary = compute_summary(resolved, RUN_CONFIG, path)
+
+    loss = summary["metrics"]["supply_loss"]
+    assert loss["scheduled_quantity"] == 40
+    assert loss["lost_quantity"] == 6
+    assert loss["exact"] == {"numerator": 6, "denominator": 40}
+    assert loss["value"] == pytest.approx(0.15)
+    assert loss["coverage_complete"] is True

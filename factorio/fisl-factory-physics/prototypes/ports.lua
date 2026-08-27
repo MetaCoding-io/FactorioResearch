@@ -11,7 +11,11 @@ local function port_container(name, tint)
   local chest = util.table.deepcopy(data.raw["container"]["steel-chest"])
   chest.name = name
   chest.minable = nil
-  chest.inventory_size = 48
+  -- One slot (= 100 workpieces): the port IS the declared warehouse, and a
+  -- finite warehouse is what lets scheduled-supply congestion/loss become
+  -- physical (ADR 0003; Lab 6). Replenish labs use target 100, which fits
+  -- exactly; sinks settle every boundary and never accumulate.
+  chest.inventory_size = 1
   if chest.icons == nil then
     chest.icons = { { icon = chest.icon, icon_size = chest.icon_size or 64 } }
     chest.icon = nil

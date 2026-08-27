@@ -13,6 +13,7 @@ from typing import Any
 _VALUE_KEYS = {
     "on_time_item_rate": ("value", "fraction"),
     "state_fraction": ("value", "fraction"),
+    "supply_loss": ("value", "fraction"),
     "throughput": ("value_per_minute", "per_minute"),
     "aggregate": ("value", "work_units"),
     "cycle_time": ("value_seconds", "seconds"),

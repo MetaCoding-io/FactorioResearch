@@ -13,6 +13,7 @@ book:
     - labs/lab-03-littles-law.qmd
     - labs/lab-04-starvation-blocking.qmd
     - labs/lab-05-push-and-pull.qmd
+    - labs/lab-06-system-optimization.qmd
 
 format:
   html:
