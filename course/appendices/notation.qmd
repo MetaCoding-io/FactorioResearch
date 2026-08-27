@@ -1,0 +1,79 @@
+# Notation and Definitions {.appendix}
+
+The course's formal spine on four pages. Everything here is defined
+somewhere in a lab or interlude; this is the place to look it up without
+hunting.
+
+## Symbols
+
+| Symbol | Name | Unit | First appears |
+|---|---|---|---|
+| $\mathrm{WIP}$, $w$ | work in process (inside the declared boundary) | work units | Lab 0 |
+| $\mathrm{TH}$ | throughput (completions across the sink boundary) | work units / time | Lab 0 |
+| $\mathrm{CT}$ | cycle time (time a unit spends inside the boundary) | time | Lab 3 |
+| $A(t)$, $D(t)$ | cumulative admissions / completions since window start | work units | flow interlude |
+| $r_b$ | bottleneck (constraint) rate | work units / time | flow interlude |
+| $T_0$ | raw process time — traversal of an empty system, transit included | time | flow interlude |
+| $W_0 = r_b T_0$ | critical WIP | work units | flow interlude |
+
+The load-bearing identities:
+
+$$
+\mathrm{WIP}(t) = \mathrm{WIP}(0) + A(t) - D(t)
+\qquad
+\overline{\mathrm{WIP}} = \mathrm{TH} \times \mathrm{CT}
+$$
+
+$$
+\mathrm{TH}_{\text{best}}(w) = \min\!\left(\tfrac{w}{T_0},\, r_b\right)
+\qquad
+\mathrm{CT}_{\text{best}}(w) = \max\!\left(T_0,\, \tfrac{w}{r_b}\right)
+$$
+
+## Conventions every number obeys
+
+- **Clock.** The experiment clock is simulation ticks (60 per second),
+  never wall time. All durations and windows are tick-exact.
+- **Windows.** Half-open intervals $[a, b)$: a window owns its first
+  tick, not its last. Adjacent windows tile time — every tick counted
+  once, no tick twice.
+- **Boundary.** The system boundary is declared in the scenario (source
+  and sink ports); WIP is everything admitted and not yet completed,
+  wherever it physically sits — belts, machine buffers, and the
+  operator's inventory included.
+- **Phases.** A run is a declared sequence (typically *warmup* →
+  *measured* → optional tails such as *service_tail*). Metrics name the
+  phase their window covers.
+- **Units.** Stocks are work units; flows are work units per time; a
+  ratio of stock to flow is a time. Fractions always name a numerator
+  set and a denominator.
+- **Identity.** The resolved scenario (boundary, phases, metrics,
+  objectives — everything semantic) has a hash; runs are comparable only
+  when it matches. A separate reproducibility fingerprint additionally
+  pins the world; matching fingerprints make runs bit-comparable.
+
+## Metric families
+
+| Metric | What it is | Fine print |
+|---|---|---|
+| `wip` | conservation ledger: admissions − completions, maintained per tick | audited by a physical census (zero tolerance); disagreement flags the run, never adjusts the number |
+| `aggregate` (time mean) | time-weighted average of a tracked value over a window | exact integral, not a sampling |
+| `throughput` | boundary crossings per time; `boundary: completion` (default) counts the sink, `boundary: entry` counts admissions | the two differ whenever WIP is changing — that difference *is* the WIP change |
+| `cycle_time` (derived) | accumulated WIP-area ÷ completions (Little's Law used as a definition) | the empirical claim is that it matches a tracked unit's lived time; in this deterministic course it must |
+| `production_state` / `state_fraction` | per-machine time classified into productive / starved / blocked / unavailable / disabled / idle_other | states partition time; *coverage missing* is reported beside, never absorbed into a state or a denominator |
+| eligibility | the span a machine belongs to the measured set (dynamic membership) | per-machine fractions use eligible time; pooled fractions sum eligible machine-time only |
+| `on_time_item_rate` | of demanded items in the cohort window, the fraction fulfilled within the deadline | item-weighted; FIFO enforced; deadlines observed passing are final; surplus never pre-credits demand |
+| `demand_wait_percentile` | the wait beaten by p% of demanded items | strictly censored: any required-but-unfulfilled unit → the metric prints `censored`, not a number |
+| `supply_loss` | of a supplier's scheduled quantity in the window, the fraction lost at a full finite buffer | requires scheduled supply *and* finite capacity; exact integers behind the fraction |
+
+## Verdicts and flags
+
+- **Requirement**: PASS / FAIL / **UNDETERMINED** (incomplete or
+  censored evidence — never rounded to either side).
+- **Run feasibility**: the conjunction of requirements. Any FAIL →
+  **INFEASIBLE**; else any UNDETERMINED → UNDETERMINED; else feasible.
+- **Preference**: a direction, reported and used only to rank feasible
+  runs. Never a verdict, never a weight, never a score.
+- **Protocol validity**: a separate axis entirely — census agreement,
+  coverage, rule violations. A run can pass every objective while
+  flagged, and vice versa; reports show both.

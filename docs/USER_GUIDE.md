@@ -254,8 +254,14 @@ starves the customer), and **Lab 6** (the capstone: a scheduled supplier at
 line from both ends; a new `supply_loss` metric counts deliveries lost at
 the full warehouse, and the scenario's declared objectives — on-time ≥ 95%
 AND supply loss ≤ 2%, minimize-WIP preference — make `fisl compare` mark
-partial fixes INFEASIBLE). Chapters live in `course/labs/`; every baseline
-builds with `fisl build-baseline` like any other.
+partial fixes INFEASIBLE). Between labs, six **theory interludes**
+(`course/interludes/`) develop the formal ideas the previous labs earned
+— measurement discipline, capacity arithmetic, Little's Law, machine
+states, service and censoring, objectives — each ending in numbered
+claims the next lab tests; two appendices (`course/appendices/`) carry
+the notation reference and the map into the wider literature. Lab
+chapters live in `course/labs/`; every baseline builds with
+`fisl build-baseline` like any other.
 
 ### Labs 3 & 4 in detail
 

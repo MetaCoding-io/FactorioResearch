@@ -1,0 +1,97 @@
+# Interlude — Capacity and the Weakest Link
+
+**Read after Lab 1, before Lab 2** · no Factorio required · ~20 minutes
+
+Lab 1 showed you a gap: two machines whose catalog capacities were 37.5
+and 30 workpieces per minute, and a line that delivered 30. Nothing was
+broken. Nothing was wasted, either, in any way you could fix by working
+harder. This interlude turns that gap into arithmetic you can do for any
+line — and into a prediction Lab 2 is built to test.
+
+## Capacity is arithmetic, not aspiration
+
+A machine's **capacity** is the rate it could sustain if material were
+always waiting and space always open. In this laboratory it is exact:
+
+$$
+\text{craft time} = \frac{\text{recipe seconds}}{\text{machine speed}},
+\qquad
+\text{capacity} = \frac{60}{\text{craft time}} \text{ per minute.}
+$$
+
+The three assembler tiers run at speeds 0.5, 0.75, and 1.25; the
+machining recipe takes 2 s of work, inspection and finishing 1 s each.
+Every capacity number in this course — 15, 30, 37.5, 45 — comes from
+this one division. Real factories need measurement campaigns to learn
+these numbers; here you can read them off the nameplate. What you *do*
+with them is the same in both worlds.
+
+## The weakest link sets the pace
+
+Put machines in series and their capacities do not add, average, or
+negotiate. In a deterministic line, sustained output is:
+
+$$
+\text{line capacity} = \min(\text{capacity}_1, \ldots, \text{capacity}_n)
+$$
+
+![Installed capacity by stage for a fast → slow → fast line. The line
+delivers the minimum; every unit of capacity above the dashed line is
+installed but unusable — not through mismanagement, but by
+arithmetic.](../images/interludes/line-capacity.svg){width=100%}
+
+The stage achieving that minimum is the **constraint** (you will also
+hear *bottleneck*; the flow interlude will call its rate $r_b$). Two
+consequences follow immediately, and both are routinely disbelieved by
+people meeting them in the wild:
+
+- **Capacity added anywhere but the constraint adds nothing.** Upgrade a
+  37.5/min stage to 45 and the min() does not move. The money is spent,
+  the output is identical.
+- **Installed capacity is not a promise.** Lab 1's line "wasted" 7.5/min
+  of the first machine's capability — permanently, structurally, and
+  invisibly to anyone auditing the machines one at a time. Only the
+  *system* number reveals it.
+
+## "Utilization" needs a denominator
+
+The natural next question — *how busy is each machine?* — is a trap
+unless you ask it precisely. "Utilization" as a bare percentage smuggles
+in two choices: busy *doing what* (crafting? powered? merely occupied?)
+and busy *out of what* (the whole window? the time the machine
+existed?). FISL deliberately has no metric named "utilization": when the
+course starts measuring busyness (Lab 4), every such number will name
+its numerator states and its denominator explicitly.
+
+For now, one honest preview from pure arithmetic: a non-constraint
+machine in a line running at rate $m$ can be doing useful work at most
+$m/\text{capacity}$ of the time. The *faster* a machine is relative to
+the constraint, the *lazier* it must look. Hold that thought; it will
+turn diagnosis upside down in Lab 4.
+
+## Claims to carry into Lab 2
+
+Lab 2 is a three-stage line — 37.5, 30, and 45 workpieces per minute —
+with live diagnostics deliberately withheld. Commitments, in writing:
+
+1. Measured throughput will be **30/min exactly** — the minimum, nothing
+   blended.
+2. The two reference interventions upgrade one machine each. The one
+   that touches a non-constraint will change throughput by **exactly
+   nothing**; the one that touches the constraint will move the line to
+   the *new* minimum — compute it before running.
+3. You can name the constraint from catalog arithmetic before the run
+   starts, and the withheld diagnostics cannot stop you: the machine
+   whose capacity equals the measured line rate is the constraint.
+
+If claim 2's first half feels too strong — surely *some* improvement
+leaks through? — good. That intuition is exactly what the lab exists to
+correct, and in a deterministic world the correction is total.
+
+## Further reading
+
+- Hopp & Spearman, *Factory Physics* (3rd ed.), ch. 7 "Basic Factory
+  Dynamics" — bottleneck rate and line parameters; ch. 18 "Capacity
+  Management" for the decision-making layer this course only touches.
+- E. M. Goldratt & J. Cox, *The Goal* (1984) — the constraint idea as
+  narrative; the five focusing steps are Lab 2's debrief in novel form.

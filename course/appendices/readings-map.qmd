@@ -1,0 +1,35 @@
+# Readings Map {.appendix}
+
+This course is not a companion to any book: its spine is the lab
+sequence and the measurement discipline, and nothing here requires
+outside reading. But the theory it teaches has a literature, and one
+book in particular — Hopp & Spearman's *Factory Physics* — covers the
+same laws with the depth a lab course trades away for contact with a
+running system. This appendix maps each unit to the reading that extends
+it. Chapter numbers refer to the 3rd edition (Waveland Press, 2011).
+
+| Course unit | Extends into |
+|---|---|
+| Lab 0 · Rules of Evidence interlude | H&S ch. 6 *A Science of Manufacturing*; Denning & Buzen, "The Operational Analysis of Queueing Network Models" (1978) — measurement laws as identities on observed data |
+| Lab 1 · Capacity interlude | H&S ch. 7 *Basic Factory Dynamics* (parameters, bottleneck rate); ch. 18 *Capacity Management* |
+| Lab 2 | H&S ch. 7; Goldratt & Cox, *The Goal* (1984) — the constraint as narrative |
+| Accounting of Flow interlude · Lab 3 | H&S ch. 7 (Little's Law, best/worst cases, critical WIP); Little, "A Proof for the Queuing Formula $L = \lambda W$", *Operations Research* 9(3), 1961; Little & Graves, "Little's Law", in *Building Intuition* (2008) |
+| States of a Machine interlude · Lab 4 | H&S ch. 8 *Variability Basics* (blocking/starving — stochastic where this course is deterministic) |
+| Customer's Clock interlude · Lab 5 | H&S ch. 10 *Push and Pull Production Systems*; ch. 3–4 for the history push and pull actually come from (MRP; JIT and lean) |
+| Objectives interlude · Lab 6 | H&S ch. 6 (trade-offs); ch. 17 *Supply Chain Management* (the supplier seed Lab 6 plants); ch. 19 *Synthesis* |
+| The road not (yet) taken | H&S ch. 8–9 (*Variability Basics*, *The Corrupting Influence of Variability*) — everything this course's determinism assumed away, and the spine of the sequel |
+
+Three reading habits, if you go on:
+
+- **Translate the notation both ways.** H&S's $r_b$, $T_0$, $W_0$ are
+  this course's symbols on purpose; their $L = \lambda W$ is our
+  $\overline{\mathrm{WIP}} = \mathrm{TH} \times \mathrm{CT}$.
+- **Ask what each formula assumes.** Much of the book's power — and all
+  of its queueing formulas — needs variability. Every law this course
+  demonstrated holds in the deterministic special case; the practical
+  worst case and the VUT equation do not exist there. When a formula
+  surprises you, check which world it lives in.
+- **Take the measurement discipline with you.** Declared boundaries,
+  explicit windows, named denominators, censored honesty: the book
+  assumes clean numbers arrive from somewhere. You now know what it
+  costs to produce one.

@@ -36,7 +36,7 @@ non-goal · ⚠️ gap (decision needed).
 | Ch 3 — The MRP Crusade | MRP/MRP II/ERP mechanics, push planning logic | Mechanics are a non-goal (software archaeology, not physics). The *push-control idea* MRP embodies is taught: Lab 3 run 1 and Lab 5's push reference run are MRP-style admission made visible. | ❌ (idea ✅ Labs 3/5) |
 | Ch 4 — From the JIT Revolution to Lean | JIT, kanban, lean, waste | Pull-as-admission-control ✅ Lab 3 (pull gate) + Lab 5 (pull vs push under a customer). Kanban *card mechanics* vs CONWIP comparison → Course II (their difference only matters under variability). Lean's waste taxonomy → Course I interlude candidate (we already price queue-waste exactly via Little's Law). | ✅ partial, 🔜 II |
 | Ch 5 — What Went Wrong? | Why slogans failed; the case for laws over fads | This is the course's founding argument — `course/index.qmd` and the interlude program carry it. No lab needed. | ✅ (framing) |
-| Ch 6 — A Science of Manufacturing | Models vs reality, laws, objectives, "the essence is trade-offs" | ✅ Deeply: FISL's whole apparatus (declared boundaries, validity, ADR 0011 no-scalar-score, ADR 0012 objectives, Lab 6's INFEASIBLE framing) *is* this chapter operationalized. Interludes should name the connection. | ✅ |
+| Ch 6 — A Science of Manufacturing | Models vs reality, laws, objectives, "the essence is trade-offs" | ✅ Deeply: FISL's whole apparatus (declared boundaries, validity, ADR 0011 no-scalar-score, ADR 0012 objectives, Lab 6's INFEASIBLE framing) *is* this chapter operationalized. Named explicitly in the Rules of Evidence and Objectives interludes. | ✅ |
 | Ch 7 — Basic Factory Dynamics | TH, WIP, CT, Little's Law, r_b, T_0, W_0, best/worst/practical-worst-case curves | Core of Course I: Labs 0–4 + interlude "The Accounting of Flow" (derives Little's Law, defines r_b/T_0/W_0, states the best-case curves). **Practical worst case requires variability → Course II.** Gap worth closing in Course I: a WIP-sweep lab tracing TH(w)/CT(w) empirically (pull gate at w = 1, 2, 4, 8, …) — the data would draw H&S's signature curves from live runs. | ✅ / ⚠️ sweep lab / 🔜 II (PWC) |
 | Ch 8 — Variability Basics | CV, process/flow variability, Kingman (VUT), propagation, pooling | Course II core. Layer II scenario models (controlled stochastic craft times / supply jitter) are the planned apparatus. Not teachable in Course I by design — determinism is Course I's stated assumption. | 🔜 II |
 | Ch 9 — The Corrupting Influence of Variability | Buffering law (inventory/capacity/time), degradation laws, variability pays | Course II core. Hook already planted: Lab 6's 40/min homework ends on "what do you buy insurance with — inventory, capacity, or time?" verbatim setup for the buffering law. | 🔜 II |
@@ -68,8 +68,11 @@ companion:
 - **Instrumentation ethics**: what the operator may see mid-experiment
   and why (visibility allowlists, no provisional verdicts).
 
-These threads should get their own interlude(s) rather than being left
-implicit in the lab protocols.
+These threads now have their interludes: measurement discipline and
+reproducibility in "The Rules of Evidence", censoring in "The Customer's
+Clock", objectives in "Objectives Without a Score" — with the notation
+appendix as the formal spine and the readings-map appendix as the
+learner-facing distillation of this file's forward direction.
 
 ## Open decisions (the ⚠️ rows)
 

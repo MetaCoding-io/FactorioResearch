@@ -1,0 +1,109 @@
+# Interlude — The Customer's Clock
+
+**Read after Lab 4, before Lab 5** · no Factorio required · ~25 minutes
+
+Every sink so far has been infinitely patient: it absorbed whatever
+arrived, whenever it arrived, and throughput was the whole story. Lab 5
+replaces it with a **customer** — demand that arrives on its own
+schedule and stops being satisfiable 30 seconds later. This interlude
+builds the measurement kit for that world, and it ends at the hardest
+honesty problem in the course: what to report about a deadline you
+never got to see.
+
+## Demand is a flow with a deadline attached
+
+The customer in Lab 5 demands 12 workpieces per minute, continuously.
+Each unit of demand is created at a moment, joins a **backlog** if it
+cannot be served immediately, and is filled strictly first-in-first-out.
+Its **wait** is the time from creation to fulfillment, and the scenario
+declares a maximum tolerable wait — the deadline.
+
+Two rules keep the accounting honest:
+
+- **FIFO, enforced.** The oldest unserved demand is always served first,
+  so waits are well-defined and no analysis can quietly cherry-pick
+  which customer got which item.
+- **Surplus is not a bank.** Producing ahead of demand does not
+  pre-credit customers who haven't asked yet; a delivery with no open
+  demand behind it is recorded as surplus, full stop. (Real contracts
+  work this way too: shipping early doesn't excuse shipping late next
+  month.)
+
+## The service metrics
+
+**On-time item rate**: of all demanded items in the window, the fraction
+fulfilled within their deadline. It is item-weighted — a cohort of ten
+counts ten times a cohort of one — and it is a *service* number, not a
+production number. That distinction has teeth: a line can run at full
+throughput and still fail every deadline, if the timing is wrong.
+
+**Wait percentiles** (Lab 5 uses p95): the wait that 95% of demanded
+items beat. Averages flatter service systems — one customer served
+instantly and one who waited a minute average to "30 s", which describes
+neither. The tail is where customers live.
+
+## Censoring: the deadline you didn't see
+
+The run ends. Some demand near the end was created, its deadline still
+in the future when observation stopped. What is it?
+
+![Three fates for a unit of demand against an observation horizon. Only
+the first two are verdicts; the third is an honest refusal to
+issue one.](../images/interludes/censoring.svg){width=100%}
+
+- Fulfilled within the deadline → **on time**. Final.
+- Deadline observed passing unfulfilled → **late**. Final — note this
+  needs no run-end: the verdict lands the instant the deadline passes,
+  and later fulfillment cannot repair it.
+- Deadline beyond the horizon → **unresolved**. Not on time, not late —
+  *unknown*, and reported as exactly that.
+
+The temptation is to fold unresolved units into whichever bucket
+flatters the story ("not late yet" → on time). FISL's rules instead:
+the on-time rate's window and horizon are declared so that reported
+cohorts have observable deadlines (Lab 5's scenario adds a
+`service_tail` phase for precisely this), and the wait percentile is
+**strictly censored** — if any unit needed for the percentile is
+unfulfilled, the metric refuses to print a number at all. You will see
+`censored` in a real report in Lab 5, and it will be the most honest
+cell in the table.
+
+## Service, capacity, and the cost of a cap
+
+The line's capacity is 15/min; the customer wants 12/min. That 25%
+margin means 100% on-time service is *achievable* — and, remarkably,
+achievable at wildly different WIP levels, which is the entire drama of
+Lab 5: push and a well-tuned pull deliver identical service; only the
+inventory differs.
+
+But admission control has a cliff. Cap the line's intake *below* demand
+— say at 10/min against 12 — and backlog grows at 2/min, forever.
+Waits grow with the backlog; once the queue is longer than what the cap
+can clear within the patience window, **every subsequent unit is late**.
+The measured on-time rate then mostly reflects how early in the run the
+queue outgrew the deadline — keep running and it decays toward zero.
+One number to internalize: an over-tight cap doesn't degrade service
+proportionally (10/12 ≈ 83%); it collapses it, because lateness
+compounds through the queue.
+
+## Claims to carry into Lab 5
+
+1. The baseline (push) will serve 100% on time. So will a correctly
+   tuned pull — with the *same* p95 wait — while carrying a fraction of
+   the WIP. Service metrics alone cannot distinguish them; the ledger
+   can.
+2. The deliberately over-tight reference solution admits 10/min against
+   12/min demand. Predict: on-time far below 83%, decaying with run
+   length, and a p95 that prints `censored` rather than a number.
+3. Little's Law works on the backlog too: the customer's average wait
+   relates backlog and demand rate exactly as WIP relates to throughput
+   and cycle time. One law, second appearance.
+
+## Further reading
+
+- Hopp & Spearman, *Factory Physics* (3rd ed.), ch. 10 "Push and Pull
+  Production Systems" — the control side of what Lab 5 measures; ch. 3
+  and 4 for where push (MRP) and pull (JIT) actually came from.
+- Little & Graves, "Little's Law" (in *Building Intuition*, 2008) — §on
+  applications includes exactly this waiting-line reading.
+- The demand-cohort and censoring contract is FISL's ADR 0008.

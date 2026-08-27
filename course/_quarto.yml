@@ -8,13 +8,21 @@ book:
   chapters:
     - index.qmd
     - labs/lab-00-measuring-the-factory.qmd
+    - interludes/rules-of-evidence.qmd
     - labs/lab-01-flow-and-capacity.qmd
+    - interludes/capacity.qmd
     - labs/lab-02-the-constraint.qmd
     - interludes/accounting-of-flow.qmd
     - labs/lab-03-littles-law.qmd
+    - interludes/states-of-a-machine.qmd
     - labs/lab-04-starvation-blocking.qmd
+    - interludes/customers-clock.qmd
     - labs/lab-05-push-and-pull.qmd
+    - interludes/objectives-without-a-score.qmd
     - labs/lab-06-system-optimization.qmd
+  appendices:
+    - appendices/notation.qmd
+    - appendices/readings-map.qmd
 
 format:
   html:

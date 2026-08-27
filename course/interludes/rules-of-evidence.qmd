@@ -1,0 +1,111 @@
+# Interlude — The Rules of Evidence
+
+**Read after Lab 0, before Lab 1** · no Factorio required · ~20 minutes
+
+Lab 0 handed you one machine and asked for three numbers: what's inside,
+what entered, what left. Small as it was, every measurement discipline
+this course enforces was already present. This interlude names the rules
+you were following — because from here on the systems grow, and the rules
+are what keep large numbers from becoming large lies.
+
+## A number is a claim with a method
+
+Every figure a FISL report prints carries three attachments: the
+**method** that produced it, the **window** it was measured over, and a
+**validity** verdict. This is not decoration. "Throughput 15/min" is not
+a fact; "15 completions per minute across the sink boundary, over the
+10-minute measured window, census clean" is. Strip the attachments and
+two honest numbers become incomparable — or worse, comparable-looking.
+
+The habit to build now: whenever you see a rate or a fraction, ask *per
+what?* A rate is a count divided by a window; a fraction is a count
+divided by a denominator. Both halves are choices, and both halves can
+be wrong independently of the count.
+
+## The boundary is declared, not discovered
+
+Lab 0's blue and orange ports were not scenery: they are the declared
+boundary of the system, fixed *before* the experiment starts. Everything
+between them — belts, machine buffers, your pockets — is inside.
+"Inside" and "outside" are decided by the declaration, not by what feels
+like part of the factory.
+
+This is what makes counting exact. Admissions are crossings of one
+declared surface; completions are crossings of another; WIP is what has
+crossed the first and not the second. Move the boundary and all three
+numbers legitimately change — which is why FISL freezes it into the
+scenario's identity, and why comparing runs is only meaningful when that
+identity is the same.
+
+## Windows: half-open, tick-exact
+
+The experiment clock is the simulation's own tick counter — not wall
+time, not your watch. A measurement window is a **half-open interval**
+of ticks, $[a, b)$: it owns its first tick and does not own its last.
+
+![Adjacent windows tile the clock exactly. The boundary tick belongs to
+the window that starts on it — never to both, never to
+neither.](../images/interludes/windows.svg){width=100%}
+
+The payoff is boring and absolute: adjacent windows tile time with no
+gap and no overlap, so an event is counted exactly once no matter how
+phases are cut. Warmup, measured window, and any tail phases are all
+intervals of this kind. When you later see a number that depends
+delicately on its window — and in Lab 6 you will meet one that hides for
+twelve minutes — the window convention is what lets you reason about it
+instead of shrugging.
+
+## Conservation is the auditor
+
+The WIP number is bookkeeping: admissions minus completions, maintained
+as a ledger. Bookkeeping can drift from reality, so FISL periodically
+takes a **census** — physically counting every workpiece in the zone,
+your inventory included — and demands the ledger and the census agree
+*exactly*, with zero tolerance. Disagreement doesn't adjust the number;
+it flags the run.
+
+That last clause is the rule of evidence in miniature: **a measurement
+problem is reported, never repaired silently.** A run can complete and
+still carry validity flags; the flags travel with every number derived
+from it. You will never be handed a cleaned-up figure with the cleaning
+hidden.
+
+## Reproducibility is the apparatus
+
+The simulation is deterministic and every rate in it is a constant.
+Rerun a scenario without intervening and you get — not approximately,
+*bit-for-bit* — the same telemetry and the same report. This is what
+makes your runs experiments in the scientific sense: an intervention's
+effect is the entire difference between two runs, with nothing left over
+for luck to explain. It is a luxury no real factory offers, and the
+course spends it deliberately: every disagreement between your
+prediction and the data is a wrong prediction, never noise.
+
+## Claims to carry into Lab 1
+
+Lab 1 puts two machines in series, and their catalog capacities differ:
+the first can craft every 1.6 s, the second every 2.0 s. Before running:
+
+1. Rerun any completed run without changing anything. Every reported
+   number will repeat exactly — decimals and all. (Do this once; it is
+   the cheapest calibration of trust you will ever perform.)
+2. Over any window, the change in WIP will equal admissions minus
+   completions in that window, exactly. The census guarantees you'd be
+   told otherwise.
+3. Convert the two craft times to capacities (60 s ÷ craft seconds) and
+   write both down. The run will report *one* throughput. Predict which
+   of your two numbers it is — and notice that you are already doing
+   Lab 2's job.
+
+## Further reading
+
+- Hopp & Spearman, *Factory Physics* (3rd ed.), ch. 6 "A Science of
+  Manufacturing" — the argument that manufacturing needs laws and
+  measurements rather than slogans; this course's founding premise.
+- P. J. Denning & J. P. Buzen, "The Operational Analysis of Queueing
+  Network Models", *Computing Surveys* 10(3), 1978 — measurement laws
+  stated as identities on observed data, exactly the stance FISL's
+  ledger takes.
+- The conventions here are FISL's ADRs 0001 (experiment time and
+  phases), 0010 (observation windows), and 0017 (conservation-ledger WIP
+  with census cross-check).
