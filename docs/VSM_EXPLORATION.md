@@ -13,6 +13,11 @@ Laboratory), `RESEARCH_NOTES.md` §8 (debrief before measurement
 science), `COURSE_II_SCOPE.md` §3 ("regulation as a subject belongs to
 Course III"), ADR 0011 (disclosure audiences).
 
+Companion memo: `VSM_NARRATIVE.md` — the same material explored as a
+long-form teaching novel with play-along scenarios; this memo is the
+*evidence* format, that one the *dramatization* (its Act III beats are
+this memo's §4 variants).
+
 ---
 
 ## 1. The gap this daydream lives in
