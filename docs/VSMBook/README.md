@@ -10,7 +10,7 @@ The core idea is a hopeful, sim-constrained teaching novel about a remote indust
 
 **Canonical narrative concept document.** This is the current source of truth for the book's premise, tone, characters, diegetic Factorio/FISL laboratory, generative-machine relationship, story structure, creative rules, and open questions.
 
-When later brainstorming conflicts with this document, update the bible deliberately rather than letting the concept drift across conversations.
+When later brainstorming conflicts with this document, update the bible deliberately rather than letting the concept drift across conversations. Focused specialization documents below may make a character or setting decision more specific; where explicitly stated, those more-specific decisions are current.
 
 ### [`WORLD_DESIGN.md`](WORLD_DESIGN.md)
 
@@ -23,6 +23,12 @@ It is intentionally not a lore bible: build only enough world to make the next h
 **Lived-world and movement-culture document.** Develops what independence feels like in ordinary life and the emerging culture of committed supporters: revolutionary willingness, legitimacy's half-life, work and family disruptions, movement values and status markers, symbols, clothing, holidays, songs, food, humor, equality, internal cultural arguments, multilingual life, media, apprenticeship, diaspora, and generational change.
 
 Its purpose is to make the country feel inhabited rather than merely administered.
+
+### [`COORDINATOR.md`](COORDINATOR.md)
+
+**Canonical Coordinator specialization.** Locks in the protagonist's native communications/control background, the post-independence Infrastructure Continuity Service that gives them credible cross-domain access, the three major pre-Province wins across railway communications, the electrical grid, and industrial production, and the intellectual trap those victories create.
+
+The key guardrail is that the Coordinator is not a polymath: their transferable gift is making distributed expertise, trustworthy measurement, and falsifiable tests meet across institutional boundaries.
 
 ## Foundational memos
 
@@ -55,6 +61,9 @@ NARRATIVE_DESIGN_BIBLE.md
            |          |
            |          +--> SOCIAL_AND_CULTURAL_LIFE.md
            |                 lived transition + movement culture
+           |
+           +--> COORDINATOR.md
+           |       canonical protagonist specialization
            |
            +--> novel / serialized fiction
            +--> Coordinator's Factorio/FISL models
