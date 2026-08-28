@@ -2,7 +2,7 @@
 
 **Status:** compact worldbuilding constraint document. This is intentionally not a lore bible.
 
-**Purpose:** establish enough of the fictional world's technological, institutional, ecological, and material grammar to make scenes coherent. This document answers questions such as: Why can an advanced railway still fail? Why does the country need the Province to work? What knowledge disappeared at independence? What can the Coordinator plausibly know? What authority does a worker council, province, or national body possess? It should constrain the story without requiring the reader to study the world before the story begins.
+**Purpose:** establish enough of the fictional world's technological, institutional, ecological, political, and material grammar to make scenes coherent. This document answers questions such as: Why can an advanced railway still fail? Why does the country need the Province to work? What knowledge disappeared at independence? What can the Coordinator plausibly know? What authority does a worker council, province, or national body possess? How does a young pluralistic state distinguish disagreement from obstruction or sabotage? It should constrain the story without requiring the reader to study the world before the story begins.
 
 The narrative design remains canonical in [`NARRATIVE_DESIGN_BIBLE.md`](NARRATIVE_DESIGN_BIBLE.md). This document specializes its setting decisions.
 
@@ -161,7 +161,83 @@ This is where the setting's solarpunk direction comes from.
 
 ---
 
-## 5. Solarpunk as destination, not backdrop
+## 5. Political dissent, opposition, and destabilization
+
+### Decided: independence does not produce political unanimity
+
+The new country is pluralistic, contested, and still deciding what independence means.
+
+The coalition that produced independence was broader than the coalition that will agree on what comes next. Political conflict can therefore come from many directions:
+
+- people who wanted independence but oppose the new economic settlement;
+- workers who support self-management but reject a particular national commitment;
+- local communities that believe the center is already rebuilding hierarchy;
+- former owners or managers seeking restoration, compensation, or influence;
+- parties that favor stronger markets or stronger central planning;
+- radicals who believe the transition is moving too slowly;
+- minorities or regions that fear domination inside the new state;
+- people whose livelihoods are genuinely harmed by emergency policies;
+- remnants of the former order;
+- actors who do not accept the legitimacy or permanence of the new country at all.
+
+Some of these people will be right about important things.
+
+The government's ability to remain viable depends partly on hearing criticism it dislikes.
+
+### Decided: dissent, obstruction, and sabotage are different categories
+
+The story should never use **dissent** as a synonym for **enemy activity**.
+
+A strike can be a legitimate labor action. A blockade can be civil disobedience. A refusal to comply can expose a bad policy or an illegitimate concentration of authority. Political opposition can be principled and compatible with the constitutional order.
+
+Other actions may be deliberately destabilizing:
+
+- coordinated disruption of freight or fuel distribution intended to create systemic shortage;
+- hoarding or withholding critical inventories for political leverage;
+- deliberate misinformation about infrastructure state;
+- destruction or disabling of communications, rail, grid, or industrial assets;
+- infiltration of institutions for the purpose of making them fail;
+- coordinated attempts to turn ordinary operational failures into crises of legitimacy.
+
+And the line between these categories will often be disputed in real time.
+
+This ambiguity is important. A young state under pressure can destroy its own political promise if it labels every strike, criticism, or local refusal as sabotage. It can also destroy itself if it assumes that every disruption is merely good-faith disagreement.
+
+A viable political system must preserve channels for **real disagreement** while still being capable of recognizing and surviving **deliberate attack**.
+
+### Strong lean: some destabilization is externally encouraged or supported
+
+The embargoing or hostile powers do not need to rely only on formal trade restrictions. They may cultivate relationships with domestic factions, former owners, media organizations, political groups, or economic actors whose interests align with weakening the new state.
+
+Support may take forms such as money, equipment, communications assistance, intelligence, propaganda, privileged trade access, or promises about a post-crisis political settlement.
+
+This should not make domestic opponents puppets. External support works best narratively when it **amplifies conflicts that already exist** rather than inventing them from nothing.
+
+The historical inspiration includes Allende-era Chile, where politically motivated transport disruption interacted with an already difficult economy and foreign pressure, while the Cybersyn team used an inherited telex network to help coordinate scarce transport resources during the October 1972 crisis. The useful lesson for this fictional world is not to reproduce that event, but to remember that infrastructure and information systems become intensely political during a legitimacy crisis.
+
+### Cybernetic consequence: political variety is not noise to be eliminated
+
+The new country's institutions will be tempted to treat opposition as noise in the control system.
+
+That would be a category error.
+
+Some political signals are warnings about unmet needs, bad policies, local conditions, or illegitimate authority. Attenuating them may make dashboards calmer while making the society less viable.
+
+Other signals are intentionally adversarial and may be designed to exploit the system's own channels, dependencies, and emergency procedures.
+
+The organizational challenge is therefore not:
+
+> How do we suppress political variety?
+
+It is closer to:
+
+> **How do we remain governable, corrigible, and free while some actors disagree with us and some actively want us to fail?**
+
+That question belongs naturally in a world concerned with autonomy, cohesion, requisite variety, and algedonic channels.
+
+---
+
+## 6. Solarpunk as destination, not backdrop
 
 ### Decided: solarpunk is what the country is trying to build
 
@@ -189,7 +265,7 @@ The optimism comes from learning, solidarity, maintenance, and institutional inv
 
 ---
 
-## 6. The Province
+## 7. The Province
 
 ### Decided: one region matters disproportionately to the independence project
 
@@ -237,7 +313,7 @@ means more than local operational success. Political independence has begun to a
 
 ---
 
-## 7. Technology: advanced, uneven, and orphaned
+## 8. Technology: advanced, uneven, and orphaned
 
 ### Decided: modern technical capability exists, but maintenance ecosystems have fractured
 
@@ -281,7 +357,7 @@ The Province will eventually confront them with failures where every component c
 
 ---
 
-## 8. The Old Cyberneticist and the inherited planning system
+## 9. The Old Cyberneticist and the inherited planning system
 
 ### Decided: modeling is common; his unusual knowledge is about the limits of central modeling
 
@@ -312,7 +388,7 @@ The book searches for the third thing.
 
 ---
 
-## 9. Factorio, FISL, and the generative machine
+## 10. Factorio, FISL, and the generative machine
 
 ### Decided: Factorio is a real game in the fictional world, subject to later naming/licensing review
 
@@ -352,7 +428,7 @@ There is a deliberate historical rhyme: infrastructure once intended to increase
 
 ---
 
-## 10. Ecological commitments
+## 11. Ecological commitments
 
 ### Decided: ecological limits are constitutional commitments of the new society
 
@@ -378,7 +454,7 @@ That makes ecological commitments part of S5's hardest questions.
 
 ---
 
-## 11. Visual and material language
+## 12. Visual and material language
 
 ### Strong lean: revolutionary industrial solarpunk
 
@@ -410,13 +486,15 @@ and:
 
 ---
 
-## 12. Tone consequences
+## 13. Tone consequences
 
 ### Decided: independence is hopeful, not a prelude to inevitable collapse
 
 The country is under pressure, but the novel should not treat its political experiment as doomed by authorial fiat.
 
 People experience ordinary joys. They are proud of things they have kept running. Worker-run facilities can genuinely succeed. Assemblies can solve problems. Technical people can enjoy their work. Institutions can learn. People can change their minds without humiliation.
+
+Political disagreement is part of that hope. A society that is genuinely decentralized and participatory will contain strikes, arguments, opposition newspapers, angry assemblies, electoral losses, organized factions, and people who think the government's project is wrong. The existence of conflict is not evidence that the experiment has failed.
 
 The central emotional proposition remains Beer's hopeful one:
 
@@ -430,13 +508,13 @@ The larger arc is:
 
 ---
 
-## 13. Shared-world principle
+## 14. Shared-world principle
 
 ### Decided: the country should be capable of generating stories beyond *The Province*
 
 This setting should be designed as a **reusable story world**, not as scenery whose only purpose is to make one VSM plot possible.
 
-The newly independent country is undergoing a transformation broad enough that the Province can only ever show one part of it. Other regions and institutions should face related but genuinely different problems as inherited technical systems, new political forms, ecological commitments, broken supply chains, and distributed authority collide.
+The newly independent country is undergoing a transformation broad enough that the Province can only ever show one part of it. Other regions and institutions should face related but genuinely different problems as inherited technical systems, new political forms, ecological commitments, broken supply chains, political conflict, and distributed authority collide.
 
 Potential future stories could naturally arise around:
 
@@ -448,13 +526,14 @@ Potential future stories could naturally arise around:
 - a telecom cooperative rebuilding an orphaned communications network;
 - a technical institute preserving and redistributing knowledge once held by foreign vendors;
 - a national planning body learning from provincial experiments without turning those experiments into centrally imposed doctrine;
+- a political crisis in which emergency coordination must survive without normalizing permanent emergency power;
 - a different community discovering another systems principle through an entirely different crisis.
 
 The common thread need not always be the VSM, the same protagonist, or even Factorio. The deeper family resemblance is:
 
 > **People inherit or build complex sociotechnical systems, encounter failures that their existing explanations cannot handle, and learn new ways to see, model, organize, and govern those systems.**
 
-This permits stories about factory physics, reliability, resilience, commons governance, distributed systems, logistics, ecological regulation, maintenance, public infrastructure, and other forms of systems thinking while remaining recognizably part of the same world.
+This permits stories about factory physics, reliability, resilience, commons governance, distributed systems, logistics, ecological regulation, maintenance, public infrastructure, political legitimacy, and other forms of systems thinking while remaining recognizably part of the same world.
 
 ### The world should contain more possibility than the first book uses
 
@@ -463,6 +542,7 @@ The first novel should leave the reader with the sense that events are occurring
 - other provinces are improvising differently;
 - national institutions are learning in parallel;
 - some worker takeovers succeed while others struggle;
+- opposition movements and political coalitions are evolving;
 - new trade relationships are being invented;
 - technical knowledge is migrating through unexpected networks;
 - political arguments continue after the Coordinator's local problem is solved.
@@ -487,7 +567,7 @@ The goal is a world with **open structural questions**, not a franchise encyclop
 
 ---
 
-## 14. What the world should not become
+## 15. What the world should not become
 
 Avoid:
 
@@ -503,14 +583,18 @@ Avoid:
 - making workers automatically competent at every metasystem problem because they understand their own plant;
 - making central institutions inherently authoritarian or local institutions inherently virtuous;
 - using the embargo as an excuse for cartoon geopolitical villains;
+- treating every strike, protest, refusal, or opposition movement as foreign-backed sabotage;
+- pretending deliberate sabotage or covert destabilization cannot exist because the new state has sympathetic ideals;
+- making political opposition monolithic, uniformly right-wing, uniformly reactionary, or uniformly dishonest;
+- giving the government perfect knowledge about which actors are acting in good faith;
 - worldbuilding exposition that arrives before a character needs the fact;
 - inserting dangling locations, factions, or crises only to advertise possible future stories.
 
-The world exists to make the distinction between **owning infrastructure, operating infrastructure, and organizing infrastructure** visible.
+The world exists to make the distinction between **owning infrastructure, operating infrastructure, organizing infrastructure, and governing legitimate conflict around infrastructure** visible.
 
 ---
 
-## 15. Open decisions
+## 16. Open decisions
 
 These remain deliberately unfixed:
 
@@ -518,18 +602,19 @@ These remain deliberately unfixed:
 2. **Exact route to independence.** Negotiated separation, collapse of a larger state, revolution, war, or hybrid remains open.
 3. **Exact external pressure.** Oil embargo is the leading shape; responsible powers and geopolitical details remain open.
 4. **Formal constitution.** Decentralized/confederal political texture is decided; the exact institutions and legal language are not.
-5. **Degree of worker ownership versus public ownership.** Both exist; their boundaries should emerge from story needs.
-6. **Exact geography.** Climate, coast, mountains, rivers, agricultural zones, and resources remain open, although winter retains strong dramatic value.
-7. **How long ago independence occurred when the novel opens.** Recent enough that institutions are still forming; exact timing is open.
-8. **The Old Cyberneticist's former institute and failed project.** Function is decided; fictional history is not.
-9. **The generative machine's exact hardware/software history.** Its inherited/offline character is a strong lean, not final technical lore.
-10. **Factorio naming/licensing.** Working diegetic choice; keep structurally renameable.
-11. **Specific historical and architectural influences.** Use multiple sources rather than mapping the fictional country onto one real culture.
-12. **Scope of the shared world.** We know it should support other systems stories; which regions, institutions, and future protagonists deserve stories should remain undiscovered until a real narrative question pulls them into focus.
+5. **Political factions.** Political pluralism, legitimate dissent, and some deliberate destabilization are decided; the parties, movements, class bases, regional alignments, and personalities should emerge only when plot needs them.
+6. **Degree of worker ownership versus public ownership.** Both exist; their boundaries should emerge from story needs.
+7. **Exact geography.** Climate, coast, mountains, rivers, agricultural zones, and resources remain open, although winter retains strong dramatic value.
+8. **How long ago independence occurred when the novel opens.** Recent enough that institutions are still forming; exact timing is open.
+9. **The Old Cyberneticist's former institute and failed project.** Function is decided; fictional history is not.
+10. **The generative machine's exact hardware/software history.** Its inherited/offline character is a strong lean, not final technical lore.
+11. **Factorio naming/licensing.** Working diegetic choice; keep structurally renameable.
+12. **Specific historical and architectural influences.** Use multiple sources rather than mapping the fictional country onto one real culture.
+13. **Scope of the shared world.** We know it should support other systems stories; which regions, institutions, and future protagonists deserve stories should remain undiscovered until a real narrative question pulls them into focus.
 
 ---
 
-## 16. Scene test
+## 17. Scene test
 
 When worldbuilding enters a scene, it should usually answer at least one of these questions:
 
@@ -544,6 +629,8 @@ When worldbuilding enters a scene, it should usually answer at least one of thes
 - What ecological commitment constrains the choice?
 - Who elsewhere pays for an emergency rescue?
 - What does the measured quantity mean to a person who depends on it?
+- Is this actor dissenting, bargaining, obstructing, or deliberately sabotaging—and does the viewpoint character actually know which?
+- Is an institution suppressing a painful but useful signal because it has mistaken disagreement for noise?
 - Is the Coordinator looking for a broken component when the real problem is a broken relationship?
 - Does this detail make the country feel larger than the current plot without demanding attention the scene has not earned?
 
