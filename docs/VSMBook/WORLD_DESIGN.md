@@ -430,7 +430,64 @@ The larger arc is:
 
 ---
 
-## 13. What the world should not become
+## 13. Shared-world principle
+
+### Decided: the country should be capable of generating stories beyond *The Province*
+
+This setting should be designed as a **reusable story world**, not as scenery whose only purpose is to make one VSM plot possible.
+
+The newly independent country is undergoing a transformation broad enough that the Province can only ever show one part of it. Other regions and institutions should face related but genuinely different problems as inherited technical systems, new political forms, ecological commitments, broken supply chains, and distributed authority collide.
+
+Potential future stories could naturally arise around:
+
+- another province whose primary problem is water rather than power;
+- a worker-recovered factory learning how self-management changes once it must coordinate with suppliers and customers;
+- the national railway trying to federate locally competent dispatch organizations into a coherent network;
+- a port or shipping system adapting to embargo and new trade relationships;
+- a hospital network balancing local autonomy against national public-health obligations;
+- a telecom cooperative rebuilding an orphaned communications network;
+- a technical institute preserving and redistributing knowledge once held by foreign vendors;
+- a national planning body learning from provincial experiments without turning those experiments into centrally imposed doctrine;
+- a different community discovering another systems principle through an entirely different crisis.
+
+The common thread need not always be the VSM, the same protagonist, or even Factorio. The deeper family resemblance is:
+
+> **People inherit or build complex sociotechnical systems, encounter failures that their existing explanations cannot handle, and learn new ways to see, model, organize, and govern those systems.**
+
+This permits stories about factory physics, reliability, resilience, commons governance, distributed systems, logistics, ecological regulation, maintenance, public infrastructure, and other forms of systems thinking while remaining recognizably part of the same world.
+
+### The world should contain more possibility than the first book uses
+
+The first novel should leave the reader with the sense that events are occurring beyond the Province:
+
+- other provinces are improvising differently;
+- national institutions are learning in parallel;
+- some worker takeovers succeed while others struggle;
+- new trade relationships are being invented;
+- technical knowledge is migrating through unexpected networks;
+- political arguments continue after the Coordinator's local problem is solved.
+
+These should appear as **glimpses, consequences, visitors, reports, technologies, and relationships**, not sequel advertisements.
+
+The country should feel larger than the camera.
+
+### Guardrail: extensibility must not become lore gravity
+
+A reusable world does **not** mean designing every ministry, province, political faction, railway line, or historical event in advance.
+
+The existing scene rule still governs worldbuilding:
+
+> **Build only enough world to make the next human and technical decision real.**
+
+New parts of the setting should be authored deeply when a story needs them. Later stories may discover facts that the first novel never had reason to establish.
+
+Continuity matters; exhaustive preconstruction does not.
+
+The goal is a world with **open structural questions**, not a franchise encyclopedia.
+
+---
+
+## 14. What the world should not become
 
 Avoid:
 
@@ -446,13 +503,14 @@ Avoid:
 - making workers automatically competent at every metasystem problem because they understand their own plant;
 - making central institutions inherently authoritarian or local institutions inherently virtuous;
 - using the embargo as an excuse for cartoon geopolitical villains;
-- worldbuilding exposition that arrives before a character needs the fact.
+- worldbuilding exposition that arrives before a character needs the fact;
+- inserting dangling locations, factions, or crises only to advertise possible future stories.
 
 The world exists to make the distinction between **owning infrastructure, operating infrastructure, and organizing infrastructure** visible.
 
 ---
 
-## 14. Open decisions
+## 15. Open decisions
 
 These remain deliberately unfixed:
 
@@ -467,10 +525,11 @@ These remain deliberately unfixed:
 9. **The generative machine's exact hardware/software history.** Its inherited/offline character is a strong lean, not final technical lore.
 10. **Factorio naming/licensing.** Working diegetic choice; keep structurally renameable.
 11. **Specific historical and architectural influences.** Use multiple sources rather than mapping the fictional country onto one real culture.
+12. **Scope of the shared world.** We know it should support other systems stories; which regions, institutions, and future protagonists deserve stories should remain undiscovered until a real narrative question pulls them into focus.
 
 ---
 
-## 15. Scene test
+## 16. Scene test
 
 When worldbuilding enters a scene, it should usually answer at least one of these questions:
 
@@ -486,6 +545,7 @@ When worldbuilding enters a scene, it should usually answer at least one of thes
 - Who elsewhere pays for an emergency rescue?
 - What does the measured quantity mean to a person who depends on it?
 - Is the Coordinator looking for a broken component when the real problem is a broken relationship?
+- Does this detail make the country feel larger than the current plot without demanding attention the scene has not earned?
 
 If a world detail answers none of them, it probably belongs in notes rather than the novel.
 
