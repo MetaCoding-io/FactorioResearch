@@ -1,0 +1,412 @@
+{
+  "scenario": {
+    "id": "fp-07-characteristic-curves",
+    "version": "0.1.0",
+    "title": "The Characteristic Curves"
+  },
+  "compatibility": {
+    "same_experiment_semantics": true,
+    "resolved_hashes": [
+      "sha256:1f0b271d1014c2f492b83fa3cdb30192fad8c5b4015554f572866af74c9054c8"
+    ],
+    "same_controlled_condition": true
+  },
+  "runs": [
+    {
+      "run_id": "01M12SY57NJYYW35XT85YMY1CA",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": null,
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M12T0CWRWH8P32ZWJN5WXBCB",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "w-04",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "01-counters.lua",
+            "sha256": "sha256:a6f79bc607bf45330ec94adc8eb40e14d34022b98a74dd6bc9a7de4c81070787"
+          },
+          {
+            "name": "02-relay.lua",
+            "sha256": "sha256:4ffa24b2a9191e14929c35807408fee5b253291281819fe97889385811a0c685"
+          },
+          {
+            "name": "03-gate.lua",
+            "sha256": "sha256:085fe5787ff095a86c2b21410751b191b2282f374b8bfbb110ce3419a647cb6e"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M12T2MHCMX052X28W50Q54NT",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "w-08",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "01-counters.lua",
+            "sha256": "sha256:a6f79bc607bf45330ec94adc8eb40e14d34022b98a74dd6bc9a7de4c81070787"
+          },
+          {
+            "name": "02-relay.lua",
+            "sha256": "sha256:4ffa24b2a9191e14929c35807408fee5b253291281819fe97889385811a0c685"
+          },
+          {
+            "name": "03-gate.lua",
+            "sha256": "sha256:032bf2d8b63ca0dd69310ccbbcfa4be4cb62752a7650b6ffc31a84bdb62ce9b0"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M12T4W6GF98QAC52E6393REY",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "w-14",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "01-counters.lua",
+            "sha256": "sha256:a6f79bc607bf45330ec94adc8eb40e14d34022b98a74dd6bc9a7de4c81070787"
+          },
+          {
+            "name": "02-relay.lua",
+            "sha256": "sha256:4ffa24b2a9191e14929c35807408fee5b253291281819fe97889385811a0c685"
+          },
+          {
+            "name": "03-gate.lua",
+            "sha256": "sha256:cee28ea253538bef9bb8830311b4aee141419c5b1ee924ad805681fc79cd3145"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    },
+    {
+      "run_id": "01M12T73V8T668SHTTNHWJQ2PZ",
+      "lifecycle": "COMPLETED",
+      "scripted_intervention": {
+        "id": "w-24",
+        "applied_at": "pre_start",
+        "steps": [
+          {
+            "name": "01-counters.lua",
+            "sha256": "sha256:a6f79bc607bf45330ec94adc8eb40e14d34022b98a74dd6bc9a7de4c81070787"
+          },
+          {
+            "name": "02-relay.lua",
+            "sha256": "sha256:4ffa24b2a9191e14929c35807408fee5b253291281819fe97889385811a0c685"
+          },
+          {
+            "name": "03-gate.lua",
+            "sha256": "sha256:cb6825b68b8a9228647459bcff50743db57b5fac6b0c79b53700e3db9b48b49b"
+          }
+        ]
+      },
+      "validity": {
+        "completed": true,
+        "aborted": false,
+        "abort_reason": null,
+        "protocol_events": {},
+        "manual_carriage_residual": 0
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "metric": "admission_rate",
+      "values": [
+        15.0,
+        5.6,
+        10.9,
+        15.0,
+        15.0
+      ],
+      "displays": [
+        "15.00/min",
+        "5.60/min",
+        "10.90/min",
+        "15.00/min",
+        "15.00/min"
+      ],
+      "validities": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -9.4,
+        -4.1,
+        0.0,
+        0.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -62.66666666666667,
+        -27.333333333333332,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "metric": "average_wip",
+      "values": [
+        51.69583333333333,
+        4.015555555555555,
+        8.030277777777778,
+        14.041666666666666,
+        24.041666666666668
+      ],
+      "displays": [
+        "51.70 work units",
+        "4.02 work units",
+        "8.03 work units",
+        "14.04 work units",
+        "24.04 work units"
+      ],
+      "validities": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -47.680277777777775,
+        -43.66555555555556,
+        -37.65416666666667,
+        -27.654166666666665
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -92.23234195749711,
+        -84.46629590822386,
+        -72.83791408076087,
+        -53.493995325219636
+      ]
+    },
+    {
+      "metric": "fraction_productive",
+      "values": [
+        0.6694444444444444,
+        0.24562037037037038,
+        0.4878240740740741,
+        0.6694444444444444,
+        0.6694444444444444
+      ],
+      "displays": [
+        "66.9% productive",
+        "24.6% productive",
+        "48.8% productive",
+        "66.9% productive",
+        "66.9% productive"
+      ],
+      "validities": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -0.423824074074074,
+        -0.18162037037037032,
+        0.0,
+        0.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -63.30982019363762,
+        -27.130013831258637,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "metric": "fraction_starved",
+      "values": [
+        0.33055555555555555,
+        0.7543796296296297,
+        0.512175925925926,
+        0.33055555555555555,
+        0.33055555555555555
+      ],
+      "displays": [
+        "33.1% starved",
+        "75.4% starved",
+        "51.2% starved",
+        "33.1% starved",
+        "33.1% starved"
+      ],
+      "validities": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        0.42382407407407413,
+        0.18162037037037043,
+        0.0,
+        0.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        128.21568627450984,
+        54.94397759103643,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "metric": "line_wip",
+      "values": [
+        51.0,
+        4.0,
+        8.0,
+        14.0,
+        24.0
+      ],
+      "displays": [
+        "final 51",
+        "final 4",
+        "final 8",
+        "final 14",
+        "final 24"
+      ],
+      "validities": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -47.0,
+        -43.0,
+        -37.0,
+        -27.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -92.15686274509804,
+        -84.31372549019608,
+        -72.54901960784314,
+        -52.94117647058824
+      ]
+    },
+    {
+      "metric": "measured_throughput",
+      "values": [
+        15.0,
+        5.6,
+        10.9,
+        15.0,
+        15.0
+      ],
+      "displays": [
+        "15.00/min",
+        "5.60/min",
+        "10.90/min",
+        "15.00/min",
+        "15.00/min"
+      ],
+      "validities": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -9.4,
+        -4.1,
+        0.0,
+        0.0
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -62.66666666666667,
+        -27.333333333333332,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "metric": "loaded_cycle_time",
+      "values": [
+        206.78333333333333,
+        43.023809523809526,
+        44.203363914373085,
+        56.166666666666664,
+        96.16666666666667
+      ],
+      "displays": [
+        "206.78 s",
+        "43.02 s",
+        "44.20 s",
+        "56.17 s",
+        "96.17 s"
+      ],
+      "validities": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "deltas_vs_first": [
+        0.0,
+        -163.7595238095238,
+        -162.57996941896025,
+        -150.61666666666667,
+        -110.61666666666666
+      ],
+      "delta_pcts_vs_first": [
+        0.0,
+        -79.19377310043869,
+        -78.6233429929686,
+        -72.83791408076087,
+        -53.493995325219636
+      ]
+    }
+  ]
+}
