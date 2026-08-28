@@ -12,6 +12,12 @@ The core idea is a hopeful, sim-constrained teaching novel about a remote indust
 
 When later brainstorming conflicts with this document, update the bible deliberately rather than letting the concept drift across conversations.
 
+### [`WORLD_DESIGN.md`](WORLD_DESIGN.md)
+
+**Compact setting constraint document.** Establishes the current parallel-present / near-present technological level, mixed socialized-infrastructure economy, ecological commitments, industrial-solarpunk visual language, modern networking and rail context, and the role of Factorio and generative software in the world.
+
+It is intentionally not a lore bible: build only enough world to make the next human and technical decision real.
+
 ## Foundational memos
 
 ### [`VSM_EXPLORATION.md`](VSM_EXPLORATION.md)
@@ -22,7 +28,7 @@ The **evidence / systems-design memo**. It develops the idea of viability varian
 
 The **original narrative daydream**. It first develops *The Province* as a teaching novel in the lineage of *The Goal*, *The Phoenix Project*, *Red Plenty*, and the history of Cybersyn, with three acts aligned to the curriculum and a rule of simulated-before-authored fiction.
 
-This memo is preserved as an origin document. Some of its assumptions have since evolved; the narrative bible records the current position.
+This memo is preserved as an origin document. Some of its assumptions have since evolved; the narrative bible and world design record the current position.
 
 ## Relationship among the documents
 
@@ -37,6 +43,9 @@ VSM_NARRATIVE.md
            v
 NARRATIVE_DESIGN_BIBLE.md
     current canonical narrative design
+           |
+           +--> WORLD_DESIGN.md
+           |       setting constraints
            |
            +--> novel / serialized fiction
            +--> Coordinator's Factorio/FISL models
