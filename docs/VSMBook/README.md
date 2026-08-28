@@ -14,9 +14,15 @@ When later brainstorming conflicts with this document, update the bible delibera
 
 ### [`WORLD_DESIGN.md`](WORLD_DESIGN.md)
 
-**Compact setting constraint document.** Establishes the current parallel-present / near-present technological level, mixed socialized-infrastructure economy, ecological commitments, industrial-solarpunk visual language, modern networking and rail context, and the role of Factorio and generative software in the world.
+**Compact structural setting document.** Establishes the newly independent country's inherited-but-orphaned technical base, decentralized political project, worker takeovers, embargo pressure, dissent and destabilization, ecological commitments, revolutionary industrial-solarpunk direction, shared-world principle, and the role of Factorio and generative software.
 
 It is intentionally not a lore bible: build only enough world to make the next human and technical decision real.
+
+### [`SOCIAL_AND_CULTURAL_LIFE.md`](SOCIAL_AND_CULTURAL_LIFE.md)
+
+**Lived-world and movement-culture document.** Develops what independence feels like in ordinary life and the emerging culture of committed supporters: revolutionary willingness, legitimacy's half-life, work and family disruptions, movement values and status markers, symbols, clothing, holidays, songs, food, humor, equality, internal cultural arguments, multilingual life, media, apprenticeship, diaspora, and generational change.
+
+Its purpose is to make the country feel inhabited rather than merely administered.
 
 ## Foundational memos
 
@@ -28,7 +34,7 @@ The **evidence / systems-design memo**. It develops the idea of viability varian
 
 The **original narrative daydream**. It first develops *The Province* as a teaching novel in the lineage of *The Goal*, *The Phoenix Project*, *Red Plenty*, and the history of Cybersyn, with three acts aligned to the curriculum and a rule of simulated-before-authored fiction.
 
-This memo is preserved as an origin document. Some of its assumptions have since evolved; the narrative bible and world design record the current position.
+This memo is preserved as an origin document. Some of its assumptions have since evolved; the narrative bible and world-design documents record the current position.
 
 ## Relationship among the documents
 
@@ -45,7 +51,10 @@ NARRATIVE_DESIGN_BIBLE.md
     current canonical narrative design
            |
            +--> WORLD_DESIGN.md
-           |       setting constraints
+           |       structural setting constraints
+           |          |
+           |          +--> SOCIAL_AND_CULTURAL_LIFE.md
+           |                 lived transition + movement culture
            |
            +--> novel / serialized fiction
            +--> Coordinator's Factorio/FISL models
