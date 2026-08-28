@@ -73,22 +73,63 @@ meaningful:
   swings are real mechanisms. The gap between your points and the bound
   is itself data — where does it come from?
 
+## The measured sweep
+
+| run | measured avg WIP | TH | CT | pooled productive |
+|---|---|---|---|---|
+| w-04 | 4.02 | 5.60/min | **43.02 s** | 24.6% |
+| w-08 | 8.03 | 10.90/min | 44.20 s | 48.8% |
+| w-14 | 14.04 | **15.00/min** | 56.17 s | 66.9% |
+| w-24 | 24.04 | 15.00/min | 96.17 s | 66.9% |
+| baseline | 51.70 | 15.00/min | 206.78 s | 66.9% |
+
+![The measured points against the deterministic best case computed from
+the *measured* $T_0$. The left branch rides the bound; the flat branch
+is Little's Law exactly; the knee sits between the second and third
+points.](../images/labs/lab-07-curves.svg){width=100%}
+
+Read the table the way the lab's own rules demand, and it corrects its
+authors first: the pre-run prediction table used the walk-estimate
+$T_0 \approx 56$ s — and the w-04 run, whose entire job is to measure
+$T_0$ directly, came back with **43.02 s**. The belt ride is faster than
+the walk suggested; the *estimate* was wrong and the *method* caught it.
+With the measured $T_0$: $W_0 = r_b T_0 = 0.25 \times 43.02 \approx
+\mathbf{10.8}$ — which the sweep confirms from both sides: w-08 (WIP
+8.03) is still on the rising branch at 10.90/min, w-14 already sits at
+the full 15.00/min. Everything else lands where the formulas point:
+
+- **The flat branch is Little's Law to the decimal**: CT $= w/r_b = 4w$
+  seconds — 56.17 at WIP 14.04, 96.17 at 24.04, 206.78 at 51.70.
+- **The left branch rides the bound**: w-04's throughput is
+  $4.02/43.02 \times 60 = 5.61$/min against 5.60 measured; w-08 gives
+  back ~2.5% to belt discreteness as the line approaches the knee — the
+  only visible mechanism gap in the whole sweep.
+- **The state fractions are rate ratios**: at 5.60/min, pooled
+  productive should be $(5.6/15 + 5.6/30 + 5.6/30)/3 = 24.8\%$;
+  measured, 24.6%.
+- **Boundaries matter, recursively**: the gate capped its circuit ledger
+  at $W < 4$, yet FISL reports average WIP 4.02. No contradiction — the
+  tap belts sit one tile *inside* FISL's ports, so the two ledgers
+  declare different boundaries and disagree by exactly the material in
+  between. Lab 0's first lesson, found again inside your own
+  instrument.
+
 ## The assignment
 
-The reference sweep leaves gaps — nothing between 14 and 24, nothing
-between 24 and the baseline's ~52. Pick a cap we didn't run, build your
-own gate (the toolbox holds a full counter kit; the solution scripts are
-readable blueprints), and add your point to the plot. Two questions to
-answer with your additions:
+The reference sweep leaves the knee bracketed but not pinned: somewhere
+in (8, 14], predicted 10.8. Pick caps we didn't run — 10, 11, 12 —
+build your own gate (the toolbox holds a full counter kit; the solution
+scripts are readable blueprints), and pin it. Two questions to answer
+with your additions:
 
-1. **Where exactly is the knee?** Bracket $W_0$ from measurement alone,
-   then compare with $r_b T_0$ computed from a stopwatch walk of the
-   empty line. Lab 3's pull run (WIP 19.16 at full throughput) already
-   told you the knee is at or below 19 — sharpen it.
+1. **Where exactly is the knee?** Find the smallest cap that still
+   yields 15.00/min, and compare with $r_b T_0 = 10.8$ computed from
+   w-04's measured $T_0$. If they disagree, one of your boundaries is
+   talking — find which.
 2. **What does the flat region cost?** Every point right of the knee has
    the same throughput; read the CT column as the price tag of the
-   inventory. Little's Law says the flat region's CT must be exactly
-   $w/r_b$ — check it.
+   inventory. The measured flat branch already obeys CT $= 4w$ exactly —
+   your new points must too, or something is wrong with your gate.
 
 ## Debrief
 
@@ -111,18 +152,24 @@ answer with your additions:
 ::: {.callout-note collapse="true"}
 ## Instructor notes
 
-- Reference dataset pending the first `fisl build-baseline
-  scenarios/factory-physics/fp07-characteristic-curves` +
-  `fisl solutions … --run` (five runs, ~60 min wall time). Cite measured
-  numbers here and in the sweep table afterward; predictions above are
-  first-order (the $T_0 \approx 56$ s figure is processing 8 s + ~48 s
-  belt transit from Lab 3's chapter — verify against the w-04 run's CT,
-  which should measure $T_0$ directly).
-- The gate's cap has ~1 unit of slack (the inserter's swing vs. the
-  pulse round-trip), so measured average WIP at cap $w$ lands slightly
-  under $w$ — another reason the x-axis is the measured number.
+- All numbers measured (reference dataset in
+  `course/data/lab-07-comparison.json`, five runs ~60 min wall time).
+  The chapter deliberately keeps the falsified pre-run estimate
+  ($T_0 \approx 56$ s from the walk) next to the measured 43.02 s — the
+  correction *is* the pedagogy: predictions written down, checked, and
+  amended in public. Teach it, don't sand it off.
+- The measured cap offset runs +0.02–0.04 *above* the nominal cap, not
+  below: the tap belts sit one tile inside FISL's port boundary, so the
+  circuit ledger undercounts FISL's WIP by the in-flight material
+  between the boundaries (~1 unit at the source side). The chapter's
+  "boundaries matter, recursively" bullet is the discussion anchor.
+- Expected learner knee-pinning result: smallest full-throughput cap
+  between 11 and 12 (predicted $W_0 = 10.8$, integer caps, +1 boundary
+  offset — the disagreement-resolution in assignment Q1 is intended,
+  not a trap).
 - The census cross-check doubles as the meta-lesson: the learner's
   combinator ledger and FISL's conservation ledger count the same
-  quantity; if a learner's own gate misbehaves, comparing their `W`
-  signal against the panel's live WIP is the debugging exercise.
+  quantity up to their declared boundaries; if a learner's own gate
+  misbehaves, comparing their `W` signal against the panel's live WIP
+  is the debugging exercise.
 :::

@@ -80,15 +80,18 @@ In dependency order (later items consume earlier ones):
    gates — external-learner gate precedes Course II code — and four open
    decisions). **Course III (organizational)** remains as scoped in
    `CONCEPT_COVERAGE.md`.
-   Gap #1 (WIP-sweep) **closed**: Lab 7 / `fp07-characteristic-curves` —
-   a circuit-built CONWIP gate (pulse counters + memory cell + belt relay
-   chain, i.e. the conservation ledger rebuilt in circuits) swept at
-   w ∈ {4, 8, 14, 24} + uncapped baseline to trace TH(w)/CT(w) and
-   bracket W0 = rb·T0 ≈ 14. Authored end to end (scenario, LAB7 layout,
-   four scripted gates, chapter); **needs its first
-   `fisl build-baseline` + `fisl solutions … --run` (~5 × 12 min) to
-   cite measured numbers**. Remaining gaps: EOQ/batching, quality/scrap,
-   scheduling — decisions live in `CONCEPT_COVERAGE.md` §Open decisions.
+   Gap #1 (WIP-sweep) **closed and measured**: Lab 7 /
+   `fp07-characteristic-curves` — a circuit-built CONWIP gate (the
+   conservation ledger rebuilt in circuits) swept at w ∈ {4, 8, 14, 24}
+   + uncapped baseline. Measured on real 2.0.77: the left branch rides
+   the best-case bound (w-04's CT measured T0 directly at 43.02 s,
+   falsifying the ~56 s walk-estimate — kept in the chapter as the
+   pedagogy), the flat branch is Little's Law to the decimal (CT = 4w),
+   knee bracketed in (8, 14] with W0 = rb·T0 = 10.8, state fractions
+   matching rate-ratio arithmetic, and the circuit-vs-FISL boundary
+   offset (+1) taught as Lab 0 recursed. Remaining gaps: EOQ/batching,
+   quality/scrap (both scoped into Course II — `COURSE_II_SCOPE.md`),
+   scheduling (deferred).
 
 **Gate carried over from the design review:** before polishing Labs 5–6
 machinery, one learner who is not the maintainer runs Lab 3 end-to-end and

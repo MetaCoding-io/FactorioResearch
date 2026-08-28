@@ -8,6 +8,8 @@ the best-case bound — belt discreteness and inserter timing are real
 mechanisms, and the honest x-coordinate is the *measured* average WIP,
 not the nominal cap.
 
+**Measured** (reference dataset): avg WIP 8.03, TH 10.90/min, CT 44.20 s — still on the rising branch, ~2.5% under the bound (belt discreteness near the knee).
+
 **The mechanism** (all three steps checked and loud): two tap belts read
 admissions and completions as pulses, two arithmetic combinators sign
 them into `signal-W`, a self-looped decider accumulates the running

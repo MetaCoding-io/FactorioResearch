@@ -277,8 +277,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#the-instrument-a-ledger-made-of-wire" id="toc-the-instrument-a-ledger-made-of-wire" class="nav-link active" data-scroll-target="#the-instrument-a-ledger-made-of-wire"><span class="header-section-number">14.1</span> The instrument: a ledger made of wire</a></li>
   <li><a href="#the-sweep" id="toc-the-sweep" class="nav-link" data-scroll-target="#the-sweep"><span class="header-section-number">14.2</span> The sweep</a></li>
-  <li><a href="#the-assignment" id="toc-the-assignment" class="nav-link" data-scroll-target="#the-assignment"><span class="header-section-number">14.3</span> The assignment</a></li>
-  <li><a href="#debrief" id="toc-debrief" class="nav-link" data-scroll-target="#debrief"><span class="header-section-number">14.4</span> Debrief</a></li>
+  <li><a href="#the-measured-sweep" id="toc-the-measured-sweep" class="nav-link" data-scroll-target="#the-measured-sweep"><span class="header-section-number">14.3</span> The measured sweep</a></li>
+  <li><a href="#the-assignment" id="toc-the-assignment" class="nav-link" data-scroll-target="#the-assignment"><span class="header-section-number">14.4</span> The assignment</a></li>
+  <li><a href="#debrief" id="toc-debrief" class="nav-link" data-scroll-target="#debrief"><span class="header-section-number">14.5</span> Debrief</a></li>
   </ul>
 </nav>
     </div>
@@ -385,16 +386,81 @@ Hands you’ll need
 <li>Expect measured points <strong>at or below</strong> the best-case TH curve (and at or above the CT curve). The formulas are bounds; belts and inserter swings are real mechanisms. The gap between your points and the bound is itself data — where does it come from?</li>
 </ul>
 </section>
-<section id="the-assignment" class="level2" data-number="14.3">
-<h2 data-number="14.3" class="anchored" data-anchor-id="the-assignment"><span class="header-section-number">14.3</span> The assignment</h2>
-<p>The reference sweep leaves gaps — nothing between 14 and 24, nothing between 24 and the baseline’s ~52. Pick a cap we didn’t run, build your own gate (the toolbox holds a full counter kit; the solution scripts are readable blueprints), and add your point to the plot. Two questions to answer with your additions:</p>
+<section id="the-measured-sweep" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="the-measured-sweep"><span class="header-section-number">14.3</span> The measured sweep</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>run</th>
+<th>measured avg WIP</th>
+<th>TH</th>
+<th>CT</th>
+<th>pooled productive</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>w-04</td>
+<td>4.02</td>
+<td>5.60/min</td>
+<td><strong>43.02 s</strong></td>
+<td>24.6%</td>
+</tr>
+<tr class="even">
+<td>w-08</td>
+<td>8.03</td>
+<td>10.90/min</td>
+<td>44.20 s</td>
+<td>48.8%</td>
+</tr>
+<tr class="odd">
+<td>w-14</td>
+<td>14.04</td>
+<td><strong>15.00/min</strong></td>
+<td>56.17 s</td>
+<td>66.9%</td>
+</tr>
+<tr class="even">
+<td>w-24</td>
+<td>24.04</td>
+<td>15.00/min</td>
+<td>96.17 s</td>
+<td>66.9%</td>
+</tr>
+<tr class="odd">
+<td>baseline</td>
+<td>51.70</td>
+<td>15.00/min</td>
+<td>206.78 s</td>
+<td>66.9%</td>
+</tr>
+</tbody>
+</table>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/labs/lab-07-curves.svg" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>The measured points against the deterministic best case computed from the <em>measured</em> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>. The left branch rides the bound; the flat branch is Little’s Law exactly; the knee sits between the second and third points.</figcaption>
+</figure>
+</div>
+<p>Read the table the way the lab’s own rules demand, and it corrects its authors first: the pre-run prediction table used the walk-estimate <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>0</mn></msub><mo>≈</mo><mn>56</mn></mrow><annotation encoding="application/x-tex">T_0 \approx 56</annotation></semantics></math> s — and the w-04 run, whose entire job is to measure <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math> directly, came back with <strong>43.02 s</strong>. The belt ride is faster than the walk suggested; the <em>estimate</em> was wrong and the <em>method</em> caught it. With the measured <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mn>0</mn></msub><mo>=</mo><msub><mi>r</mi><mi>b</mi></msub><msub><mi>T</mi><mn>0</mn></msub><mo>=</mo><mn>0.25</mn><mo>×</mo><mn>43.02</mn><mo>≈</mo><mn mathvariant="bold">10.8</mn></mrow><annotation encoding="application/x-tex">W_0 = r_b T_0 = 0.25 \times 43.02 \approx
+\mathbf{10.8}</annotation></semantics></math> — which the sweep confirms from both sides: w-08 (WIP 8.03) is still on the rising branch at 10.90/min, w-14 already sits at the full 15.00/min. Everything else lands where the formulas point:</p>
+<ul>
+<li><strong>The flat branch is Little’s Law to the decimal</strong>: CT <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mi>w</mi><mi>/</mi><msub><mi>r</mi><mi>b</mi></msub><mo>=</mo><mn>4</mn><mi>w</mi></mrow><annotation encoding="application/x-tex">= w/r_b = 4w</annotation></semantics></math> seconds — 56.17 at WIP 14.04, 96.17 at 24.04, 206.78 at 51.70.</li>
+<li><strong>The left branch rides the bound</strong>: w-04’s throughput is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4.02</mn><mi>/</mi><mn>43.02</mn><mo>×</mo><mn>60</mn><mo>=</mo><mn>5.61</mn></mrow><annotation encoding="application/x-tex">4.02/43.02 \times 60 = 5.61</annotation></semantics></math>/min against 5.60 measured; w-08 gives back ~2.5% to belt discreteness as the line approaches the knee — the only visible mechanism gap in the whole sweep.</li>
+<li><strong>The state fractions are rate ratios</strong>: at 5.60/min, pooled productive should be <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>5.6</mn><mi>/</mi><mn>15</mn><mo>+</mo><mn>5.6</mn><mi>/</mi><mn>30</mn><mo>+</mo><mn>5.6</mn><mi>/</mi><mn>30</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>3</mn><mo>=</mo><mn>24.8</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">(5.6/15 + 5.6/30 + 5.6/30)/3 = 24.8\%</annotation></semantics></math>; measured, 24.6%.</li>
+<li><strong>Boundaries matter, recursively</strong>: the gate capped its circuit ledger at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>&lt;</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">W &lt; 4</annotation></semantics></math>, yet FISL reports average WIP 4.02. No contradiction — the tap belts sit one tile <em>inside</em> FISL’s ports, so the two ledgers declare different boundaries and disagree by exactly the material in between. Lab 0’s first lesson, found again inside your own instrument.</li>
+</ul>
+</section>
+<section id="the-assignment" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="the-assignment"><span class="header-section-number">14.4</span> The assignment</h2>
+<p>The reference sweep leaves the knee bracketed but not pinned: somewhere in (8, 14], predicted 10.8. Pick caps we didn’t run — 10, 11, 12 — build your own gate (the toolbox holds a full counter kit; the solution scripts are readable blueprints), and pin it. Two questions to answer with your additions:</p>
 <ol type="1">
-<li><strong>Where exactly is the knee?</strong> Bracket <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mn>0</mn></msub><annotation encoding="application/x-tex">W_0</annotation></semantics></math> from measurement alone, then compare with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>b</mi></msub><msub><mi>T</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">r_b T_0</annotation></semantics></math> computed from a stopwatch walk of the empty line. Lab 3’s pull run (WIP 19.16 at full throughput) already told you the knee is at or below 19 — sharpen it.</li>
-<li><strong>What does the flat region cost?</strong> Every point right of the knee has the same throughput; read the CT column as the price tag of the inventory. Little’s Law says the flat region’s CT must be exactly <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mi>/</mi><msub><mi>r</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">w/r_b</annotation></semantics></math> — check it.</li>
+<li><strong>Where exactly is the knee?</strong> Find the smallest cap that still yields 15.00/min, and compare with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>b</mi></msub><msub><mi>T</mi><mn>0</mn></msub><mo>=</mo><mn>10.8</mn></mrow><annotation encoding="application/x-tex">r_b T_0 = 10.8</annotation></semantics></math> computed from w-04’s measured <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math>. If they disagree, one of your boundaries is talking — find which.</li>
+<li><strong>What does the flat region cost?</strong> Every point right of the knee has the same throughput; read the CT column as the price tag of the inventory. The measured flat branch already obeys CT <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mn>4</mn><mi>w</mi></mrow><annotation encoding="application/x-tex">= 4w</annotation></semantics></math> exactly — your new points must too, or something is wrong with your gate.</li>
 </ol>
 </section>
-<section id="debrief" class="level2" data-number="14.4">
-<h2 data-number="14.4" class="anchored" data-anchor-id="debrief"><span class="header-section-number">14.4</span> Debrief</h2>
+<section id="debrief" class="level2" data-number="14.5">
+<h2 data-number="14.5" class="anchored" data-anchor-id="debrief"><span class="header-section-number">14.5</span> Debrief</h2>
 <ul>
 <li>The machine-state fractions tell the low-WIP story: at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">w = 4</annotation></semantics></math>, which machines are starved and how much? The constraint’s idle time left of the knee is the <em>only</em> throughput cost in this whole deterministic world — name the mechanism.</li>
 <li>Your gate held WIP constant; Lab 3’s gate held one buffer constant. Both landed on the flat region. What does CONWIP’s <em>system-level</em> cap give you that the local gate didn’t? (Hint: what happens to each if a middle machine slows down for a minute?)</li>
@@ -413,9 +479,10 @@ Instructor notes
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
-<li>Reference dataset pending the first <code>fisl build-baseline   scenarios/factory-physics/fp07-characteristic-curves</code> + <code>fisl solutions … --run</code> (five runs, ~60 min wall time). Cite measured numbers here and in the sweep table afterward; predictions above are first-order (the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>0</mn></msub><mo>≈</mo><mn>56</mn></mrow><annotation encoding="application/x-tex">T_0 \approx 56</annotation></semantics></math> s figure is processing 8 s + ~48 s belt transit from Lab 3’s chapter — verify against the w-04 run’s CT, which should measure <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>0</mn></msub><annotation encoding="application/x-tex">T_0</annotation></semantics></math> directly).</li>
-<li>The gate’s cap has ~1 unit of slack (the inserter’s swing vs.&nbsp;the pulse round-trip), so measured average WIP at cap <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math> lands slightly under <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math> — another reason the x-axis is the measured number.</li>
-<li>The census cross-check doubles as the meta-lesson: the learner’s combinator ledger and FISL’s conservation ledger count the same quantity; if a learner’s own gate misbehaves, comparing their <code>W</code> signal against the panel’s live WIP is the debugging exercise.</li>
+<li>All numbers measured (reference dataset in <code>course/data/lab-07-comparison.json</code>, five runs ~60 min wall time). The chapter deliberately keeps the falsified pre-run estimate (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>0</mn></msub><mo>≈</mo><mn>56</mn></mrow><annotation encoding="application/x-tex">T_0 \approx 56</annotation></semantics></math> s from the walk) next to the measured 43.02 s — the correction <em>is</em> the pedagogy: predictions written down, checked, and amended in public. Teach it, don’t sand it off.</li>
+<li>The measured cap offset runs +0.02–0.04 <em>above</em> the nominal cap, not below: the tap belts sit one tile inside FISL’s port boundary, so the circuit ledger undercounts FISL’s WIP by the in-flight material between the boundaries (~1 unit at the source side). The chapter’s “boundaries matter, recursively” bullet is the discussion anchor.</li>
+<li>Expected learner knee-pinning result: smallest full-throughput cap between 11 and 12 (predicted <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mn>0</mn></msub><mo>=</mo><mn>10.8</mn></mrow><annotation encoding="application/x-tex">W_0 = 10.8</annotation></semantics></math>, integer caps, +1 boundary offset — the disagreement-resolution in assignment Q1 is intended, not a trap).</li>
+<li>The census cross-check doubles as the meta-lesson: the learner’s combinator ledger and FISL’s conservation ledger count the same quantity up to their declared boundaries; if a learner’s own gate misbehaves, comparing their <code>W</code> signal against the panel’s live WIP is the debugging exercise.</li>
 </ul>
 </div>
 </div>
